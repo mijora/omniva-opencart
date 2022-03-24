@@ -1,0 +1,10 @@
+{
+    "require": {
+        "mijora/omniva-api": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mijora\\OmnivaOpencart\\": "src/"
+        }
+    }
+}

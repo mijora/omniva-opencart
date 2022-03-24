@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="view/javascript/omniva_m/settings.css">
+
+<div id="omniva_m-panel" class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-info-circle"></i>
+			{{ omniva_m_panel_title }}
+		</h3>
+	</div>
+	<div class="panel-body">
+		<ul class="nav nav-tabs">
+			<li class="active">
+				<a href="#tab-omniva_m-order-info" data-toggle="tab">{{ omniva_m_tab_order_info }}</a>
+			</li>
+			<li>
+				<a href="#tab-omniva_m-history" data-toggle="tab">{{ omniva_m_tab_history }} <span class="badge">{{ omniva_m_order.label_history.total }}</span></a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="tab-omniva_m-order-info">
+				<div id="omniva_m-order-info">
+                    {% if omniva_m_order.oc_order %}
+                    <input type="hidden" name="omniva_m_order_id" value="{{ omniva_m_order.oc_order.order_id }}">
+					<div class="form-horizontal">
+                        {% if omniva_m_order.manifest_id > 0 %}
+                        <div class="omniva_m_alert alert-info">{{ omniva_m_info_manifest_id }} {{ omniva_m_order.manifest_id }}</div>
+                        {% endif %}
+                        
+                        {% if omniva_m_order.label_history.last_barcodes and omniva_m_order.label_history.last_barcodes != "[]" %}
+                        <div class="omniva_m_alert alert-info">{{ omniva_m_info_last_barcodes }} {{ omniva_m_order.label_history.last_barcodes }}</div>
+                        {% endif %}
+                        {% if omniva_m_order.label_history.last_error %}
+                        <div class="omniva_m_alert alert-danger">{{ omniva_m_info_last_error }} {{ omniva_m_order.label_history.last_error }}</div>
+                        {% endif %}
+
+                        {% if omniva_m_order.shipping_types.terminal == omniva_m_order.shipping_type and not omniva_m_order.terminal_data %}
+                        <div class="omniva_m_alert alert-danger">{{ omniva_m_warning_no_terminal }}</div>
+                        {% endif %}
+
+                        {% if omniva_m_order.order_data %}
+                        <div class="omniva_m_alert alert-warning">{{ omniva_m_warning_order_data_changed }}</div>
+                        {% endif %}
+
+                        {# Multiparcel only for Courier #}
+                        {% if omniva_m_order.shipping_types.courier == omniva_m_order.shipping_type %}
+                        <div class="form-group">
+							<label class="col-sm-2 control-label" for="input-omniva_m-multiparcel">{{ omniva_m_label_multiparcel }}</label>
+							<div class="col-sm-10">
+                                <select name="omniva_m_multiparcel" id="input-omniva_m-multiparcel" class="form-control">
+                                    {% for amount in range(1, 5) %}
+                                    <option value="{{ amount }}" {% if amount == omniva_m_order.multiparcel %}selected{% endif %}>{{ amount }}</option>
+                                    {% endfor %}
+                                </select>
+							</div>
+						</div>
+                        {% endif %}
+                        
+                        {# Parcel weight #}
+                        <div class="form-group">
+							<label class="col-sm-2 control-label" for="input-omniva_m-set-weight">{{ omniva_m_label_total_weight }}</label>
+							<div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" name="omniva_m_set_weight" value="{{ omniva_m_order.set_weight }}" id="input-omniva_m-total-weight" class="form-control" />
+                                    <span class="input-group-addon">kg</span>
+                                </div>
+                                {% if omniva_m_order.shipping_types.courier == omniva_m_order.shipping_type %}
+                                <p class="help-block">{{ omniva_m_help_weight_multiparcel }}</p>
+                                {% endif %}
+                                {% if omniva_m_order.terminal_overweight %}
+                                <div class="omniva_m_alert alert-warning">{{ omniva_m_warning_overweight }} {{ omniva_m_order.terminal_max_weight }}kg</div>
+                                {% endif %}
+							</div>
+						</div>
+
+                        {# COD #}
+                        {% if omniva_m_order.cod.order_use and not omniva_m_order.cod.enabled %}
+                        <div class="omniva_m_alert alert-danger">{{ omniva_m_warning_cod_used }}</div>
+                        {% endif %}
+
+                        {% if omniva_m_order.cod.enabled %}
+						<div class="form-group">
+                            <label class="col-sm-2 control-label" for="input-omniva_m-cod-use">{{ omniva_m_label_cod_use }}</label>
+                            <div class="col-sm-4">
+                                <select name="omniva_m_cod_use" id="input-omniva_m-cod-use" class="form-control">
+                                    <option value="0">{{ omniva_m_option_no }}</option>
+                                    <option value="1" {% if omniva_m_order.cod.use %}selected{% endif %}>{{ omniva_m_option_yes }}</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label" for="input-omniva_m-cod-amount">{{ omniva_m_label_cod_amount }}</label>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <input type="text" name="omniva_m_cod_amount" value="{{ omniva_m_order.cod.amount }}" id="input-omniva_m-cod-amount" class="form-control" />
+                                    <span class="input-group-addon">&euro;</span>
+                                </div>
+                            </div>
+						</div>
+                            {% if omniva_m_order.cod.amount != omniva_m_order.cod.oc_amount %}
+                            <div class="omniva_m_alert alert-warning">{{ omniva_m_warning_cod_amount_mismatch|replace({'$$cod_amount$$': omniva_m_order.cod.amount, '$$order_amount$$': omniva_m_order.cod.oc_amount}) }}</div>
+                            {% endif %}
+                        {% endif %}
+
+                        <div class="omniva_m-panel-buttons-wrapper">
+                            <a href="#" class="btn btn-default omniva_m-register-label-btn">{{ omniva_m_btn_register_label }}</a>
+                            {% if omniva_m_order.label_history.last_barcodes and omniva_m_order.label_history.last_barcodes != "[]" %}
+                            <a href="#" class="btn btn-default omniva_m-print-label-btn">{{ omniva_m_btn_print_label }}</a>
+                            {% endif %}
+                            <a href="#" class="btn btn-default omniva_m-save-data-btn">{{ omniva_m_btn_save_data }}</a>
+                        </div>
+					</div>
+                    {% else %}
+                    <div class="omniva_m_alert omniva_m_alert-danger">{{ omniva_m_error_no_oc_order }}</div>
+                    {% endif %}
+				</div>
+			</div>
+			<div class="tab-pane" id="tab-omniva_m-history">
+				<div id="omniva_m-history">
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<td>{{ omniva_m_header_date }}</td>
+									<td>{{ omniva_m_header_service_code }}</td>
+									<td>{{ omniva_m_header_tracking_numbers }}</td>
+									<td>{{ omniva_m_header_actions }}</td>
+								</tr>
+							</thead>
+							<tbody id="omniva_m-label_history">
+                                {% for omniva_m_lh in omniva_m_label_history %}
+                                <tr class="{% if omniva_m_lh.is_error == 1 %}alert-danger{% endif %}">
+                                    <td>{{ omniva_m_lh.date_add }}</td>
+                                    {% if omniva_m_lh.barcodes != "[]" %}
+                                        <td>{{ omniva_m_lh.service_code }}</td>
+                                        {% if omniva_m_lh.is_error == 1 %}
+                                            <td colspan="2">{{ omniva_m_lh.barcodes }}</td>
+                                        {% else %}
+                                            <td>{{ omniva_m_lh.barcodes }}</td>
+                                            <td>
+                                                <a class="btn btn-default omniva_m-print-history-label-btn"
+                                                    href="#" data-history-id="{{ omniva_m_lh.id_label_history }}">Print</a>
+                                            </td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td colspan="3">{{ omniva_m_lh.service_code }}</td>
+                                    {% endif %}
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan='4'>{{ omniva_m_history_empty }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+            <div id="omniva_m-response-info" class="omniva_m_alert hidden"></div>
+		</div>
+	</div>
+    <div class="omniva_m-panle-overlay hidden">
+        <div class="bs5-spinner-border text-warning"></div>
+    </div>
+</div>
+<script>
+    const OMNIVA_M_ORDER_DATA = {{ omniva_m_order|json_encode() }};
+    const OMNIVA_M_INFO_PANEL_TRANSLATION = {{ omniva_m_info_panel_translation|json_encode() }};
+</script>

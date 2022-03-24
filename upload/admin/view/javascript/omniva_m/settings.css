@@ -1,0 +1,167 @@
+#content {
+    position: relative;
+}
+
+.omniva_m_alert {
+    padding: 10px;
+    margin-bottom: 18px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+}
+
+.omniva_m_alert-danger {
+    background-color: #f5c1bb;
+    border-color: #f3b5ad;
+    color: #c72f1d;
+}
+
+.omniva_m-overlay {
+    position: relative;
+}
+
+.omniva_m-overlay::after {
+    content: "Loading...";
+    font-size: 2em;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+}
+
+.page-header h1 img {
+    height: 33px;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.omniva_m-checkboxes {
+    padding-left: 20px;
+}
+
+.omniva_m-checkboxes input[type="checkbox"]:checked~label {
+    font-weight: 700;
+}
+
+.help-block {
+    font-style: italic;
+}
+
+.omniva_m-terminal-info {
+    padding: 15px 30px;
+}
+
+.omniva_m-terminal-info>.row:not(:last-of-type) {
+    margin-bottom: 1em;
+}
+
+.omniva_m-terminal-list a {
+    word-break: break-all;
+}
+
+.omniva_m-terminal-list>div:nth-of-type(even):not(:last-of-type) {
+    margin-bottom: 1em;
+}
+
+.omniva_m-terminal-info-name {
+    text-align: left;
+}
+
+.edit-price-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+a.btn-omniva_m {
+    color: #fff;
+    background-color: hsl(24deg 100% 45%);
+    border-color: hsl(24deg 100% 40%);
+    margin: 0 0.15em;
+}
+
+a.btn-omniva_m:hover,
+a.btn-omniva_m:focus {
+    color: #fff;
+    background-color: hsl(24deg 100% 50%);
+}
+
+a.omniva_m-btn-close span,
+a.omniva_m-btn-order-action * {
+    pointer-events: none;
+}
+
+@keyframes bs5-spinner-border {
+    100% { transform: rotate(360deg) }
+}
+
+.bs5-spinner-border {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: .75s linear infinite bs5-spinner-border;
+    animation: 0.75s linear infinite bs5-spinner-border;
+}
+
+@media (min-width: 768px) {
+    .omniva_m-terminal-info-name {
+        text-align: right;
+    }
+
+    .omniva_m-terminal-list>div:not(:last-child) {
+        margin-bottom: 1em;
+    }
+}
+
+/* Panel inside Order info */
+#omniva_m-panel {
+    position: relative;
+}
+
+#omniva_m-response-info.omniva_m_alert {
+    margin-top: 1em;
+    margin-bottom: 0;
+}
+
+.omniva_m-panel-buttons-wrapper {
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+#omniva_m-panel .omniva_m-panle-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#omniva_m-panel .omniva_m-panle-overlay .bs5-spinner-border {
+    width: 5em;
+    height: 5em;
+    border-width: 0.5em;
+}
