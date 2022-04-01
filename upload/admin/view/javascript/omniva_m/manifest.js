@@ -307,7 +307,9 @@ const OMNIVA_M_MANIFEST = {
         orderListEl.innerHTML = html;
 
         OMNIVA_M_MANIFEST.renderPagination(data.current_page, data.total_pages);
-        $('#omniva_m-manifest-orders .omniva_m-btn-order-action').tooltip();
+        $('#omniva_m-manifest-orders .omniva_m-btn-order-action').tooltip({
+            container: 'body'
+        });
     },
 
     getNoResultHtml: function () {
