@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Omniva Base Mod for OC3</name>
-    <version>0.0.32</version>
+    <version>0.0.33</version>
     <author>Mijora</author>
     <link>https://www.mijora.lt</link>
     <code>omniva_m_base</code>
@@ -179,7 +179,7 @@
 
                     // $this->document->addScript('catalog/view/javascript/omniva_m/leaflet.js');
                     $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20220401');
                 }
                 // OMNIVA_M END    
             ]]></add>

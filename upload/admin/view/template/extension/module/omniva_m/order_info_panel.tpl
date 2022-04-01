@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="view/javascript/omniva_m/settings.css">
+<link rel="stylesheet" href="view/javascript/omniva_m/settings.css?20220401">
 
 <div id="omniva_m-panel" class="panel panel-default">
 	<div class="panel-heading">

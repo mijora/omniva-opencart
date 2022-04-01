@@ -698,7 +698,7 @@
 
 <link rel="stylesheet" href="view/javascript/omniva_m/select2.min.css">
 <script src="view/javascript/omniva_m/select2.min.js"></script>
-<link rel="stylesheet" href="view/javascript/omniva_m/settings.css">
+<link rel="stylesheet" href="view/javascript/omniva_m/settings.css?20220401">
 <script>
   $(document).ready(function() {
     $('.js-select-sender').select2();
