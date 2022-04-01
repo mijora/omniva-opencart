@@ -17,10 +17,13 @@ const OMNIVA_M = {
         const config = { attributes: false, childList: true, subtree: true };
 
         const callback = function (mutationsList, observer) {
-            if (document.querySelector('input[value^="omniva_m.terminal_"]')) {
+            if (
+                document.querySelector('input[value^="omniva_m.terminal_"]')
+                && !document.querySelector('input[value^="omniva_m.terminal_"][data-initialized="omniva_m"]')
+            ) {
+                console.log('Omniva_m initializing terminals');
+                document.querySelector('input[value^="omniva_m.terminal_"]').dataset.initialized = 'omniva_m';
                 OMNIVA_M.init();
-                observer.disconnect();
-                console.log('Omniva_m terminal found - disconecting observer');
             }
         };
 
