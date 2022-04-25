@@ -4,12 +4,12 @@ namespace Mijora\OmnivaOpencart;
 
 class Params
 {
-    const VERSION = '2.0.0beta';
+    const VERSION = '2.0.1';
 
     const PREFIX = 'omniva_m_';
 
-    const GIT_VERSION_CHECK = 'https://api.github.com/repos/mijora/omniva-opencart-3.0-ocmod/releases/latest';
-    const GIT_URL = 'https://github.com/mijora/omniva-opencart-3.0-ocmod/releases/latest';
+    const GIT_VERSION_CHECK = 'https://api.github.com/repos/mijora/omniva-opencart/releases/latest';
+    const GIT_URL = 'https://github.com/mijora/omniva-opencart/releases/latest';
     const GIT_CHECK_EVERY_HOURS = 24; // how often to check git for version. Default 24h
 
     const TERMINAL_MAX_WEIGHT = 30; // max allowed terminal weight in kg
