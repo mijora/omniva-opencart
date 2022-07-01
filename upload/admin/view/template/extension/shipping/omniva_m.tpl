@@ -70,7 +70,6 @@
             <li><a href="#tab-cod" data-toggle="tab"><?php echo $omniva_m_tab_cod; ?></a></li>
             <li><a href="#tab-terminals" data-toggle="tab"><?php echo $omniva_m_tab_terminals; ?></a></li>
             <li><a href="#tab-tracking-email" data-toggle="tab"><?php echo $omniva_m_tab_tracking_email; ?></a></li>
-            <li class="hidden"><a href="#tab-advanced" data-toggle="tab"><?php echo $omniva_m_tab_advanced; ?></a></li>
         <?php else: ?>
             <li><div class="alert alert-danger"><?php echo $omniva_m_alert_settings; ?></div></li>
         <?php endif; ?>
@@ -621,26 +620,6 @@
             </div>
         </div>
 
-        <!-- Advanced Settings -->
-        <div class="tab-pane" id="tab-advanced">
-            <div class="container-fluid">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-pencil"></i> <?php echo $omniva_m_title_advanced_settings; ?></h3>
-                    </div>
-
-                    <div class="panel-body">
-                    </div>
-
-                    <div class="panel-footer clearfix">
-                        <div class="pull-right">
-                            <button type="submit" form="form-omniva_m-advanced" data-toggle="tooltip" title="<?php echo $omniva_m_generic_btn_save; ?>" class="btn btn-primary"><i class="fa fa-save"></i></button>
-                            <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $omniva_m_generic_btn_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div> <!-- End Tab content -->
 
     <!-- Price EDIT Modal -->
