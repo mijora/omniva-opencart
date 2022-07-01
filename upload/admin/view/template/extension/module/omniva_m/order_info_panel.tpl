@@ -100,7 +100,7 @@
                                 </div>
                             </div>
                             <?php if ($omniva_m_order['cod']['amount'] != $omniva_m_order['cod']['oc_amount']): ?>
-                            <div class="omniva_m_alert alert-warning"><?php echo str_replace(['$$cod_amount$$', '$$order_amount$$'], [omniva_m_order['cod']['amount'], omniva_m_order['cod']['oc_amount']], $omniva_m_warning_cod_amount_mismatch); ?></div>
+                            <div class="omniva_m_alert alert-warning"><?php echo str_replace(['$$cod_amount$$', '$$order_amount$$'], [$omniva_m_order['cod']['amount'], $omniva_m_order['cod']['oc_amount']], $omniva_m_warning_cod_amount_mismatch); ?></div>
                             <?php endif; ?>
                         <?php endif; ?>
 
