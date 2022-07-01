@@ -48,7 +48,7 @@ class Shipment
      * @var array
      */
     private $terminalServices = [
-        'PU', 'PA', 'PK', 'PP'
+         'PU', 'PA', 'PK', 'PP'
      ];
     
     public function setAuth($username, $password)
@@ -262,7 +262,7 @@ class Shipment
             if($this->isShowReturnCodeEmail()) {
                 $item->addChild('show_return_code_email', true);
             }
-            if($this->getComment()) {
+	    if($this->getComment()) {
                 $item->addChild('comment', $this->getComment());
             }
             if($this->getPartnerId()) {

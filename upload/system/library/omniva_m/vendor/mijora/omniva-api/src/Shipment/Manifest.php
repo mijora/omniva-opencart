@@ -84,6 +84,7 @@ class Manifest
         $sign .= "Sender name, surname, signature" . ' ________________________________________________';
         $pdf->writeHTML($sign, true, false, false, false, '');
         
+        
         if ($mode === 'S') {
             return $pdf->Output($name . '.pdf', $mode);
         }
