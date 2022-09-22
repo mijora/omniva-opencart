@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.3] - Public release
+- fixed composer autoload. Used Composer 2.4.2 to generate autoloader
+
 ## [2.0.2] - Public release
 - Updated mijora/omniva-api library to 1.0.4
 - Fixed bad variable in order-info-panel.tpl
