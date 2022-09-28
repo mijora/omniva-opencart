@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.4] - PK Service
+- fixed an issue when PK service is used. Since this service requires offloadPostcode, receiver postcode will be used
+
 ## [2.0.3] - Public release
 - fixed composer autoload. Used Composer 2.4.2 to generate autoloader
 

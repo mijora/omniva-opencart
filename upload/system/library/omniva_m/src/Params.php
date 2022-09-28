@@ -4,7 +4,7 @@ namespace Mijora\OmnivaOpencart;
 
 class Params
 {
-    const VERSION = '2.0.3';
+    const VERSION = '2.0.4';
 
     const PREFIX = 'omniva_m_';
 
