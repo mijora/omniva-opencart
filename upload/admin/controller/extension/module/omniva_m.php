@@ -272,6 +272,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 $receiver_address->setOffloadPostcode($offload_code);
             }
 
+            if ($service_code === 'PK') {
+                $receiver_address->setOffloadPostcode($receiver_postcode);
+            }
+
             $senderContact = $this->getSenderContact();
 
             // Receiver contact data
@@ -638,7 +642,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
         $this->load->model('extension/module/omniva_m/order');
 
         $omniva_m_translation = $this->model_extension_module_omniva_m_order->loadAdminModuleTranslations();
-		$data = array_merge($data, $omniva_m_translation);
+        $data = array_merge($data, $omniva_m_translation);
 
         $data['omniva_m_data'] = [
             'order_url' => $this->url->link('sale/order/info', $this->getUserToken(), true),
