@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.5] - Dependencies update
+- updated omniva-api library to 1.0.6.1
+
 ## [2.0.4] - PK Service
 - fixed an issue when PK service is used. Since this service requires offloadPostcode, receiver postcode will be used
 
