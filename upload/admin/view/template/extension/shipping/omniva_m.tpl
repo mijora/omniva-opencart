@@ -37,8 +37,8 @@
     <!-- VERSION CHECK -->
     <?php if ($omniva_m_git_version): ?>
     <div class="container-fluid">
-        <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> <?php echo str_replace('$$omniva_m_new_version$$' , omniva_m_git_version['version'], $omniva_m_new_version_notify); ?> 
-            <a href="<?php echo $omniva_m_git_version.download_url; ?>" target="_blank" class="btn btn-success"><?php echo $omniva_m_button_download_version; ?></a>
+        <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> <?php echo str_replace('$$omniva_m_new_version$$' , $omniva_m_git_version['version'], $omniva_m_new_version_notify); ?> 
+            <a href="<?php echo $omniva_m_git_version['download_url']; ?>" target="_blank" class="btn btn-success"><?php echo $omniva_m_button_download_version; ?></a>
         </div>
     </div>
     <?php endif; ?>
