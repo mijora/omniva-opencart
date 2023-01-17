@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.6] - Improvements
+- added simplified support for Journal 3 Theme on OpenCart 3
+- fixed a typo in parameter name within front.js
+- fixed omniva_m.tpl using incorrect template variables
+
 ## [2.0.5] - Dependencies update
 - updated omniva-api library to 1.0.6.1
 
