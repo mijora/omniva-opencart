@@ -73,7 +73,7 @@ const OMNIVA_M = {
                     OMNIVA_M.omnivaModule[0].checked = true;
                 }
             },
-            translations: omniva_m_js_translation,
+            translate: omniva_m_js_translation,
             terminals: terminals,
         });
 
