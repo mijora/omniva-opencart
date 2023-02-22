@@ -1,5 +1,8 @@
 # Changelog
 
+## [UNRELEASED]
+- Improved Journal 3 experimental support.
+
 ## [2.0.6] - Improvements
 - added simplified support for Journal 3 Theme on OpenCart 3
 - fixed a typo in parameter name within front.js
