@@ -1,5 +1,7 @@
 const OMNIVA_M_J3 = {
     mainNode: null,
+    strings: null,
+    currentCountryId: null,
 
     observe: function () {
         const targetNode = document.body;
@@ -7,12 +9,24 @@ const OMNIVA_M_J3 = {
         const config = { attributes: false, childList: true, subtree: true };
 
         const callback = function (mutationsList, observer) {
+            try {
+                // check if country changed, if so make sure previous node is removed
+                if (OMNIVA_M_J3.mainNode && window._QuickCheckout && _QuickCheckout.order_data.shipping_country_id !== OMNIVA_M_J3.currentCountryId) {
+                    console.log('Omniva_m country change detected');
+                    OMNIVA_M_J3.mainNode.remove();
+                    OMNIVA_M_J3.currentCountryId = _QuickCheckout.order_data.shipping_country_id;
+                    OMNIVA_M_J3.init();
+                    return;
+                }
+            } catch (error) { }
+
             if (
                 document.querySelector('input[value^="omniva_m.terminal_"]')
                 && !document.querySelector('input[value^="omniva_m.terminal_"][data-initialized="omniva_m"]')
             ) {
                 console.log('Omniva_m initializing terminals');
                 document.querySelector('input[value^="omniva_m.terminal_"]').dataset.initialized = 'omniva_m';
+                OMNIVA_M_J3.currentCountryId = _QuickCheckout.order_data.shipping_country_id;
                 OMNIVA_M_J3.init();
             }
         };
@@ -56,13 +70,13 @@ const OMNIVA_M_J3 = {
         clone.style.flexDirection = 'column';
         clone.querySelector('label').classList.remove('hidden');
         let cloneTitle = clone.querySelector('.shipping-quote-title');
-        cloneTitle.textContent = cloneTitle.textContent.replace(/:.*-/, ' -').replace('Omniva', 'Pristatymas į Omniva paštomatą');
+        cloneTitle.textContent = cloneTitle.textContent.replace(/:.*-/, ' -').replace('Omniva', 'Omniva Parcel Terminal');
         let select = document.createElement('select');
         select.classList.add('form-control');
         select.style.margin = '0.25em 0';
 
         let keys = Object.keys(window._QuickCheckout.shipping_methods.omniva_m.quote);
-        let selectHtml = '<option value="0" disabled>-Prašome pasirinkti-</option>';
+        let selectHtml = '<option value="0" disabled>- Select terminal -</option>';
         keys.forEach((key) => {
             if (key === 'courier') { return; }
             let optionData = window._QuickCheckout.shipping_methods.omniva_m.quote[key];
@@ -73,6 +87,24 @@ const OMNIVA_M_J3 = {
         select.value = '0';
         clone.append(select);
 
+        setTimeout(function () {
+            try {
+                fetch(omniva_m_ajax_url + '&action=getFrontTrans')
+                    .then(response => response.json())
+                    .then(parsed => {
+                        if (!parsed.data) {
+                            console.warning('Omniva_m: Could not load translations');
+                            return;
+                        }
+
+                        OMNIVA_M_J3.strings = parsed.data;
+                        OMNIVA_M_J3.updateStrings();
+                    });
+            } catch (error) {
+                console.log('OMNIVA_M:', error);
+            }
+        }, 1);
+
         firstEl.closest('.radio').parentNode.append(clone);
 
         let cloneInput = clone.querySelector('input[name="shipping_method"]');
@@ -82,7 +114,7 @@ const OMNIVA_M_J3 = {
 
         cloneInput.addEventListener('change', function (e) {
             if (e.target.checked) {
-            	if (window._QuickCheckout.order_data.shipping_code != e.target.value) {
+                if (window._QuickCheckout.order_data.shipping_code != e.target.value) {
                     _QuickCheckout.forceLoadingOverlay();
                 }
                 window._QuickCheckout.order_data.shipping_code = e.target.value;
@@ -103,7 +135,11 @@ const OMNIVA_M_J3 = {
                 const selected_node = $("input[name=\"shipping_method\"]:checked");
                 if (selected_node.length && selected_node.val().startsWith('omniva_m.terminal') && (!select.value || select.value == '0')) {
                     jqXhr.abort();
-                    alert('Pasirinkite Omniva paštomatą!');
+                    if (OMNIVA_M_J3.strings && OMNIVA_M_J3.strings['omniva_m_select_option_warning']) {
+                        alert(OMNIVA_M_J3.strings['omniva_m_select_option_warning']);
+                    } else {
+                        alert('Please select Omniva parcel terminal!');
+                    }
                     $("html, body").animate({ scrollTop: $(select).offset().top }, 1e3);
                     $(".journal-loading-overlay").hide();
                     $("#quick-checkout-button-confirm").button("reset")
@@ -128,7 +164,7 @@ const OMNIVA_M_J3 = {
 
         $.ajaxPrefilter(_onAjaxReq);
         $(document).ajaxComplete(_onAjaxComplete);
-        
+
         clone.closest('.shippings').classList.remove('hidden');
     },
 
@@ -144,8 +180,25 @@ const OMNIVA_M_J3 = {
         return false;
     },
 
-    unhideTest: function() {
+    unhideTest: function () {
         OMNIVA_M_J3.mainNode.closest('.shippings').classList.remove('hidden');
+    },
+
+    updateStrings: function () {
+        if (!OMNIVA_M_J3.mainNode || !OMNIVA_M_J3.strings) {
+            return;
+        }
+
+        const titleTag = OMNIVA_M_J3.mainNode.querySelector('.shipping-quote-title');
+
+        if (titleTag && OMNIVA_M_J3.strings['omniva_m_shipping_option_title']) {
+            titleTag.textContent = titleTag.textContent.replace('Omniva Parcel Terminal', OMNIVA_M_J3.strings['omniva_m_shipping_option_title']);
+        }
+
+        const optionTag = OMNIVA_M_J3.mainNode.querySelector('select option[value="0"]');
+        if (optionTag && OMNIVA_M_J3.strings['omniva_m_select_option']) {
+            optionTag.textContent = OMNIVA_M_J3.strings['omniva_m_select_option'];
+        }
     }
 };
 

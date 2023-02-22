@@ -177,6 +177,19 @@ const OMNIVA_M = {
         link.crossOrigin = urlData.crossOrigin;
         link.media = 'all';
         head.appendChild(link);
+    },
+
+    testLoadTranslations: function () {
+        fetch(omniva_m_ajax_url + '&action=getFrontTrans')
+            .then(res => res.json())
+            .then(json => {
+                if (!json.data) {
+                    console.warning('Omniva_m: Could not load translations');
+                    return;
+                }
+
+                console.log(json.data);
+            });
     }
 };
 
