@@ -11,3 +11,6 @@ $_['omniva_m_show_more'] = 'Show more';
 $_['omniva_m_place_not_found'] = 'Place not found';
 $_['omniva_m_search_back_to_list'] = 'Back to list';
 $_['omniva_m_terminal_not_selected'] = 'Please select parcel terminal';
+$_['omniva_m_shipping_option_title'] = 'Omniva Parcel Terminal';
+$_['omniva_m_select_option'] = '- Select terminal -';
+$_['omniva_m_select_option_warning'] = 'Please select Omniva parcel terminal!';

@@ -20,6 +20,12 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 header('Content-Type: application/json');
                 echo json_encode(['data' => $terminal_list]);
                 exit();
+            case 'getFrontTrans':
+                $translation = $this->getFrontTrans();
+
+                header('Content-Type: application/json');
+                echo json_encode(['data' => $translation]);
+                exit();
             case 'terminalUpdate':
                 $secret = $this->config->get(Params::PREFIX . 'cron_secret');
                 if (isset($this->request->get['secret']) && $secret && $secret === $this->request->get['secret']) {
@@ -71,5 +77,13 @@ class ControllerExtensionModuleOmnivaM extends Controller
         }
 
         return $configured_list;
+    }
+
+    private function getFrontTrans()
+    {
+        $all_translations = $this->load->language('extension/module/omniva_m');
+        return array_filter($all_translations, function($item) {
+            return strpos($item, 'omniva_m_') !== FALSE;
+        }, ARRAY_FILTER_USE_KEY);
     }
 }
