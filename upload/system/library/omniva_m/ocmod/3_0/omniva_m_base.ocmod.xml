@@ -279,7 +279,7 @@
 
                     // $this->document->addScript('catalog/view/javascript/omniva_m/leaflet.js');
                     $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20220401');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20230223');
                 }
                 // OMNIVA_M END    
             ]]></add>
