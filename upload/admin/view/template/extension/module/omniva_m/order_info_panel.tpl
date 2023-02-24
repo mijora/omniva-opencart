@@ -138,7 +138,7 @@
                                 <?php foreach($omniva_m_label_history as $omniva_m_lh): ?>
                                 <tr class="<?php if ($omniva_m_lh['is_error'] == 1) { echo "alert-danger"; } ?>">
                                     <td><?php echo $omniva_m_lh['date_add']; ?></td>
-                                    <?php if ($omniva_m_lh['barcodes'] != "[]"): ?>
+                                    <?php if ($omniva_m_lh['barcodes'] != "[]" && $omniva_m_lh['barcodes'] != ""): ?>
                                         <td><?php echo $omniva_m_lh['service_code']; ?></td>
                                         <?php if ($omniva_m_lh['is_error'] == 1): ?>
                                             <td colspan="2"><?php echo $omniva_m_lh['barcodes']; ?></td>

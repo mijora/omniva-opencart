@@ -351,15 +351,12 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         $order_id = $order_data['oc_order']['order_id'];
         $barcodes_empty = empty($barcodes);
         // $barcodes will hold error message in case is_error is true, otherwise array of tracking numbers
-        $barcodes_string = $is_error ? $this->db->escape($barcodes) : json_encode($barcodes);
+        $barcodes_string = $is_error ? $this->db->escape($barcodes) : implode(', ', $barcodes);
 
-        // update order history
-        if (!$is_error && !$barcodes_empty) {
-            // notify customer if enabled
+        // update order history if $barcodes is not empty which means history change comming from registration
+        if (!$barcodes_empty) {
+            // if not error try sending tracking email if enabled
             $notified = 0;
-            if ($this->config->get('omniva_m_tracking_email_status')) {
-                $notified = $this->sendTrackingUrl($order_data, $barcodes) ? 1 : 0;
-            }
 
             $last_status_id = $this->db->query("
                 SELECT order_status_id FROM `" . DB_PREFIX . "order_history`
@@ -369,12 +366,29 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             ")->row;
 
             $last_status_id = isset($last_status_id['order_status_id']) ? $last_status_id['order_status_id'] : 0;
+            $status_id = $last_status_id;
 
-            if ($last_status_id > 0) {
+            if (!$is_error) {
+                if ($this->config->get('omniva_m_tracking_email_status')) {
+                    $notified = $this->sendTrackingUrl($order_data, $barcodes) ? 1 : 0;
+                }
+
+                $success_status_id = $this->config->get(Params::PREFIX . 'order_status_registered');
+                if ($success_status_id) {
+                    $status_id = (int) $success_status_id;
+                }
+            } else { // if error
+                $error_status_id = $this->config->get(Params::PREFIX . 'order_status_error');
+                if ($error_status_id) {
+                    $status_id = (int) $error_status_id;
+                }
+            }
+
+            if ($status_id > 0) {
                 $this->db->query(
                     "
                     INSERT INTO `" . DB_PREFIX . "order_history` 
-                    SET `order_id` = '" . (int) $order_id . "', `order_status_id` = '" . (int) $last_status_id . "', `notify` = '" . $notified . "', `comment` = '" . $this->db->escape($barcodes_string) . "', `date_added` = NOW()
+                    SET `order_id` = '" . (int) $order_id . "', `order_status_id` = '" . (int) $status_id . "', `notify` = '" . $notified . "', `comment` = '" . $this->db->escape($barcodes_string) . "', `date_added` = NOW()
                     "
                 );
             }

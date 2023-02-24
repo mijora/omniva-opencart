@@ -128,7 +128,7 @@
                                 {% for omniva_m_lh in omniva_m_label_history %}
                                 <tr class="{% if omniva_m_lh.is_error == 1 %}alert-danger{% endif %}">
                                     <td>{{ omniva_m_lh.date_add }}</td>
-                                    {% if omniva_m_lh.barcodes != "[]" %}
+                                    {% if omniva_m_lh.barcodes != "[]" and omniva_m_lh.barcodes != "" %}
                                         <td>{{ omniva_m_lh.service_code }}</td>
                                         {% if omniva_m_lh.is_error == 1 %}
                                             <td colspan="2">{{ omniva_m_lh.barcodes }}</td>
