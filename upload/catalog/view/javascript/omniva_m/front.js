@@ -60,9 +60,17 @@ const OMNIVA_M = {
         if (inputs.length <= 0) {
             return;
         }
+        
+        const quickcheckout = typeof omniva_m_quickcheckout !== 'undefined' && omniva_m_quickcheckout;
 
         // here we can try to determine the type of checkout used, for now asume basic opencart 3.0 checkout
-        let newInput = this.buildForBasicOpencart3_0(inputs);
+        let newInput = null;
+        if (quickcheckout) {
+        	newInput = this.buildForQuickcheckout3_0(inputs);
+        } else {
+        	// Default opencart checkout setup
+	        newInput = this.buildForBasicOpencart3_0(inputs);
+        }
 
         this.omnivaModule = $(newInput).omniva({
             country_code: omniva_m_country_code,
@@ -71,11 +79,19 @@ const OMNIVA_M = {
                 OMNIVA_M.omnivaModule.val('omniva_m.terminal_' + id);
                 if (manual) {
                     OMNIVA_M.omnivaModule[0].checked = true;
+					if (quickcheckout) {
+						OMNIVA_M.omnivaModule.trigger('change');
+					}
                 }
             },
             translate: omniva_m_js_translation,
             terminals: terminals,
         });
+        
+        if (quickcheckout) {
+        	const moduleContainer = OMNIVA_M.omnivaModule.closest('tr').find('.omniva-terminal-container');
+        	OMNIVA_M.omnivaModule.closest('tr').find('td:nth-of-type(2)').append(moduleContainer);
+		}
 
         let selected_terminal = document.querySelector('input[value^="omniva_m.terminal_"]:checked');
 
@@ -84,6 +100,9 @@ const OMNIVA_M = {
             this.omnivaModule.trigger('omniva.select_terminal', terminal_id);
             // since it was selected lets not forget to select our radio
             this.omnivaModule[0].checked = true;
+            if (quickcheckout) {
+				OMNIVA_M.omnivaModule.trigger('change');
+			}
         }
     },
 
@@ -109,6 +128,32 @@ const OMNIVA_M = {
         // hide refNode
         refNode.classList.add('hidden');
         return newNode.querySelector('input');
+    },
+    
+    buildForQuickcheckout3_0: function (inputs) {
+        // hide all options except second
+        let refNode = null;
+    	let firstEl = null;
+        inputs.forEach((el,index)=>{
+            
+            if (index === 1) {
+                firstEl = el;
+                refNode = el.closest('tr');
+                firstEl.id = 'omniva_m.terminals';
+                firstEl.value = '';
+                firstEl.dataset.initialized = 'omniva_m';
+                refNode.querySelectorAll('label').forEach((label, lIndex) => {
+                    label.attributes.for.value = 'omniva_m.terminals';
+                    if (lIndex === 0) { 
+                    	label.innerText = omniva_m_js_translation.shipping_method_terminal; 
+                    }
+                });
+                return;
+            }
+
+            el.closest('tr').classList.add('hidden');
+        });
+        return firstEl;
     },
 
     // Leaflet loading
