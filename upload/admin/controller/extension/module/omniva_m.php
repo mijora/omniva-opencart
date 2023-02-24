@@ -330,8 +330,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
             if (isset($result['barcodes'])) {
                 $this->saveLabelHistory($order_data, $result['barcodes'], $this->formatServicesString($service_code, $additional_services));
 
+                $barcodes_string = implode(', ', $result['barcodes']);
+
                 return [
-                    'data' => "Received barcodes: " . implode(', ', $result['barcodes']),
+                    'data' => "Received barcodes: " . $barcodes_string,
                     'barcodes' => $result['barcodes']
                 ];
             }
@@ -349,12 +351,16 @@ class ControllerExtensionModuleOmnivaM extends Controller
         return $service . (!empty($services) ? ' + ' . implode(', ', $services) : '');
     }
 
-    private function saveLabelHistory($order_id, $barcodes, $service_code, $is_error = false)
+    private function saveLabelHistory($order_data, $barcodes, $service_code, $is_error = false)
     {
         $this->load->model('extension/module/omniva_m/order');
 
+        if (!is_array($order_data)) {
+            $order_data = $this->model_extension_module_omniva_m_order->loadOrder((int) $order_data);
+        }
+
         return $this->model_extension_module_omniva_m_order->saveLabelHistory(
-            $order_id,
+            $order_data,
             $barcodes,
             $service_code,
             $is_error

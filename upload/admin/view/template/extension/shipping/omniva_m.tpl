@@ -136,6 +136,39 @@
                         <input type="text" name="omniva_m_sort_order" value="<?php echo $omniva_m_sort_order; ?>" id="input-sort-order" class="form-control" />
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-order-status-registered"><?php echo $omniva_m_label_order_status_registered; ?></label>
+                        <div class="col-sm-10">
+                            <select type="text" name="omniva_m_order_status_registered" id="input-order-status-registered" class="form-control">
+                                <option value="0"><?php echo $omniva_m_generic_none; ?></option>
+                                <?php foreach ($order_statuses as $order_status): ?>
+                                    <?php if ($order_status['order_status_id'] == $omniva_m_order_status_registered): ?>
+                                        <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+                                    <?php else: ?>
+                                        <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="help-block"><?php echo $omniva_m_help_order_status_registered; ?></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-order-status-error"><?php echo $omniva_m_label_order_status_error; ?></label>
+                        <div class="col-sm-10">
+                            <select type="text" name="omniva_m_order_status_error" id="input-order-status-error" class="form-control">
+                                <option value="0"><?php echo $omniva_m_generic_none; ?></option>
+                                <?php foreach ($order_statuses as $order_status): ?>
+                                    <?php if ($order_status['order_status_id'] == $omniva_m_order_status_error): ?>
+                                        <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+                                    <?php else: ?>
+                                        <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="help-block"><?php echo $omniva_m_help_order_status_error; ?></p>
+                        </div>
+                    </div>
                     </form>
                 </div>
 

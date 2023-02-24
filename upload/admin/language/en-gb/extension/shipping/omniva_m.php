@@ -70,6 +70,10 @@ $_['omniva_m_label_geo_zone'] = 'Geo zone';
 $_['omniva_m_option_all_zones'] = 'All Zones';
 $_['omniva_m_label_status'] = 'Module status';
 $_['omniva_m_label_sort_order'] = 'Sort order';
+$_['omniva_m_label_order_status_registered'] = 'Order status';
+$_['omniva_m_help_order_status_registered'] = 'What order status to set after successful label registration.';
+$_['omniva_m_label_order_status_error'] = 'Register error status';
+$_['omniva_m_help_order_status_error'] = 'What order status to set after failed label registration.';
 
 // Sender Tab
 $_['omniva_m_title_sender_settings'] = 'Sender Information';
