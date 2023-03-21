@@ -129,7 +129,15 @@ class Shipment
      */
     public function isShowReturnCodeSms()
     {
-        return $this->showReturnCodeSms;
+        return (!is_null($this->showReturnCodeSms));
+    }
+
+    /**
+     * @return string
+     */
+    public function getShowReturnCodeSms()
+    {
+        return $this->showReturnCodeSms ? 'true' : 'false';
     }
 
     /**
@@ -147,7 +155,15 @@ class Shipment
      */
     public function isShowReturnCodeEmail()
     {
-        return $this->showReturnCodeEmail;
+        return (!is_null($this->showReturnCodeEmail));
+    }
+
+    /**
+     * @return string
+     */
+    public function getShowReturnCodeEmail()
+    {
+        return $this->showReturnCodeEmail ? 'true' : 'false';
     }
 
     /**
@@ -192,10 +208,6 @@ class Shipment
         }
         if($header->getPrepDateTime()) {
             $head->addAttribute('prep_date_time', $header->getPrepDateTime());
-        }
-        
-        if($this->getComment()) {
-            $head->addChild('comment', $this->getComment());
         }
 
         $itemList = $xml->addChild('item_list');
@@ -258,15 +270,15 @@ class Shipment
                     $item->addChild('reference_number', $cod->getReferenceNumber());
                 }
             }
-            // Non-mandatory 
+            // Non-mandatory
+            if($this->getComment()) {
+                $item->addChild('comment', $this->getComment());
+            }
             if($this->isShowReturnCodeSms()) {
-                $item->addChild('show_return_code_sms', true);
+                $item->addChild('show_return_code_sms', $this->getShowReturnCodeSms());
             }
             if($this->isShowReturnCodeEmail()) {
-                $item->addChild('show_return_code_email', true);
-            }
-	    if($this->getComment()) {
-                $item->addChild('comment', $this->getComment());
+                $item->addChild('show_return_code_email', $this->getShowReturnCodeEmail());
             }
             if($this->getPartnerId()) {
                 $item->addChild('partnerId', $this->getPartnerId());

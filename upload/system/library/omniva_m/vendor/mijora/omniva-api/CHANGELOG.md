@@ -1,3 +1,17 @@
+## [1.0.9] - Improvements
+- added a ability to debug request
+- fixed error message when API credentials is wrong
+- fixed error message when API URL is wrong
+- added the option to specify how many parcels will be sent when calling the courier
+- fixed courier pickup time when it has already started but not yet finished
+
+## [1.0.8] - Fixes
+- fixed comment section in Shipment XML request building
+- fixed courier pickup time format in requests
+
+## [1.0.7] - Fixes
+- fixed syntax of return code showing in customer SMS/email
+
 ## [1.0.6.1] - Fixes
 - fixed escaping function for special letters
 - removed vendor directory

@@ -4,6 +4,7 @@
 - Improved Journal 3 experimental support.
 - Added new module settings to set specific order status upon registering label
 - Added Quickchekout module experimental support for Opencart 3.0
+- updated omniva-api library to 1.0.9
 
 ## [2.0.6] - Improvements
 - added simplified support for Journal 3 Theme on OpenCart 3
