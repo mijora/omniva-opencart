@@ -321,7 +321,9 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 continue;
             }
 
-            $decoded_barcodes = json_decode($row['barcodes'], true);
+            //$decoded_barcodes = json_decode($row['barcodes'], true);
+            $backward_barcodes_string = str_replace([' ','[',']','"'], '', $row['barcodes']);
+            $decoded_barcodes = explode(',', $backward_barcodes_string);
 
             if (empty($decoded_barcodes)) {
                 continue;
