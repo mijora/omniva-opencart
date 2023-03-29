@@ -270,9 +270,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
             if ($offload_code) {
                 $receiver_address->setOffloadPostcode($offload_code);
-            }
-
-            if ($service_code === 'PK') {
+            } elseif (in_array(strtoupper($service_code), Package::ZIP_NOT_REQUIRED_SERVICES)) {
                 $receiver_address->setOffloadPostcode($receiver_postcode);
             }
 
