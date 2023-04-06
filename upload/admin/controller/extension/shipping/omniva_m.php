@@ -183,7 +183,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
                 'option_terminal', 'option_sorting_center', 'option_label_print_a4', 'option_label_print_a6',
                 'option_contract_estonia', 'option_contract_other', 'option_courier_estonia', 'option_courier_finland',
                 'label_api_add_comment', 'option_no', 'option_yes',
-                'label_api_show_return_code',
+                'label_api_show_return_code', 'option_addto_sms_email', 'option_addto_sms', 'option_addto_email', 'option_addto_dont',
                 // General Tab
                 'title_edit', 'label_tax_class', 'label_geo_zone', 'option_all_zones', 'label_status', 'label_sort_order',
                 'label_order_status_registered', 'help_order_status_registered', 'label_order_status_error', 'help_order_status_error',
