@@ -183,6 +183,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
                 'option_terminal', 'option_sorting_center', 'option_label_print_a4', 'option_label_print_a6',
                 'option_contract_estonia', 'option_contract_other', 'option_courier_estonia', 'option_courier_finland',
                 'label_api_add_comment', 'option_no', 'option_yes',
+                'label_api_show_return_code',
                 // General Tab
                 'title_edit', 'label_tax_class', 'label_geo_zone', 'option_all_zones', 'label_status', 'label_sort_order',
                 'label_order_status_registered', 'help_order_status_registered', 'label_order_status_error', 'help_order_status_error',
@@ -293,7 +294,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
             'tax_class_id', 'geo_zone_id', 'order_status_registered', 'order_status_error',
             // api tab
             'api_user', 'api_pass', 'api_url', 'api_sendoff_type', 'api_label_print_type',
-            'api_add_comment', 'api_contract_origin',
+            'api_add_comment', 'api_contract_origin', 'api_show_return_code',
             // sender-info tab
             'sender_name', 'sender_street', 'sender_postcode',
             'sender_city', 'sender_country', 'sender_phone', 'sender_email',
@@ -338,6 +339,14 @@ class ControllerExtensionShippingOmnivaM extends Controller
         $data['label_print_types'] = [
             Params::LABEL_PRINT_TYPE_A4 => $this->language->get(Params::PREFIX . 'option_label_print_a4'),
             Params::LABEL_PRINT_TYPE_A6 => $this->language->get(Params::PREFIX . 'option_label_print_a6'),
+        ];
+
+        // return code display types
+        $data['show_return_code_types'] = [
+            Params::SHOW_RETURN_ALL => $this->language->get(Params::PREFIX . 'option_addto_sms_email'),
+            Params::SHOW_RETURN_SMS => $this->language->get(Params::PREFIX . 'option_addto_sms'),
+            Params::SHOW_RETURN_EMAIL => $this->language->get(Params::PREFIX . 'option_addto_email'),
+            Params::SHOW_RETURN_DONT => $this->language->get(Params::PREFIX . 'option_addto_dont'),
         ];
 
         // special cases (that need json_decode)

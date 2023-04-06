@@ -50,6 +50,8 @@ $_['omniva_m_label_api_user'] = 'Username';
 $_['omniva_m_label_api_pass'] = 'Password';
 $_['omniva_m_label_api_sendoff_type'] = 'Send parcel by';
 $_['omniva_m_label_api_label_print_type'] = 'Print labels';
+$_['omniva_m_label_api_add_comment'] = 'Add Order ID as comment to label';
+$_['omniva_m_label_api_show_return_code'] = 'Show return code to customers';
 $_['omniva_m_option_courier'] = 'Courier';
 $_['omniva_m_option_terminal'] = 'Terminal';
 $_['omniva_m_option_sorting_center'] = 'Sorting center';
@@ -59,9 +61,12 @@ $_['omniva_m_option_contract_estonia'] = 'Estonia';
 $_['omniva_m_option_contract_other'] = 'Other';
 $_['omniva_m_option_courier_estonia'] = 'Estonian courier service';
 $_['omniva_m_option_courier_finland'] = 'Finland courier service';
-$_['omniva_m_label_api_add_comment'] = 'Add Order ID as comment to label';
 $_['omniva_m_option_no'] = 'No';
 $_['omniva_m_option_yes'] = 'Yes';
+$_['omniva_m_option_addto_sms_email'] = 'Add to SMS and email';
+$_['omniva_m_option_addto_sms'] = 'Add to SMS';
+$_['omniva_m_option_addto_email'] = 'Add to email';
+$_['omniva_m_option_addto_dont'] = 'Dont add';
 
 // General Tab
 $_['omniva_m_title_edit'] = 'General settings';
