@@ -291,7 +291,7 @@
                                         <?php foreach($show_return_code_types as $key => $show_status): ?>
                                             <option value="<?php echo $key; ?>"
                                                 <?php if ($omniva_m_api_show_return_code == $key) { echo "selected"; } ?>
-                                            >{{ show_status }}</option>
+                                            ><?php echo $show_status; ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
