@@ -215,8 +215,8 @@
                             </div>
 
                             <div class="form-group omniva_m-courier-options">
-                                <label class="col-sm-2 control-label"><?php echo $omniva_m_label_cod_options; ?></label>
-                                <div class="col-sm-10">
+                                <label class="col-sm-4 control-label"><?php echo $omniva_m_label_cod_options; ?></label>
+                                <div class="col-sm-8">
                                     <div class="omniva_m-checkboxes">
                                         <?php foreach($courier_options as $key => $courier_name ): ?>
                                         <div class="checkbox">
@@ -281,6 +281,18 @@
                                         <option value="1" 
                                             <?php if ($omniva_m_api_add_comment == 1) { echo "selected"; } ?>
                                         ><?php echo $omniva_m_option_yes; ?></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="input-api-show-return-code"><?php echo $omniva_m_label_api_show_return_code; ?></label>
+                                <div class="col-sm-8">
+                                    <select name="omniva_m_api_show_return_code" id="input-api-show-return-code" class="form-control">
+                                        <?php foreach($show_return_code_types as $key => $show_status): ?>
+                                            <option value="<?php echo $key; ?>"
+                                                <?php if ($omniva_m_api_show_return_code == $key) { echo "selected"; } ?>
+                                            ><?php echo $show_status; ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>

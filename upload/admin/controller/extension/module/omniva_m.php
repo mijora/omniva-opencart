@@ -321,6 +321,11 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
             $shipment->setPackages($packages);
 
+            //control return code showing
+            $show_return_code = $this->getShowReturnCode();
+            $shipment->setShowReturnCodeSms($show_return_code->sms);
+            $shipment->setShowReturnCodeEmail($show_return_code->email);
+
             //set auth data
             $shipment->setAuth($username, $password);
 
@@ -347,6 +352,31 @@ class ControllerExtensionModuleOmnivaM extends Controller
     private function formatServicesString($service, $services)
     {
         return $service . (!empty($services) ? ' + ' . implode(', ', $services) : '');
+    }
+
+    private function getShowReturnCode()
+    {
+        $add_to_sms = true;
+        $add_to_email = true;
+
+        $show_return_code = (int) $this->config->get(Params::PREFIX . 'api_show_return_code');
+        switch ($show_return_code) {
+            case Params::SHOW_RETURN_SMS:
+                $add_to_email = false;
+                break;
+            case Params::SHOW_RETURN_EMAIL:
+                $add_to_sms = false;
+                break;
+            case Params::SHOW_RETURN_DONT:
+                $add_to_email = false;
+                $add_to_sms = false;
+                break;
+        }
+
+        return (object) array(
+            'sms' => $add_to_sms,
+            'email' => $add_to_email
+        );
     }
 
     private function saveLabelHistory($order_data, $barcodes, $service_code, $is_error = false)
