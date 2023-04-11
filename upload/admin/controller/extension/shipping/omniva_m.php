@@ -353,7 +353,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         if (isset($this->request->post[Params::PREFIX . 'cod_options'])) {
             $data[Params::PREFIX . 'cod_options'] = json_decode($this->request->post[Params::PREFIX . 'cod_options']);
         } else {
-            $data[Params::PREFIX . 'cod_options'] = json_decode($this->config->get(Params::PREFIX . 'cod_options'));
+            $data[Params::PREFIX . 'cod_options'] = json_decode((string) $this->config->get(Params::PREFIX . 'cod_options'));
         }
 
         if (!$data[Params::PREFIX . 'cod_options']) {
@@ -363,7 +363,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         if (isset($this->request->post[Params::PREFIX . 'courier_options'])) {
             $data[Params::PREFIX . 'courier_options'] = json_decode($this->request->post[Params::PREFIX . 'courier_options']);
         } else {
-            $data[Params::PREFIX . 'courier_options'] = json_decode($this->config->get(Params::PREFIX . 'courier_options'));
+            $data[Params::PREFIX . 'courier_options'] = json_decode((string) $this->config->get(Params::PREFIX . 'courier_options'));
         }
 
         if (!$data[Params::PREFIX . 'courier_options']) {
@@ -373,7 +373,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         if (isset($this->request->post[Params::PREFIX . 'tracking_email_template'])) {
             $data[Params::PREFIX . 'tracking_email_template'] = json_decode($this->request->post[Params::PREFIX . 'tracking_email_template']);
         } else {
-            $data[Params::PREFIX . 'tracking_email_template'] = json_decode($this->config->get(Params::PREFIX . 'tracking_email_template'));
+            $data[Params::PREFIX . 'tracking_email_template'] = json_decode((string) $this->config->get(Params::PREFIX . 'tracking_email_template'));
             if (empty($data[Params::PREFIX . 'tracking_email_template'])) {
                 $data[Params::PREFIX . 'tracking_email_template'] = Helper::getDefaultTrackingEmailTemplate();
             }
@@ -381,7 +381,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
 
         $data[Params::PREFIX . 'prices'] = array_map(
             function ($price) {
-                return json_decode($price['price_data'], true);
+                return json_decode((string) $price['price_data'], true);
             },
             Price::getPrices($this->db) //$this->getPrices()
         );
@@ -396,7 +396,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         $data['last_update'] = $data['last_update'] == null ? 'Never updated' : date('Y-m-d H:i:s', $data['last_update']);
         $data['cron_url'] = $this->getCronUrl();
 
-        $version_check = @json_decode($this->config->get(Params::PREFIX . 'version_check_data'), true);
+        $version_check = @json_decode((string) $this->config->get(Params::PREFIX . 'version_check_data'), true);
         if (empty($version_check) || Helper::isTimeToCheckVersion($version_check['timestamp'])) {
             $git_version = Helper::hasGitUpdate();
             $version_check = [
