@@ -4,7 +4,7 @@
 - Improved Journal 3 experimental support.
 - Added new module settings to set specific order status upon registering label
 - Added Quickchekout module experimental support for Opencart 3.0
-- updated omniva-api library to 1.0.9
+- updated omniva-api library to 1.0.10
 - removed offload postcode element from PK service request
 
 ## [2.0.6] - Improvements

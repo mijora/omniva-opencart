@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "mijora/omniva-api",
-            "version": "1.0.9",
-            "version_normalized": "1.0.9.0",
+            "version": "1.0.10",
+            "version_normalized": "1.0.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                "reference": "171219beabdc54ff4a8dea67ac9e0243b8e203de"
+                "reference": "f7633167cf04d82de68fe8591a75f4bc64d046b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/171219beabdc54ff4a8dea67ac9e0243b8e203de",
-                "reference": "171219beabdc54ff4a8dea67ac9e0243b8e203de",
+                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/f7633167cf04d82de68fe8591a75f4bc64d046b8",
+                "reference": "f7633167cf04d82de68fe8591a75f4bc64d046b8",
                 "shasum": ""
             },
             "require": {
@@ -20,7 +20,7 @@
                 "setasign/fpdi": "^2.3",
                 "tecnickcom/tcpdf": "^6.3"
             },
-            "time": "2023-03-07T09:08:41+00:00",
+            "time": "2023-04-05T14:25:16+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -44,30 +44,26 @@
             "description": "Omniva API wrapper",
             "support": {
                 "issues": "https://github.com/omniva-baltic/omniva-api-lib/issues",
-                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/v1.0.9"
+                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/v1.0.10"
             },
             "install-path": "../mijora/omniva-api"
         },
         {
             "name": "setasign/fpdf",
-            "version": "1.8.5",
-            "version_normalized": "1.8.5.0",
+            "version": "1.8.2",
+            "version_normalized": "1.8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Setasign/FPDF.git",
-                "reference": "f4104a04c9a3f95c4c26a0a0531abebcc980987a"
+                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDF/zipball/f4104a04c9a3f95c4c26a0a0531abebcc980987a",
-                "reference": "f4104a04c9a3f95c4c26a0a0531abebcc980987a",
+                "url": "https://api.github.com/repos/Setasign/FPDF/zipball/d77904018090c17dc9f3ab6e944679a7a47e710a",
+                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a",
                 "shasum": ""
             },
-            "require": {
-                "ext-gd": "*",
-                "ext-zlib": "*"
-            },
-            "time": "2022-11-18T07:02:00+00:00",
+            "time": "2019-12-08T10:32:10+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -93,7 +89,7 @@
                 "pdf"
             ],
             "support": {
-                "source": "https://github.com/Setasign/FPDF/tree/1.8.5"
+                "source": "https://github.com/Setasign/FPDF/tree/1.8.2"
             },
             "install-path": "../setasign/fpdf"
         },
