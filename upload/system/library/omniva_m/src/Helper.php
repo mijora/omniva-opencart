@@ -139,7 +139,7 @@ class Helper
      */
     public static function downloadTerminalsJson()
     {
-        return @json_decode(file_get_contents(PickupPoints::LOCATIONS_URL), true);
+        return @json_decode((string) file_get_contents(PickupPoints::LOCATIONS_URL), true);
     }
 
     public static function updateTerminals()
@@ -201,7 +201,7 @@ class Helper
                 continue;
             }
 
-            $terminals_array = json_decode(file_get_contents($file), true);
+            $terminals_array = json_decode((string) file_get_contents($file), true);
 
             $terminal_list_data[$country] = count($terminals_array);
         }
@@ -220,7 +220,7 @@ class Helper
             return [];
         }
 
-        $terminals_array = json_decode(file_get_contents($file), true);
+        $terminals_array = json_decode((string) file_get_contents($file), true);
 
         return empty($terminals_array) ? [] : $terminals_array;
     }
@@ -355,7 +355,7 @@ class Helper
 
         curl_close($curl);
 
-        $version_data = @json_decode($response, true);
+        $version_data = @json_decode((string) $response, true);
 
         if (empty($version_data)) {
             return false;

@@ -49,7 +49,7 @@ class ModelExtensionShippingOmnivaM extends Model
         $tax_class_id = $this->config->get(Params::PREFIX . 'tax_class_id');
 
         //determine cost
-        $price_data = json_decode($price_data, true);
+        $price_data = json_decode((string) $price_data, true);
 
         $quote_data = array();
 
@@ -82,6 +82,10 @@ class ModelExtensionShippingOmnivaM extends Model
             (int) $price_data['terminal_price_range_type'],
             Params::SHIPPING_TYPE_TERMINAL
         );
+
+        if (!$this->isTerminalAllowed()) {
+			$terminal_cost = -1; // disable terminals
+		}
 
         if ($terminal_cost >= 0) {
             $terminals = Helper::loadTerminalListByCountry($address['iso_code_2']);
@@ -235,5 +239,46 @@ class ModelExtensionShippingOmnivaM extends Model
         }
 
         return $cost;
+    }
+
+    public function isTerminalAllowed() {
+		$total_height = 0;
+		$total_width = 0;
+        $total_length = 0;
+
+		$cm_length_class_id = $this->getLengthClassId();
+
+		if (!$cm_length_class_id) {
+			return true;
+		}
+
+        foreach ($this->cart->getProducts() as $product) {
+			$width  = (float) $this->length->convert($product['width'],  $product['length_class_id'], $cm_length_class_id);
+            $length = (float) $this->length->convert($product['length'], $product['length_class_id'], $cm_length_class_id);
+            $height = (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id);
+            
+			$total_height += $height * $product['quantity'];
+            $total_width += $width * $product['quantity'];
+            $total_length += $length * $product['quantity'];
+
+            if ($total_height > 39 || $total_width > 38 || $total_length > 64) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+	public function getLengthClassId()
+    {
+        $weight_sql = $this->db->query("
+            SELECT length_class_id FROM `" . DB_PREFIX . "length_class_description` WHERE `unit` = 'cm' LIMIT 1
+        ");
+
+        if (!$weight_sql->rows) {
+            return null;
+        }
+
+        return (int) $weight_sql->row['length_class_id'];
     }
 }

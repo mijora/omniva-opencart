@@ -105,7 +105,7 @@ class Order
             return [];
         }
 
-        $data = json_decode($result->row['data'], true);
+        $data = json_decode((string) $result->row['data'], true);
         $data['manifest_id'] = $result->row['manifest_id'];
 
         return $data; //!$result->rows ? [] : json_decode($result->row['data'], true);

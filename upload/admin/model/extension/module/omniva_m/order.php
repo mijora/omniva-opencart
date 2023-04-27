@@ -78,7 +78,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             $data['cod']['amount'] = (float) $order_data->getData('cod_amount');
         }
 
-        $cod_options = @json_decode($this->config->get(Params::PREFIX . 'cod_options'), true);
+        $cod_options = @json_decode((string) $this->config->get(Params::PREFIX . 'cod_options'), true);
         if (!is_array($cod_options)) {
             $cod_options = [];
         }
@@ -321,7 +321,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 continue;
             }
 
-            //$decoded_barcodes = json_decode($row['barcodes'], true);
+            //$decoded_barcodes = json_decode((string) $row['barcodes'], true);
             $backward_barcodes_string = str_replace([' ','[',']','"'], '', $row['barcodes']);
             $decoded_barcodes = explode(',', $backward_barcodes_string);
 
@@ -329,7 +329,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 continue;
             }
 
-            // $barcodes = array_merge($barcodes, json_decode($row['barcodes'], true));
+            // $barcodes = array_merge($barcodes, json_decode((string) $row['barcodes'], true));
             $barcodes_data['barcodes'] = array_merge($barcodes_data['barcodes'], $decoded_barcodes);
             $barcodes_data['order_ids'][] = (int) $row['order_id'];
         }
