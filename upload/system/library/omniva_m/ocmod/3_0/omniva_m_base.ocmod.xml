@@ -265,6 +265,26 @@
         </operation>
     </file>
 
+    <!-- JOURNAL 3 SUPPORT START -->
+    <file path="catalog/controller/journal3/checkout.php" error="log">
+        <operation error="skip">
+            <search><![CDATA[$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');]]></search>
+            <add position="after"><![CDATA[
+                // OMNIVA_M
+                $omniva_m_status = $this->config->get('shipping_omniva_m_status');
+
+                if ($omniva_m_status) {
+                    $this->document->addStyle('catalog/view/javascript/omniva_m/omniva-map.css');
+
+                    $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20220401');
+                }
+                // OMNIVA_M END    
+            ]]></add>
+        </operation>
+    </file>
+    <!-- JOURNAL 3 SUPPORT END -->
+
     <!-- QUICKCHECKOUT SUPPORT FRONT -->
     <file path="catalog/controller/extension/quickcheckout/checkout.php" error="log">
         <operation error="skip">
