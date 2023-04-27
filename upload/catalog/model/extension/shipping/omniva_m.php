@@ -220,8 +220,9 @@ class ModelExtensionShippingOmnivaM extends Model
             $cart_weight = $this->getCartWeightInKg();
         }
 
-        // disable terminal option if total cart weight is above allowed
-        if ($shipping_type === Params::SHIPPING_TYPE_TERMINAL && $cart_weight > Params::TERMINAL_MAX_WEIGHT) {
+        // disable terminal option if total cart weight is above allowed and this check is not disabled
+        $disable_cart_weight_check = (bool) $this->config->get(Params::PREFIX . 'disable_cart_weight_check');
+        if ($shipping_type === Params::SHIPPING_TYPE_TERMINAL && !$disable_cart_weight_check && $cart_weight > Params::TERMINAL_MAX_WEIGHT) {
             return -1;
         }
 
