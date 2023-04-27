@@ -170,14 +170,27 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-4 control-label" for="input-disable_cart_weight_check"><?php echo $omniva_m_label_disable_cart_weight_check; ?></label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-2 control-label" for="input-disable_cart_weight_check"><?php echo $omniva_m_label_disable_cart_weight_check; ?></label>
+                        <div class="col-sm-10">
                             <select name="omniva_m_disable_cart_weight_check" id="input-disable_cart_weight_check" class="form-control">
                                 <option value="0"><?php echo $omniva_m_option_no; ?></option>
                                 <option value="1" 
                                     <?php if ($omniva_m_disable_cart_weight_check == 1) { echo "selected"; } ?>
                                 ><?php echo $omniva_m_option_yes; ?></option>
                             </select>
+                            <p class="help-block"><?php echo $omniva_m_help_disable_cart_weight_check; ?></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-use_simple_terminal_check"><?php echo $omniva_m_label_use_simple_terminal_check; ?></label>
+                        <div class="col-sm-10">
+                            <select name="omniva_m_use_simple_terminal_check" id="input-use_simple_terminal_check" class="form-control">
+                                <option value="0"><?php echo $omniva_m_option_no; ?></option>
+                                <option value="1" 
+                                    <?php if ($omniva_m_use_simple_terminal_check == 1) { echo "selected"; } ?>
+                                ><?php echo $omniva_m_option_yes; ?></option>
+                            </select>
+                            <p class="help-block"><?php echo $omniva_m_help_use_simple_terminal_check; ?></p>
                         </div>
                     </div>
                     </form>

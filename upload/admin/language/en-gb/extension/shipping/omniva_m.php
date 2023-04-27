@@ -80,6 +80,9 @@ $_['omniva_m_help_order_status_registered'] = 'What order status to set after su
 $_['omniva_m_label_order_status_error'] = 'Register error status';
 $_['omniva_m_help_order_status_error'] = 'What order status to set after failed label registration.';
 $_['omniva_m_label_disable_cart_weight_check'] = 'Disable cart weight check for terminals';
+$_['omniva_m_help_disable_cart_weight_check'] = 'If set to YES disables total cart weight check (max 30kg) for terminals';
+$_['omniva_m_label_use_simple_terminal_check'] = 'Use simple terminal fit check';
+$_['omniva_m_help_use_simple_terminal_check'] = 'Checks if cart fits terminal box dimensions W38 - H39 - L64.';
 
 // Sender Tab
 $_['omniva_m_title_sender_settings'] = 'Sender Information';

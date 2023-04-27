@@ -187,7 +187,8 @@ class ControllerExtensionShippingOmnivaM extends Controller
                 // General Tab
                 'title_edit', 'label_tax_class', 'label_geo_zone', 'option_all_zones', 'label_status', 'label_sort_order',
                 'label_order_status_registered', 'help_order_status_registered', 'label_order_status_error', 'help_order_status_error',
-                'label_disable_cart_weight_check',
+                'label_disable_cart_weight_check', 'label_use_simple_terminal_check',
+                'help_disable_cart_weight_check', 'help_use_simple_terminal_check',
                 // Sender Tab
                 'title_sender_settings', 'label_sender_name', 'label_sender_street', 'label_sender_postcode',
                 'label_sender_city', 'label_sender_country', 'label_sender_phone', 'label_sender_email',
@@ -293,6 +294,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         $module_settings = [
             // general tab
             'tax_class_id', 'geo_zone_id', 'order_status_registered', 'order_status_error', 'disable_cart_weight_check',
+            'use_simple_terminal_check',
             // api tab
             'api_user', 'api_pass', 'api_url', 'api_sendoff_type', 'api_label_print_type',
             'api_add_comment', 'api_contract_origin', 'api_show_return_code',

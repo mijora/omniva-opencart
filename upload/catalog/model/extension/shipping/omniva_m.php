@@ -83,7 +83,8 @@ class ModelExtensionShippingOmnivaM extends Model
             Params::SHIPPING_TYPE_TERMINAL
         );
 
-        if (!$this->isTerminalAllowed()) {
+        $use_simple_terminal_check = (bool) $this->config->get(Params::PREFIX . 'use_simple_terminal_check');
+        if ($use_simple_terminal_check && !$this->isTerminalAllowed()) {
 			$terminal_cost = -1; // disable terminals
 		}
 
