@@ -196,7 +196,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
         $sendoff_type = (int) $this->config->get(Params::PREFIX . 'api_sendoff_type');
         $add_comment = (int) $this->config->get(Params::PREFIX . 'api_add_comment');
         $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
-        $courier_options = json_decode($this->config->get(Params::PREFIX . 'courier_options'));
+        $courier_options = json_decode((string) $this->config->get(Params::PREFIX . 'courier_options'));
         if (!is_array($courier_options)) {
             $courier_options = [];
         }
@@ -492,7 +492,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 continue;
             }
 
-            $barcodes = @json_decode($order_data['label_history']['last_barcodes'], true);
+            $barcodes = @json_decode((string) $order_data['label_history']['last_barcodes'], true);
 
             if (!is_array($barcodes) || empty($barcodes)) {
                 $skipped_orders[] = $order_id;
@@ -544,7 +544,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 continue;
             }
 
-            $barcodes = @json_decode($order_data['label_history']['last_barcodes'], true);
+            $barcodes = @json_decode((string) $order_data['label_history']['last_barcodes'], true);
 
             if (!is_array($barcodes) || empty($barcodes)) {
                 $skipped_orders[] = $order_id;

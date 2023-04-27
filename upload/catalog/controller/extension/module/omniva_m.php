@@ -20,6 +20,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 header('Content-Type: application/json');
                 echo json_encode(['data' => $terminal_list]);
                 exit();
+            case 'getCheckoutSettings':
+                header('Content-Type: application/json');
+                echo json_encode(['data' => $this->getCheckoutSettings()]);
+                exit();
             case 'getFrontTrans':
                 $translation = $this->getFrontTrans();
 
@@ -40,6 +44,33 @@ class ControllerExtensionModuleOmnivaM extends Controller
             default:
                 exit();
         }
+    }
+
+    private function getCheckoutSettings()
+    {
+    	// Opencart 3 expects status to be shipping_omniva_m_status
+    	$oc_prefix = '';
+        if (version_compare(VERSION, '3.0.0', '>=')) {
+            $oc_prefix = 'shipping_';
+        }
+        
+        $omniva_m_status = $this->config->get($oc_prefix . Params::PREFIX . 'status');
+
+        $data = [
+        	'omniva_m_status' => (bool) $omniva_m_status
+        ];
+
+		if ($omniva_m_status) {
+			$data['omniva_m_country_code'] = isset($this->session->data['shipping_address']['iso_code_2']) ? $this->session->data['shipping_address']['iso_code_2'] : 'LT';
+
+			$this->load->language('extension/module/omniva_m');
+
+			$data['omniva_m_ajax_url'] = $this->url->link('extension/module/omniva_m/ajax', '', true);
+
+			$data['omniva_m_js_translation'] = $this->getFrontTrans(true);
+		}
+		
+		return $data;
     }
 
     private function getTerminals()
@@ -79,11 +110,24 @@ class ControllerExtensionModuleOmnivaM extends Controller
         return $configured_list;
     }
 
-    private function getFrontTrans()
+    private function getFrontTrans($remove_prefix = false)
     {
         $all_translations = $this->load->language('extension/module/omniva_m');
-        return array_filter($all_translations, function($item) {
-            return strpos($item, 'omniva_m_') !== FALSE;
-        }, ARRAY_FILTER_USE_KEY);
+
+		$result = [];
+
+		foreach ($all_translations as $key => $string) {
+			if (strpos($key, 'omniva_m_') === FALSE) {
+				continue;
+			}
+
+			$result[($remove_prefix ? str_replace('omniva_m_', '', $key) : $key)] = $string;
+		}
+		
+		return $result;
+
+        //return array_filter($all_translations, function($item) {
+        //    return strpos($item, 'omniva_m_') !== FALSE;
+        //}, ARRAY_FILTER_USE_KEY);
     }
 }
