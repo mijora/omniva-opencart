@@ -1,11 +1,17 @@
 # Changelog
 
-## [UNRELEASED]
-- Improved Journal 3 experimental support.
+## [2.1.0]
+- Removed previous Journal 3 experimental support.
+- Added new experimental quickcheckouts support (Opencart 3):
+    - Journal 3 (Journal3)
+    - Custom Quickcheckout (Cqc)
+    - d_quickceckout ajax version (QcdAjax)
+    - Posible conflicts if omniva_m module has been previously customized. 
 - Added new module settings to set specific order status upon registering label
-- Added Quickchekout module experimental support for Opencart 3.0
-- updated omniva-api library to 1.0.10
-- removed offload postcode element from PK service request
+- Added new module setting to enable / disable cart weight check for terminals (default: No)
+- Added new module setting to enable / disable simple cart fit into terminal check (default: No)
+- Updated omniva-api library to 1.0.10
+- Removed offload postcode element from PK service request
 
 ## [2.0.6] - Improvements
 - added simplified support for Journal 3 Theme on OpenCart 3
