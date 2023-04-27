@@ -79,6 +79,7 @@ $_['omniva_m_label_order_status_registered'] = 'Order status';
 $_['omniva_m_help_order_status_registered'] = 'What order status to set after successful label registration.';
 $_['omniva_m_label_order_status_error'] = 'Register error status';
 $_['omniva_m_help_order_status_error'] = 'What order status to set after failed label registration.';
+$_['omniva_m_label_disable_cart_weight_check'] = 'Disable cart weight check for terminals';
 
 // Sender Tab
 $_['omniva_m_title_sender_settings'] = 'Sender Information';
