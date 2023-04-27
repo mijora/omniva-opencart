@@ -46,6 +46,11 @@ const OMNIVA_M = {
             OMNIVA_M.checkoutModule = "Journal3";
             return;
         }
+
+        if (document.getElementById('quickcheckoutconfirm')) {
+            OMNIVA_M.checkoutModule = "Cqc";
+            return;
+        }
     },
 
     init: function () {
@@ -249,7 +254,7 @@ const OMNIVA_M = {
     },
 
     /**
-     * functions for QcdAjax
+     * d_quickcheckout (ajax version?) for QcdAjax
      */
     buildForQcdAjax: function (inputs) {
         // hide all options except second
@@ -310,7 +315,76 @@ const OMNIVA_M = {
     },
 
     /**
-     * functions for Journal3
+     * Custom QuickCheckout - Cqc
+     */
+    buildForCqc: function (inputs) {
+        // hide all options except second
+        let refNode = null;
+        let firstEl = null;
+        inputs.forEach((el, index) => {
+            refNode = el.closest('div');
+            if (index === 1) {
+                firstEl = el;
+
+                firstEl.id = 'omniva_m.terminals';
+                firstEl.value = '';
+                firstEl.dataset.initialized = 'omniva_m';
+                refNode.querySelectorAll('label').forEach((label, lIndex) => {
+                    label.attributes.for.value = 'omniva_m.terminals';
+                    if (lIndex === 0) {
+                        label.lastChild.textContent = label.lastChild.textContent.replaceAll(/.+\]/ig, omniva_m_js_translation.shipping_option_title)
+                    }
+                });
+                refNode.classList.remove('hidden');
+                return;
+            }
+
+            refNode.classList.add('hidden');
+        });
+        return firstEl;
+    },
+
+    validateCqc: function () {
+        if (OMNIVA_M.isValidateCqc) {
+            console.log('isValidateCqc registered');
+            return;
+        }
+
+        /* handles validation on main checkout button presss */
+        function _onAjaxReq(options, originalOptions, jqXhr) {
+            if (/terms\/validate/i.test(options.url) && (options.dataType == "json" || !options.dataType)) {
+                const selected_node = $("input[name=\"shipping_method\"]:checked");
+                if (selected_node.length && selected_node.attr('id').startsWith('omniva_m.terminals') && (!selected_node.val() || selected_node.val() == '0')) {
+                    jqXhr.abort();
+                    if (omniva_m_js_translation && omniva_m_js_translation['select_option_warning']) {
+                        alert(omniva_m_js_translation['select_option_warning']);
+                    } else {
+                        alert('Please select Omniva parcel terminal!');
+                    }
+                    $("html, body").animate({ scrollTop: $('#shipping_method').offset().top }, 1e3);
+                    $("#button-payment-method").prop("disabled", false);
+                    $("#button-payment-method").button("reset");
+                    $(".fa-spinner").remove();
+                    return false;
+                }
+            }
+        }
+
+        $.ajaxPrefilter(_onAjaxReq);
+
+        OMNIVA_M.isValidateCqc = true;
+    },
+
+    handleSelectionCqc: function (manual) {
+        if (!manual) {
+            return;
+        }
+
+        OMNIVA_M.omnivaModule.trigger('change');
+    },
+
+    /**
+     * Journal3
      */
     buildForJournal3: function (inputs) {
         // hide all options except second

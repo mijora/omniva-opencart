@@ -173,15 +173,11 @@
                 // OMNIVA_M
                 $omniva_m_status = $this->config->get('shipping_omniva_m_status');
 
-                if ($omniva_m_status && (defined('JOURNAL3_ACTIVE') && $this->journal3->settings->get('activeCheckout') === 'journal')) {
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front-j3.js?2022123002');
-                }
-
-                if ($omniva_m_status && !(defined('JOURNAL3_ACTIVE') && $this->journal3->settings->get('activeCheckout') === 'journal')) {
+                if ($omniva_m_status) {
                     $this->document->addStyle('catalog/view/javascript/omniva_m/omniva-map.css');
 
                     $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20220401');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20230427');
                 }
                 // OMNIVA_M END    
             ]]></add>
@@ -277,7 +273,7 @@
                     $this->document->addStyle('catalog/view/javascript/omniva_m/omniva-map.css');
 
                     $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20220401');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20230427');
                 }
                 // OMNIVA_M END    
             ]]></add>
@@ -285,88 +281,23 @@
     </file>
     <!-- JOURNAL 3 SUPPORT END -->
 
-    <!-- QUICKCHECKOUT SUPPORT FRONT -->
+    <!-- QUICKCHECKOUT SUPPORT START -->
     <file path="catalog/controller/extension/quickcheckout/checkout.php" error="log">
         <operation error="skip">
-            <search><![CDATA[$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');]]></search>
+            <search><![CDATA[$this->document->addStyle('catalog/view/javascript/jquery/quickcheckout/bootstrap-datetimepicker.min.css');]]></search>
             <add position="after"><![CDATA[
                 // OMNIVA_M
                 $omniva_m_status = $this->config->get('shipping_omniva_m_status');
 
-                if ($omniva_m_status) {
-                    // $this->document->addStyle('catalog/view/javascript/omniva_m/leaflet.css');
+                if ($omniva_m_status && $this->config->get('quickcheckout_status')) {
                     $this->document->addStyle('catalog/view/javascript/omniva_m/omniva-map.css');
 
-                    // $this->document->addScript('catalog/view/javascript/omniva_m/leaflet.js');
                     $this->document->addScript('catalog/view/javascript/omniva_m/omniva-map.min.js');
-                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20230223');
+                    $this->document->addScript('catalog/view/javascript/omniva_m/front.js?20230427');
                 }
                 // OMNIVA_M END    
             ]]></add>
         </operation>
     </file>
-
-    <file path="catalog/controller/extension/quickcheckout/shipping_method.php" error="log">
-        <operation>
-            <search><![CDATA[$this->response->setOutput($this->load->view('extension/quickcheckout/shipping_method', $data));]]></search>
-            <add position="before"><![CDATA[
-                // OMNIVA_M
-                $omniva_m_status = $this->config->get('shipping_omniva_m_status');
-                $data['omniva_m_status'] = $omniva_m_status;
-
-                if ($omniva_m_status) {
-                    $data['omniva_m_country'] = $shipping_address['iso_code_2'];
-
-                    $this->load->language('extension/module/omniva_m');
-
-                    $data['omniva_m_ajax_url'] = $this->url->link('extension/module/omniva_m/ajax');
-
-                    $omniva_m_js_translation_keys = [
-                        'modal_header', 'search_bar_title', 'select_terminal', 'search_bar_placeholder',
-                        'place_not_found', 'show_on_map', 'show_more', 'search_back_to_list',
-                        'terminal_not_selected', 'shipping_method_terminal'
-                    ];
-
-                    $data['omniva_m_js_translation'] = [];
-                    foreach ($omniva_m_js_translation_keys as $js_key) {
-                        $data['omniva_m_js_translation'][$js_key] = $this->language->get('omniva_m_' . $js_key);
-                    }
-                }
-                // OMNIVA_M END
-            ]]></add>
-        </operation>
-    </file>
-
-    <file path="catalog/view/theme/*/template/extension/quickcheckout/shipping_method.twig" error="log">
-        <operation>
-            <search index="0"><![CDATA[{% if shipping_methods %}]]></search>
-            <add position="after"><![CDATA[
-                {# OMNIVA_M #}
-                {% if omniva_m_status %}
-                    <script>
-                        var omniva_m_status = Boolean({{ omniva_m_status }});
-                        var omniva_m_country_code = '{{ omniva_m_country }}';
-                        var omniva_m_js_translation = {{ omniva_m_js_translation|json_encode() }};
-                        var omniva_m_ajax_url = '{{ omniva_m_ajax_url }}';
-                        var omniva_m_quickcheckout = true;
-                    </script>
-                {% endif %}
-                {# OMNIVA_M END #}
-            ]]></add>
-        </operation>
-
-        <operation>
-            <search index="0"><![CDATA[{% for quote in shipping_method.quote %}]]></search>
-            <add position="after"><![CDATA[
-                {# OMNIVA_M #}
-                {% if omniva_m_status and not omniva_m_price_set and quote.code starts with 'omniva_m.terminal_' %}
-                    {% set omniva_m_price_set = true %}
-                    <script>
-                        var omniva_m_terminal_price = '{{ quote.text }}';
-                    </script>
-                {% endif %}
-                {# OMNIVA_M END #}
-            ]]></add>
-        </operation>
-    </file>
+    <!-- QUICKCHECKOUT SUPPORT END -->
 </modification>
