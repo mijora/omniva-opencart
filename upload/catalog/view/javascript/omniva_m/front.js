@@ -51,6 +51,11 @@ const OMNIVA_M = {
             OMNIVA_M.checkoutModule = "Cqc";
             return;
         }
+
+        if (document.getElementById('onepcheckout')) {
+            OMNIVA_M.checkoutModule = "Onepc";
+            return;
+        }
     },
 
     init: function () {
@@ -384,6 +389,17 @@ const OMNIVA_M = {
     },
 
     /**
+     * Custom Onepcheckout - Onepc
+     */
+    handleSelectionOnepc: function (manual) {
+        if (!manual) {
+            return;
+        }
+
+        OMNIVA_M.omnivaModule.trigger('change');
+    },
+
+    /**
      * Journal3
      */
     buildForJournal3: function (inputs) {
@@ -577,4 +593,3 @@ const OMNIVA_M = {
 document.addEventListener('DOMContentLoaded', function (e) {
     OMNIVA_M.observe();
 });
-
