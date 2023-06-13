@@ -1,11 +1,15 @@
 # Changelog
 
+## [Unreleased]
+- Added new experimental quickcheckouts support (Opencart 3):
+    - Custom Onepcheckout (Onepc)
+
 ## [2.1.0]
 - Removed previous Journal 3 experimental support.
 - Added new experimental quickcheckouts support (Opencart 3):
     - Journal 3 (Journal3)
     - Custom Quickcheckout (Cqc)
-    - d_quickceckout ajax version (QcdAjax)
+    - d_quickcheckout ajax version (QcdAjax)
     - Posible conflicts if omniva_m module has been previously customized. 
 - Added new module settings to set specific order status upon registering label
 - Added new module setting to enable / disable cart weight check for terminals (default: No)
