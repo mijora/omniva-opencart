@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Omniva Base Mod for OC3</name>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <author>Mijora</author>
     <link>https://www.mijora.lt</link>
     <code>omniva_m_base</code>
@@ -197,7 +197,7 @@
 
                     $this->load->language('extension/module/omniva_m');
 
-                    $data['omniva_m_ajax_url'] = $this->url->link('extension/module/omniva_m/ajax');
+                    $data['omniva_m_ajax_url'] = $this->url->link('extension/module/omniva_m/ajax', '', true);
 
                     $omniva_m_js_translation_keys = [
                         'modal_header', 'search_bar_title', 'select_terminal', 'search_bar_placeholder',

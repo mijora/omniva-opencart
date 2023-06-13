@@ -3,6 +3,7 @@
 ## [Unreleased]
 - Added new experimental quickcheckouts support (Opencart 3):
     - Custom Onepcheckout (Onepc)
+- Fixed secure Omniva ajax URL
 
 ## [2.1.0]
 - Removed previous Journal 3 experimental support.
