@@ -51,6 +51,7 @@ $_['omniva_m_label_api_pass'] = 'Password';
 $_['omniva_m_label_api_sendoff_type'] = 'Send parcel by';
 $_['omniva_m_label_api_label_print_type'] = 'Print labels';
 $_['omniva_m_label_api_add_comment'] = 'Add Order ID as comment to label';
+$_['omniva_m_label_api_service_delivery_email'] = 'Send email to customer when shipment arrive';
 $_['omniva_m_label_api_show_return_code'] = 'Show return code to customers';
 $_['omniva_m_option_courier'] = 'Courier';
 $_['omniva_m_option_terminal'] = 'Terminal';

@@ -309,6 +309,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-4 control-label" for="input-api-service-delivery-email"><?php echo $omniva_m_label_api_service_delivery_email; ?></label>
+                                <div class="col-sm-8">
+                                    <select name="omniva_m_api_service_delivery_email" id="input-api-service-delivery-email" class="form-control">
+                                        <option value="0"><?php echo $omniva_m_option_no; ?></option>
+                                        <option value="1" 
+                                            <?php if ($omniva_m_api_service_delivery_email== 1) { echo "selected"; } ?>
+                                        ><?php echo $omniva_m_option_yes; ?></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-4 control-label" for="input-api-show-return-code"><?php echo $omniva_m_label_api_show_return_code; ?></label>
                                 <div class="col-sm-8">
                                     <select name="omniva_m_api_show_return_code" id="input-api-show-return-code" class="form-control">

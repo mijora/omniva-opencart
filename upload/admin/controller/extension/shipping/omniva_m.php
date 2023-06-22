@@ -182,7 +182,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
                 'label_api_pass', 'label_api_sendoff_type', 'label_api_label_print_type', 'option_courier',
                 'option_terminal', 'option_sorting_center', 'option_label_print_a4', 'option_label_print_a6',
                 'option_contract_estonia', 'option_contract_other', 'option_courier_estonia', 'option_courier_finland',
-                'label_api_add_comment', 'option_no', 'option_yes',
+                'label_api_add_comment', 'option_no', 'option_yes', 'label_api_service_delivery_email',
                 'label_api_show_return_code', 'option_addto_sms_email', 'option_addto_sms', 'option_addto_email', 'option_addto_dont',
                 // General Tab
                 'title_edit', 'label_tax_class', 'label_geo_zone', 'option_all_zones', 'label_status', 'label_sort_order',
@@ -297,7 +297,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
             'use_simple_terminal_check',
             // api tab
             'api_user', 'api_pass', 'api_url', 'api_sendoff_type', 'api_label_print_type',
-            'api_add_comment', 'api_contract_origin', 'api_show_return_code',
+            'api_add_comment', 'api_service_delivery_email', 'api_contract_origin', 'api_show_return_code',
             // sender-info tab
             'sender_name', 'sender_street', 'sender_postcode',
             'sender_city', 'sender_country', 'sender_phone', 'sender_email',

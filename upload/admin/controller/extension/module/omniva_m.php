@@ -195,6 +195,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $sendoff_type = (int) $this->config->get(Params::PREFIX . 'api_sendoff_type');
         $add_comment = (int) $this->config->get(Params::PREFIX . 'api_add_comment');
+        $send_delivery_email = (int) $this->config->get(Params::PREFIX . 'api_service_delivery_email');
         $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
         $courier_options = json_decode((string) $this->config->get(Params::PREFIX . 'courier_options'));
         if (!is_array($courier_options)) {
@@ -219,14 +220,14 @@ class ControllerExtensionModuleOmnivaM extends Controller
         $receiver_postcode = $order_data['oc_order']['shipping_postcode'];
         $receiver_city = $order_data['oc_order']['shipping_city'];
         $receiver_country = $order_data['oc_order']['shipping_iso_code_2'];
-        $receiver_email = $order_data['oc_order']['email'];
+        $receiver_email = ($send_delivery_email) ? $order_data['oc_order']['email'] : '';
 
         $cod_receiver = $this->config->get(Params::PREFIX . 'cod_receiver');
         $cod_iban = trim(str_replace(' ', '', $this->config->get(Params::PREFIX . 'cod_iban')));
 
         $additional_services = [];
         if ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
-            if (!empty($receiver_email)) {
+            if (!empty($receiver_email) && $send_delivery_email) {
                 $additional_services[] = 'SF'; // notify by email
             }
             $additional_services[] = 'ST'; // mandatory notify by sms
