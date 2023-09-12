@@ -1,9 +1,10 @@
 # Changelog
 
-## [Unreleased]
+## [2.1.1]
 - Added new experimental quickcheckouts support (Opencart 3):
     - Custom Onepcheckout (Onepc)
 - Fixed secure Omniva ajax URL
+- Fixed an issue with barcode strings after switching from JSON array to just string. Should handle both old format and new.
 
 ## [2.1.0]
 - Removed previous Journal 3 experimental support.
