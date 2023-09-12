@@ -139,6 +139,6 @@
 <script>
     const OMNIVA_M_DATA = <?php echo json_encode($omniva_m_data); ?>;
 </script>
-<script src="view/javascript/omniva_m/manifest.js?20220401"></script>
+<script src="view/javascript/omniva_m/manifest.js?20230912"></script>
 
 <?php echo $footer; ?> 

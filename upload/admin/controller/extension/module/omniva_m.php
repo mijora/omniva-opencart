@@ -486,14 +486,9 @@ class ControllerExtensionModuleOmnivaM extends Controller
         foreach ($order_ids as $order_id) {
             $order_data = $this->model_extension_module_omniva_m_order->loadOrder((int) $order_id);
 
-            // skip orders wihtout barcodes (means not registered or with errors)
-            if (empty($order_data['label_history']['last_barcodes'])) {
-                $skipped_orders[] = $order_id;
-                continue;
-            }
+            $barcodes = Helper::parseBarcodeStringToArray((string) $order_data['label_history']['last_barcodes']);
 
-            $barcodes = @json_decode((string) $order_data['label_history']['last_barcodes'], true);
-
+            // no barcodes
             if (!is_array($barcodes) || empty($barcodes)) {
                 $skipped_orders[] = $order_id;
                 continue;
@@ -538,14 +533,15 @@ class ControllerExtensionModuleOmnivaM extends Controller
         foreach ($order_ids as $order_id) {
             $order_data = $this->model_extension_module_omniva_m_order->loadOrder((int) $order_id);
 
-            // skip orders wihtout barcodes (means not registered or with errors)
-            if (empty($order_data['label_history']['last_barcodes']) || (int) $order_data['manifest_id'] > 0) {
+            // skip orders wiht barcodes already in manifest
+            if ((int) $order_data['manifest_id'] > 0) {
                 $skipped_orders[] = $order_id;
                 continue;
             }
 
-            $barcodes = @json_decode((string) $order_data['label_history']['last_barcodes'], true);
+            $barcodes = Helper::parseBarcodeStringToArray((string) $order_data['label_history']['last_barcodes']);
 
+            // no barcodes
             if (!is_array($barcodes) || empty($barcodes)) {
                 $skipped_orders[] = $order_id;
                 continue;
