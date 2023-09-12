@@ -236,6 +236,20 @@ const OMNIVA_M_MANIFEST = {
         paginationEl.classList.remove('hidden');
     },
 
+    parseBarcodes: function(barcodeString) {
+        if (barcodeString.length === 0) {
+            return '';
+        }
+
+        // for backwards compatibility assume JSON array if first symbol is [
+        if (barcodeString[0] === '[') {
+            return JSON.parse(barcodeString).join(', ');
+        }
+
+        // new versions should have barcodes in a string separated by comma
+        return barcodeString;
+    },
+
     renderOrderList: function (data) {
         const orderListEl = document.querySelector('#omniva_m-manifest-orders');
 
@@ -251,7 +265,7 @@ const OMNIVA_M_MANIFEST = {
             let barcodes = order.barcodes;
             let hasBarcodes = 0;
             if (order.is_error === null || parseInt(order.is_error) === 0) {
-                barcodes = barcodes === null ? '' : JSON.parse(barcodes).join(', ');
+                barcodes = barcodes === null ? '' : OMNIVA_M_MANIFEST.parseBarcodes(barcodes);
                 if (barcodes.length > 0) {
                     hasBarcodes = 1;
                 }

@@ -390,4 +390,21 @@ class Helper
     {
         return time() > (int) $timestamp + (Params::GIT_CHECK_EVERY_HOURS * 60 * 60);
     }
+
+    public static function parseBarcodeStringToArray($string)
+    {
+        if (strlen($string) === 0) {
+            return [];
+        }
+
+        // backwards compatibility, barcodes used to be stored as json encoded arrays
+        if ($string[0] === '[') {
+            $array = @json_decode($string, true);
+            return is_array($array) ? $array : [];
+        }
+
+        $array = explode(',', $string);
+
+        return array_map('trim', $array);
+    }
 }
