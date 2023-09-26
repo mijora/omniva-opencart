@@ -4,10 +4,16 @@ namespace Mijora\Omniva\Shipment;
 
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Request;
+use Mijora\Omniva\Shipment\Package\Package;
+use Mijora\Omniva\Shipment\Request\ShipmentOmxRequest;
 
 class Shipment
 {
     const CONTACT_TYPES = ['receiver' => 'receiverAddressee', 'sender' => 'returnAddressee'];
+
+    const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP'];
+
+    const ADDITIONAL_SERVICES = ['cod' => 'BP'];
 
     /**
      * @var ShipmentHeader
@@ -35,21 +41,14 @@ class Shipment
     private $partnerId;
 
     /**
-     * @var array
+     * @var Package[]
      */
-    private $packages;
+    private $packages = [];
     
     /**
      * @var Request
      */
     private $request;
-    
-    /**
-     * @var array
-     */
-    private $terminalServices = [
-         'PU', 'PA', 'PK', 'PP'
-     ];
     
     public function setAuth($username, $password)
     {
@@ -80,16 +79,17 @@ class Shipment
     /*
      * @return mixed
      */
-    public function registerShipment()
+    public function registerShipment($use_old_api = false)
     {
         if ( empty($this->request) ) {
             throw new OmnivaException("Please set username and password");
         }
-        return $this->request->call($this->toXml()->asXML());
+
+        return $use_old_api ? $this->request->call($this->toXml()->asXML()) : $this->request->registerShipmentOmx($this->getOmxShipmentRequest());
     }
 
     /**
-     * @return array
+     * @return Package[]
      */
     public function getPackages()
     {
@@ -97,12 +97,30 @@ class Shipment
     }
 
     /**
-     * @param array $packages
+     * @param Package[]|Package $packages Array of Package objects or just Package obj by itself
+     * @param bool $replace Should given packages replace currently set ones. If true replaces whole array with new values, if false will add to array
+     * 
      * @return Shipment
+     * @throws OmnivaException
      */
-    public function setPackages($packages)
+    public function setPackages($packages, $replace = false)
     {
-        $this->packages = $packages;
+        if (!is_array($packages)) {
+            $packages = [$packages];
+        }
+
+        if ($replace) {
+            $this->packages = [];
+        }
+
+        foreach ($packages as $package) {
+            if (Package::class !== get_class($package)) {
+                throw new OmnivaException("Trying to add package that is not of class Package");
+            }
+
+            $this->packages[] = $package;
+        }
+
         return $this;
     }
 
@@ -192,6 +210,25 @@ class Shipment
     {
         $this->partnerId = $partnerId;
         return $this;
+    }
+
+    /**
+     * @return ShipmentOmxRequest
+     */
+    public function getOmxShipmentRequest()
+    {
+        $omxRequest = new ShipmentOmxRequest();
+
+        $header = $this->getShipmentHeader();
+        $omxRequest->customerCode = $header->getSenderCd();
+        $omxRequest->fileId = $header->getFileId();
+        
+        $packages = $this->getPackages();
+        foreach ($packages as $package) {
+            $omxRequest->addShipment($package, $this);
+        }
+
+        return $omxRequest;
     }
 
     public function toXml()
@@ -302,7 +339,7 @@ class Shipment
             if($address->getPostcode()) {
                 $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
             }
-            if($address->getOffloadPostcode() && in_array($package->getService(), $this->terminalServices)) {
+            if($address->getOffloadPostcode() && in_array($package->getService(), self::TERMINAL_SERVICES)) {
                 $addressNode->addAttribute('offloadPostcode', $address->getOffloadPostcode());
             }
             if($address->getDeliverypoint()) {
