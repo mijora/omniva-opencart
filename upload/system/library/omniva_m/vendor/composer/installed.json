@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "mijora/omniva-api",
-            "version": "1.0.15",
-            "version_normalized": "1.0.15.0",
+            "version": "dev-omx-api-rework",
+            "version_normalized": "dev-omx-api-rework",
             "source": {
                 "type": "git",
                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                "reference": "784f1cb5b9bc18a03c783cf89626166ab162d34b"
+                "reference": "12e94e38d041557b5a21ffeb66547ebc4fe224bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/784f1cb5b9bc18a03c783cf89626166ab162d34b",
-                "reference": "784f1cb5b9bc18a03c783cf89626166ab162d34b",
+                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/12e94e38d041557b5a21ffeb66547ebc4fe224bb",
+                "reference": "12e94e38d041557b5a21ffeb66547ebc4fe224bb",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
             "description": "Omniva API wrapper",
             "support": {
                 "issues": "https://github.com/omniva-baltic/omniva-api-lib/issues",
-                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/v1.0.15"
+                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/omx-api-rework"
             },
             "install-path": "../mijora/omniva-api"
         },

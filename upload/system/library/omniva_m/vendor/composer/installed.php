@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'mijora/omniva-api' => array(
-            'pretty_version' => '1.0.15',
-            'version' => '1.0.15.0',
-            'reference' => '784f1cb5b9bc18a03c783cf89626166ab162d34b',
+            'pretty_version' => 'dev-omx-api-rework',
+            'version' => 'dev-omx-api-rework',
+            'reference' => '12e94e38d041557b5a21ffeb66547ebc4fe224bb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mijora/omniva-api',
             'aliases' => array(),
