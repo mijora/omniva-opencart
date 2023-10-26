@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+- Added codebase to allow FI terminals for EE buiseness clients
+- Updated omniva-api library to 1.0.13
+- Updated terminal map js library to 1.1.3
+
 ## [2.1.1]
 - Added new experimental quickcheckouts support (Opencart 3):
     - Custom Onepcheckout (Onepc)
