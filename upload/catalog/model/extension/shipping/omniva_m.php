@@ -75,18 +75,8 @@ class ModelExtensionShippingOmnivaM extends Model
                 )
             );
         }
-
-
-        $terminal_cost = (float) $this->calculateCost(
-            $price_data['terminal_price'],
-            (int) $price_data['terminal_price_range_type'],
-            Params::SHIPPING_TYPE_TERMINAL
-        );
-
-        $use_simple_terminal_check = (bool) $this->config->get(Params::PREFIX . 'use_simple_terminal_check');
-        if ($use_simple_terminal_check && !$this->isTerminalAllowed()) {
-			$terminal_cost = -1; // disable terminals
-		}
+        
+        $terminal_cost = $this->determineTerminalCost($price_data);
 
         if ($terminal_cost >= 0) {
             $terminals = Helper::loadTerminalListByCountry($address['iso_code_2']);
@@ -125,6 +115,29 @@ class ModelExtensionShippingOmnivaM extends Model
         );
 
         return $method_data;
+    }
+
+    protected function determineTerminalCost($price_data)
+    {
+        $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
+
+        // disable terminals for FINLAND if contract origin not ESTONIA
+        if ($contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
+            return -1;
+        }
+
+        $terminal_cost = (float) $this->calculateCost(
+            $price_data['terminal_price'],
+            (int) $price_data['terminal_price_range_type'],
+            Params::SHIPPING_TYPE_TERMINAL
+        );
+
+        $use_simple_terminal_check = (bool) $this->config->get(Params::PREFIX . 'use_simple_terminal_check');
+        if ($use_simple_terminal_check && !$this->isTerminalAllowed()) {
+			return -1; // disable terminals
+		}
+
+        return $terminal_cost;
     }
 
     /**

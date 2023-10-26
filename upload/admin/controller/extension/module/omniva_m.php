@@ -129,7 +129,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $username = $this->config->get(Params::PREFIX . 'api_user');
         $password = $this->config->get(Params::PREFIX . 'api_pass');
-        $origin = $this->config->get(Params::PREFIX . 'api_contract_origin');
+        $origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
 
         if (!in_array($origin, Params::CONTRACT_AVAILABLE_ORIGINS)) {
             return [
