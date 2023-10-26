@@ -1,3 +1,19 @@
+## [1.0.13] - Improvements
+- to services map added QH and QL services
+- services CD and CE are marked as having terminals
+
+## [1.0.12] - Improvements
+- added additional services map for each shipping service
+- added the email adding to sender
+
+## [1.0.11] - Improvements
+- centralized terminal services getting
+- added barcode image display in manifest
+- added order number to manifest
+- added the possibility to change the manifest strings
+- added the possibility to change the manifest columns width
+- fixed error on PHP 8.2
+
 ## [1.0.10] - Fixes
 - removed PK service from "required offload postcode" services list
 - added error message display when error message is written in prompt element
