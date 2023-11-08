@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 - Added codebase to allow FI terminals for EE buiseness clients
-- Updated omniva-api library to 1.0.13
+- Updated omniva-api library to 1.0.14
 - Updated terminal map js library to 1.1.3
 
 ## [2.1.1]
