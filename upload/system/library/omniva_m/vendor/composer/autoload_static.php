@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit2254862db9f0e186730e545d48666c24
 {
+    public static $files = array (
+        'e1af0acb87348aa51d89cfb77fc80e82' => __DIR__ . '/..' . '/mijora/omniva-api/overrides/tcpdf/tcpdf_config.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         's' => 
         array (
