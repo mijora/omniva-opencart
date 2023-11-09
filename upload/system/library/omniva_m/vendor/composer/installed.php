@@ -22,7 +22,7 @@
         'mijora/omniva-api' => array(
             'pretty_version' => 'dev-omx-api-rework',
             'version' => 'dev-omx-api-rework',
-            'reference' => '12e94e38d041557b5a21ffeb66547ebc4fe224bb',
+            'reference' => '28042b30298642d746826d84066ab09cb590f90c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mijora/omniva-api',
             'aliases' => array(),
