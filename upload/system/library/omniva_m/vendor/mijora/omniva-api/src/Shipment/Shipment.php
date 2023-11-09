@@ -11,9 +11,49 @@ class Shipment
 {
     const CONTACT_TYPES = ['receiver' => 'receiverAddressee', 'sender' => 'returnAddressee'];
 
-    const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP'];
+    const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP', 'CE', 'CD'];
 
     const ADDITIONAL_SERVICES = ['cod' => 'BP'];
+
+    const ADDITIONAL_SERVICES_MAP = [
+        'code' => ['BA','BB','BC','BG','BI','BK','BL','BM','BP','BS','BT','CL','GN','GM','PC','SB','SE','SF','SG','SI','SL','SS','ST','QD','XT'],
+        'CA'   => [   1,   1,   1,   1,   0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   1,   1,   0,   0,   0,   1,   1,   0,   0],
+        'CB'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   0,   1,   1,   0,   1],
+        'CC'   => [   0,   1,   1,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+        'CD'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   0,   1,   1,   1,   1,   1,   1,   1,   0,   0,   1,   1,   0,   1],
+        'CE'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   0,   1,   1,   1,   1,   1,   1,   1,   0,   0,   1,   1,   0,   1],
+        'CI'   => [   0,   0,   1,   0,   0,   0,   0,   0,   1,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   1],
+        'EA'   => [   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+        'EP'   => [   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+        'LA'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   0,   1,   1,   1,   1,   0,   0,   1,   1,   0,   1],
+        'LE'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   0,   1,   1,   1,   1,   0,   0,   1,   1,   0,   1],
+        'LG'   => [   0,   0,   1,   0,   1,   0,   1,   1,   1,   1,   1,   0,   1,   1,   0,   1,   1,   1,   1,   0,   0,   1,   1,   1,   1],
+        'LH'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
+        'LL'   => [   0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   0,   0,   1,   1,   1,   1],
+        'LX'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
+        'LZ'   => [   0,   0,   1,   0,   1,   0,   1,   1,   1,   1,   1,   0,   1,   1,   0,   1,   1,   1,   1,   0,   0,   1,   1,   1,   1],
+        'PA'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   1,   1,   1,   1,   1,   1,   0,   1,   1,   1,   0],
+        'PK'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   1,   1,   1,   1,   1,   0,   0,   1,   1,   0,   0],
+        'PO'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   1,   1,   1,   1,   1,   0,   0,   1,   1,   0,   0],
+        'PP'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   0],
+        'PU'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   1,   1,   1,   1,   1,   1,   0,   1,   1,   1,   0],
+        'PV'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   0,   1,   1,   1,   1,   1,   0,   1,   1,   0,   0],
+        'QB'   => [   0,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+        'QH'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   1,   1,   1,   1,   0,   1,   0,   0,   0,   0,   1,   0,   0,   1],
+        'QK'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
+        'QL'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   1],
+        'QP'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
+        'VC'   => [   0,   1,   1,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
+        'VS'   => [   1,   1,   1,   1,   0,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   1,   1,   0,   0,   0,   1,   1,   0,   0],
+    ];
+
+    const ADDITIONAL_SERVICES_CONDITIONS = [
+        'QB' => [
+            'BP' => [
+                'only_countries' => ['FI'],
+            ],
+        ],
+    ];
 
     /**
      * @var ShipmentHeader
@@ -212,6 +252,34 @@ class Shipment
         return $this;
     }
 
+    public static function getAdditionalServicesForShipment($shipmentServiceCode)
+    {
+        if ( ! isset(self::ADDITIONAL_SERVICES_MAP[$shipmentServiceCode]) ) {
+            return array();
+        }
+
+        $services = array();
+        foreach ( self::ADDITIONAL_SERVICES_MAP[$shipmentServiceCode] as $position => $value ) {
+            if ( $value ) {
+                $services[] = self::ADDITIONAL_SERVICES_MAP['code'][$position];
+            }
+        }
+
+        return $services;
+    }
+
+    public static function getAdditionalServiceConditionsForShipment($shipmentServiceCode, $additionServiceCode)
+    {
+        if ( ! isset(self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode]) ) {
+            return (object) array();
+        }
+        if ( ! isset(self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode][$additionServiceCode]) ) {
+            return (object) array();
+        }
+
+        return (object) self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode][$additionServiceCode];
+    }
+
     /**
      * @return ShipmentOmxRequest
      */
@@ -225,7 +293,10 @@ class Shipment
         
         $packages = $this->getPackages();
         foreach ($packages as $package) {
-            $omxRequest->addShipment($package, $this);
+            // legacy comment was on main shipment
+            $package->setComment($this->getComment());
+
+            $omxRequest->addShipment($package);
         }
 
         return $omxRequest;
@@ -359,6 +430,9 @@ class Shipment
             }
             if ($senderAddressee->getMobile()) {
                 $senderAddresseeNode->addChild('mobile', $this->escape_value($senderAddressee->getMobile()));
+            }
+            if ($senderAddressee->getEmail()) {
+                $senderAddresseeNode->addChild('email', $this->escape_value($senderAddressee->getEmail(), 'email'));
             }
             $address = $senderAddressee->getAddress();
             $addressNode = $senderAddresseeNode->addChild('address');

@@ -173,8 +173,12 @@ Use `example/config.php` to enter your API username and password for testing the
             ->setPersonName('Stefan Dexter'); //set sender full name
     
     $manifest = new Manifest(); //new manifest object
-    $manifest->setSender($senderContact); //add sender contact
-    
+    $manifest
+            ->setSender($senderContact) //add sender contact
+            ->showBarcode(false) //disable barcode image display
+            ->setSignatureLineLength(40) //change the length of the signature line
+            ->setString('sender_address', 'Shop address') //change string in manifest. First value is string key. Available keys: sender_address, row_number, shipment_number, order_number, date, quantity, weight, recipient_address, courier_signature, sender_signature
+            ->setColumnLength('row_number', 20); //change orders table column width. First value is column key. Available keys: row_number, shipment_number, order_number, date, quantity, weight, recipient_address
     
     $order = new Order(); //new order object
     $order->setTracking('BK000000000LT'); //set tracking number
@@ -191,6 +195,8 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Call courier for pickup
+
+Anytime during setup or when calling api Exception can be thrown with errors.
 
 ```php
 
@@ -216,15 +222,52 @@ Use `example/config.php` to enter your API username and password for testing the
     
     //call courier object
     $call = new CallCourier();
-    $call->setAuth($username, $password, $api_url, true); //set auth info. Username (required), password (required), API url (optional), debug (optional)
-    $call->setSender($senderContact); //assign pickup address
-    $call->setEarliestPickupTime('08:00'); //set pickup start time
-    $call->setLatestPickupTime('17:00'); //set picktup end time
-    $call->setDestinationCountry('estonia'); //indicate which country's service to use. estonia - use CI, finland - use CE, any other - use QH
-    $call->setParcelsNumber(3); //specify how many packages will be handed over to the courier
+    $call
+        ->setAuthsetAuth($username, $password, $api_url, true); // set auth info. Username (required), password (required), API url (optional), debug (optional)
+        ->setSender($senderContact) // assign pickup address
+        ->setEarliestPickupTime('08:00') // set pickup start time, day will be chosen based on this time (either same day or next day)
+        ->setLatestPickupTime('17:00') // set picktup end time
+        ->setComment('Third door on he left') // set comment for courier. New with OMX
+        ->setIsHeavyPackage(true) // set true if any of packages >30kg, default is false. New with OMX
+        ->setIsTwoManPickup(false) // set true if pickup requires two people. Default is false. New with OMX
+        ->setParcelsNumber(3); // specify how many packages will be handed over to the courier
     
-    $result = $call->callCourier(); //make a call, if returned true - courier called successfully
-    $debug_data = $call->getDebugData(); //return debug data which contain URL, HTTP code, request and response
+    $pickup_call_id = $call->callCourier(); // make a call, returns call ID which can be used to cancel pickup call
+    $debug_data = $call->getDebugData(); //return debug data which contain URL, HTTP code, request and response. only if debug = true
+
+```
+
+## Cancel courier for pickup. New in OMX
+
+Anytime during setup or when calling api Exception can be thrown with errors. Requires to have Pickup Call ID
+
+```php
+
+    use Mijora\Omniva\OmnivaException;
+    use Mijora\Omniva\Shipment\CallCourier;
+    
+    $address = new Address(); //pickup address object
+    $address
+            ->setCountry('LT') //set country code
+            ->setPostcode('72201') //set post code
+            ->setDeliverypoint('City') //set city
+            ->setStreet('Test g.'); //set street
+    
+    //pickup contact data
+    $senderContact = new Contact();
+    $senderContact
+            ->setAddress($address) //assign pickup address object
+            ->setMobile('+37060000000') //set phone
+            ->setPersonName('Stefan Dexter'); //set full name of sender
+    
+    //call courier object
+    $call = new CallCourier();
+    // set auth info. Username (required), password (required), API url (optional), debug (optional)
+    $call->setAuthsetAuth($username, $password, $api_url, true);
+    
+    // $pickup_call_id is ID that was returned during courier pickup call
+    $result = $call->cancelCourierOmx($pickup_call_id); // result = true if cancelation was successful
+    $debug_data = $call->getDebugData(); //return debug data which contain URL, HTTP code, request and response. only if debug = true
 
 ```
 
