@@ -41,6 +41,7 @@ class ComposerStaticInit2254862db9f0e186730e545d48666c24
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
+        'Mijora\\OmnivaOpencart\\CourierCall' => __DIR__ . '/../..' . '/src/CourierCall.php',
         'Mijora\\OmnivaOpencart\\Helper' => __DIR__ . '/../..' . '/src/Helper.php',
         'Mijora\\OmnivaOpencart\\Order' => __DIR__ . '/../..' . '/src/Order.php',
         'Mijora\\OmnivaOpencart\\Params' => __DIR__ . '/../..' . '/src/Params.php',
