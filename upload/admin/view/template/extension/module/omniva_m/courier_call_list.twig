@@ -1,0 +1,68 @@
+<link rel="stylesheet" href="view/javascript/omniva_m/settings.css">
+{{ header }}
+{{ column_left }}
+
+<div id="content" class="omniva_m-overlay" data-courier-calls>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><img src="view/image/omniva_m/logo.png" alt="Omniva Logo"></h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-list"></i> {{ omniva_m_title_courier_calls }}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <p class="help-block">{{ omniva_m_help_courier_calls_list }}</p>
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <td class="text-right">{{ omniva_m_column_call_id }}</td>
+                                    <td class="text-left">{{ omniva_m_column_timerange }}</td>
+                                    <td class="text-right">{{ omniva_m_column_action }}</td>
+                                </tr>
+                            </thead>
+                            <tbody id="omniva_m-courier_calls" data-omnivam-table>
+                                {% if callTimes %}
+                                    {% for key, callTime in callTimes %}
+                                        <tr>
+                                            <td class="text-right">{{ key }}</td>
+                                            <td class="text-left">{{ callTime }}</td>
+                                            <td class="text-right">
+                                                <a href="#" class="btn btn-omniva_m omniva_m-btn-order-action"
+                                                    data-call-id="{{ key }}" data-action="cancelCourierCall"
+                                                    data-original-title="{{ omniva_m_courier_call_list_action_tootip_cancel }}" data-toggle="tooltip"
+                                                >
+                                                    <i class="fa fa-ban"></i>
+                                                    <div class="bs5-spinner-border hidden"></div>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td class="text-center" colspan="3">{{ omniva_m_courier_calls_no_results }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div> {# results end #}
+    </div> {# row end #}
+</div> {# content end #}
+
+<script>
+    const OMNIVA_M_DATA = {{ omniva_m_data|json_encode }};
+</script>
+{# using manifest js for simplicity #}
+<script src="view/javascript/omniva_m/manifest.js?202311131643"></script>
+
+{{ footer }} 

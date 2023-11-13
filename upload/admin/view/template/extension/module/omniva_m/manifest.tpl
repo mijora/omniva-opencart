@@ -99,7 +99,7 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <td style="width: 1px;" class="text-center"><input id="check-all-input" type="checkbox"/></td>
+                                    <td style="width: 1px;" class="text-center"><input id="check-all-input" data-omnivam-table-checkall type="checkbox"/></td>
                                     <td class="text-right"><?php echo $omniva_m_column_order_id; ?></td>
                                     <td class="text-left"><?php echo $omniva_m_column_customer; ?></td>
                                     <td class="text-left"><?php echo $omniva_m_column_status; ?></td>
@@ -108,7 +108,7 @@
                                     <td class="text-right"><?php echo $omniva_m_column_action; ?></td>
                                 </tr>
                             </thead>
-                            <tbody id="omniva_m-manifest-orders">
+                            <tbody id="omniva_m-manifest-orders" data-omnivam-table>
                                 <tr>
                                     <td class="text-center" colspan="7"><?php echo $omniva_m_manifest_orders_no_results; ?></td>
                                 </tr>
@@ -139,6 +139,6 @@
 <script>
     const OMNIVA_M_DATA = <?php echo json_encode($omniva_m_data); ?>;
 </script>
-<script src="view/javascript/omniva_m/manifest.js?20230912"></script>
+<script src="view/javascript/omniva_m/manifest.js?202311131643"></script>
 
 <?php echo $footer; ?> 

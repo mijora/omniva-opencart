@@ -139,6 +139,7 @@ class Helper
      */
     public static function downloadTerminalsJson()
     {
+        // return @json_decode((string) file_get_contents(__DIR__ . '/demo_terminals.json'), true);
         return @json_decode((string) file_get_contents(PickupPoints::LOCATIONS_URL), true);
     }
 
@@ -159,6 +160,11 @@ class Helper
         foreach ($terminals_array as $terminal) {
             // if we do not allow postoffice as selection remove TYPE=1 terminals
             if (!Params::ALLOW_POSTOFFICE && (int) $terminal['TYPE'] === 1) {
+                continue;
+            }
+
+            // skip terminals with invalid coordinates
+            if (!((float) $terminal['X_COORDINATE']) || !((float) $terminal['Y_COORDINATE'])) {
                 continue;
             }
 
@@ -406,5 +412,15 @@ class Helper
         $array = explode(',', $string);
 
         return array_map('trim', $array);
+    }
+
+    public static function isValidTimeString($string)
+    {
+        return preg_match('/^[0-9]{2}:[0-9]{2}$/', $string);
+    }
+
+    public static function isValidCourierCallId($call_id)
+    {
+        return preg_match('/^[0-9A-Z]{1,50}$/i', $call_id);
     }
 }

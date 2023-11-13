@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                "reference": "28042b30298642d746826d84066ab09cb590f90c"
+                "reference": "3ebddfd4201a69acf45d4ccef6e7f87469410f2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/28042b30298642d746826d84066ab09cb590f90c",
-                "reference": "28042b30298642d746826d84066ab09cb590f90c",
+                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/3ebddfd4201a69acf45d4ccef6e7f87469410f2e",
+                "reference": "3ebddfd4201a69acf45d4ccef6e7f87469410f2e",
                 "shasum": ""
             },
             "require": {
@@ -52,7 +52,7 @@
                 "issues": "https://github.com/omniva-baltic/omniva-api-lib/issues",
                 "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/omx-api-rework"
             },
-            "time": "2023-10-27T14:53:14+00:00"
+            "time": "2023-11-13T13:44:32+00:00"
         },
         {
             "name": "setasign/fpdf",

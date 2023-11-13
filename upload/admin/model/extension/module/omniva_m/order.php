@@ -555,46 +555,14 @@ class ModelExtensionModuleOmnivaMOrder extends Model
 
     public function loadAdminModuleTranslations()
     {
-        $this->load->language('extension/module/omniva_m');
+        $omniva_m_translations = $this->load->language('extension/module/omniva_m');
 
         // OC3 automatically loads translations into view with $this->load->language
         if (version_compare(VERSION, '3.0.0', '>=')) {
             return [];
         }
 
-        $data = [];
-        // but versions before 3.0 requires manualy loading each string
-        $translations = [
-            // Panel title
-            'panel_title',
-            // Tabs
-            'tab_order_info', 'tab_history',
-            // Order information
-            'info_manifest_id', 'info_last_barcodes', 'info_last_error', 'label_total_weight',
-            'label_multiparcel', 'label_cod_use', 'label_cod_amount', 'option_yes',
-            'option_no',
-            // History table
-            'header_date', 'header_service_code', 'header_tracking_numbers',
-            'header_actions', 'history_empty',
-            // Panel buttons
-            'btn_register_label', 'btn_print_label', 'btn_save_data',
-            // Manifest page
-            'title_manifest_orders', 'column_order_id', 'column_customer', 'column_status',
-            'column_barcode', 'column_manifest_id', 'column_action', 'manifest_orders_no_results',
-            'title_filters', 'label_order_id', 'label_customer', 'label_barcode',
-            'label_order_status_id', 'label_has_barcode', 'label_has_manifest', 'tooltip_print_labels',
-            'tooltip_create_manifest', 'tooltip_call_courier', 'btn_filter',
-            // General messages
-            'help_weight_multiparcel', 'error_no_oc_order', 'error_no_barcodes_found', 'error_missing_origin',
-            'error_nothing_in_manifest', 'warning_no_terminal', 'warning_overweight', 'warning_cod_used',
-            'warning_cod_amount_mismatch', 'warning_order_data_changed'
-        ];
-
-        foreach ($translations as $key) {
-            $data[Params::PREFIX . $key] = $this->language->get(Params::PREFIX . $key);
-        }
-
-        return $data;
+        return $omniva_m_translations;
     }
 
     public function loadListJsData()
@@ -607,24 +575,25 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         ];
     }
 
+    /**
+     * Get specificly marked JS strings from translation. JS string is identified by key starting with omniva_m_js_
+     * 
+     * @return array
+     */
     public function getJsTranslations()
     {
-        $this->load->language('extension/module/omniva_m');
-
-        $strings = [
-            'order_saved', 'order_not_saved', 'bad_response', 'label_registered', 'no_data_changes',
-            'confirm_new_label', 'refresh_now_btn', 'btn_no', 'btn_yes', 'tooltip_btn_print_register',
-            'tooltip_btn_call_courier', 'confirm_call_courier', 'alert_no_orders', 'confirm_print_labels',
-            'alert_response_error', 'alert_no_pdf', 'alert_bad_response', 'notify_courrier_called',
-            'notify_courrier_call_failed', 'option_yes', 'option_no', 'tooltip_btn_manifest',
-            'filter_label_omniva_only', 'filter_label_has_label', 'filter_label_in_manifest',
-            'no_results', 'confirm_create_manifest'
-        ];
+        $omniva_m_translations = $this->load->language('extension/module/omniva_m');
 
         $translations = [];
 
-        foreach ($strings as $string) {
-            $translations[$string] = $this->language->get(Params::PREFIX . 'js_' . $string);
+        $needle = Params::PREFIX . 'js_';
+        $substr_offset = strlen($needle);
+        foreach ($omniva_m_translations as $key => $string) {
+            if (strpos($key, $needle) !== 0) {
+                continue;
+            }
+
+            $translations[substr($key, $substr_offset)] = $string;
         }
 
         return $translations;

@@ -13,6 +13,16 @@ const OMNIVA_M_MANIFEST = {
         this.loadOrders(1);
     },
 
+    initCourierCallList: function() {
+        this.addModalElement();
+        this.listenForCheckAll();
+
+        // listen for action buttons
+        document.querySelector('[data-courier-calls]').addEventListener('click', function (e) {
+            OMNIVA_M_MANIFEST.handleActionButtons(e);
+        });
+    },
+
     showWorking: function (shouldShow, target) {
         let btnEl = target;
         if (!(target instanceof Node)) {
@@ -25,9 +35,14 @@ const OMNIVA_M_MANIFEST = {
     },
 
     listenForCheckAll: function () {
-        document.querySelector('#check-all-input').addEventListener('change', function (e) {
+        const checkAllEl = document.querySelector('[data-omnivam-table-checkall]');
+        if (!checkAllEl) {
+            return;
+        }
+
+        checkAllEl.addEventListener('change', function (e) {
             const status = this.checked;
-            const tableEl = document.querySelector('#omniva_m-manifest-orders');
+            const tableEl = document.querySelector('[data-omnivam-table]');
             const checkboxes = tableEl.querySelectorAll('input[name*=selected]');
             checkboxes.forEach(item => {
                 item.checked = status;
@@ -96,6 +111,13 @@ const OMNIVA_M_MANIFEST = {
             if (action === 'callCourier') {
                 console.log('Calling courier...');
                 OMNIVA_M_MANIFEST.callCourierAction(e.target);
+                return;
+            }
+
+            // button to cancel courier call
+            if (action === 'cancelCourierCall') {
+                console.log('Canceling courier call...');
+                OMNIVA_M_MANIFEST.cancelCourierCallAction(e.target);
                 return;
             }
 
@@ -566,12 +588,14 @@ const OMNIVA_M_MANIFEST = {
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close omniva_m-btn-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close omniva_m-btn-close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                         <h4 class="modal-title">Omniva</h4>
                     </div>
                     
                     <div class="modal-body">
-                        <p class="omniva_m-modal-msg"></p>
+                        <div class="omniva_m-modal-msg"></div>
                     </div>
 
                     <div class="modal-footer">
@@ -587,26 +611,33 @@ const OMNIVA_M_MANIFEST = {
         fragment.innerHTML = html;
 
         fragment.addEventListener('click', function (e) {
-            if (e.target.matches('.omniva_m-btn-close') || e.target.matches('.omniva_m-btn-no')) {
+            if (e.target.matches('.omniva_m-btn-close') || e.target.matches('.omniva_m-btn-no') || e.target.matches('.modal.omniva_m-modal')) {
                 e.preventDefault();
                 console.log('confirm: NO');
-                if (typeof OMNIVA_M_MANIFEST.confirm_action_no === 'function') {
-                    OMNIVA_M_MANIFEST.confirm_action_no(e);
-                }
+                const action = OMNIVA_M_MANIFEST.confirm_action_no;
+
                 OMNIVA_M_MANIFEST.confirm_action_no = null;
                 OMNIVA_M_MANIFEST.confirm_action_yes = null;
+
+                if (typeof action === 'function') {
+                    action(e);
+                }
+                
                 return;
             }
 
             if (e.target.matches('.omniva_m-btn-yes')) {
                 e.preventDefault();
                 console.log('confirm: YES');
-                if (typeof OMNIVA_M_MANIFEST.confirm_action_yes === 'function') {
-                    OMNIVA_M_MANIFEST.confirm_action_yes(e);
-                }
+                const action = OMNIVA_M_MANIFEST.confirm_action_yes;
+                
                 OMNIVA_M_MANIFEST.confirm_action_no = null;
                 OMNIVA_M_MANIFEST.confirm_action_yes = null;
                 $('.omniva_m-modal').modal('hide');
+
+                if (typeof action === 'function') {
+                    action(e);
+                }
                 return;
             }
         });
@@ -626,15 +657,64 @@ const OMNIVA_M_MANIFEST = {
             OMNIVA_M_MANIFEST.showWorking(false, loadingTarget);
         };
 
-        OMNIVA_M_MANIFEST.confirm(OMNIVA_M_DATA.trans.confirm_call_courier + OMNIVA_M_DATA.call_courier_address);
+        let called = '';
+
+        fetch(OMNIVA_M_DATA.ajax_url + '&action=checkCourier', {
+            method: 'GET',
+        })
+        .then(res => res.json())
+        .then(json => {
+            console.log(json);
+
+            if (typeof json.data === 'undefined') {
+                console.log(OMNIVA_M_DATA.trans.alert_bad_response);
+                return;
+            }
+
+            if (typeof json.data.error !== 'undefined') {
+                console.log(OMNIVA_M_DATA.trans.alert_response_error + json.data.error);
+                return;
+            }
+
+            if (json.data.html) {
+                    called = json.data.html;
+                return;
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+        .finally(() => {
+            OMNIVA_M_MANIFEST.confirm(OMNIVA_M_DATA.trans.confirm_call_courier + OMNIVA_M_DATA.call_courier_address + called);
+        });
+    },
+
+    checkIfCourierCalled: function (loadingTarget) {
+        if (loadingTarget) {
+            OMNIVA_M_MANIFEST.showWorking(true, loadingTarget);
+        }
+        
     },
 
     callCourier: function (loadingTarget) {
         if (loadingTarget) {
             OMNIVA_M_MANIFEST.showWorking(true, loadingTarget);
         }
+
+        // collect values
+        const modal = document.querySelector('.omniva_m-modal');
+        const selectStart = modal.querySelector('select[name="omniva_m_cc_start"]');
+        const selectEnd = modal.querySelector('select[name="omniva_m_cc_end"]');
+        const inputParcels = modal.querySelector('input[name="omniva_m_cc_parcels"]');
+        
+        const data = new FormData();
+        data.append('omniva_m_cc_start', selectStart.value);
+        data.append('omniva_m_cc_end', selectEnd.value);
+        data.append('omniva_m_cc_parcels', inputParcels.value);
+
         fetch(OMNIVA_M_DATA.ajax_url + '&action=callCourier', {
-            method: 'GET',
+            method: 'POST',
+            body: data
         })
             .then(res => res.json())
             .then(json => {
@@ -651,11 +731,79 @@ const OMNIVA_M_MANIFEST = {
                 }
 
                 if (json.data) {
-                    alert(OMNIVA_M_DATA.trans.notify_courrier_called);
+                    alert(OMNIVA_M_DATA.trans.notify_courrier_called + ' ' + json.data);
                     return;
                 }
 
                 alert(OMNIVA_M_DATA.trans.notify_courrier_call_failed);
+            })
+            .catch((error) => {
+                console.error(error);
+                alert(OMNIVA_M_DATA.trans.alert_response_error);
+            })
+            .finally(() => {
+                if (loadingTarget) {
+                    OMNIVA_M_MANIFEST.showWorking(false, loadingTarget);
+                }
+            });
+    },
+
+    cancelCourierCallAction: function (loadingTarget) {
+        OMNIVA_M_MANIFEST.showWorking(true, loadingTarget);
+
+        OMNIVA_M_MANIFEST.confirm_action_yes = function () {
+            OMNIVA_M_MANIFEST.showWorking(false, loadingTarget);
+            OMNIVA_M_MANIFEST.cancelCourierCall(loadingTarget);
+        };
+
+        OMNIVA_M_MANIFEST.confirm_action_no = function () {
+            OMNIVA_M_MANIFEST.showWorking(false, loadingTarget);
+        };
+
+        OMNIVA_M_MANIFEST.confirm(OMNIVA_M_DATA.trans.confirm_cancel_courier_call);
+    },
+
+    cancelCourierCall: function(loadingTarget) {
+        if (!loadingTarget.dataset.callId) {
+            return;
+        }
+
+        if (loadingTarget) {
+            OMNIVA_M_MANIFEST.showWorking(true, loadingTarget);
+        }
+
+        const callId = loadingTarget.dataset.callId;
+
+        const data = new FormData();
+        data.append('omniva_m_cc_id', callId);
+
+        fetch(OMNIVA_M_DATA.ajax_url + '&action=cancelCourierCall', {
+            method: 'POST',
+            body: data
+        })
+            .then(res => res.json())
+            .then(json => {
+                console.log(json);
+
+                if (typeof json.data === 'undefined') {
+                    alert(OMNIVA_M_DATA.trans.alert_bad_response);
+                    return;
+                }
+
+                if (typeof json.data.error !== 'undefined') {
+                    alert(OMNIVA_M_DATA.trans.alert_response_error + json.data.error);
+                    return;
+                }
+
+                if (json.data.canceled) {
+                    const actionBtn = document.querySelector(`[data-call-id="${callId}"]`);
+                    if (actionBtn) {
+                        actionBtn.parentNode.innerText = OMNIVA_M_DATA.trans.canceled;
+                    }
+                    return;
+                }
+
+                alert(OMNIVA_M_DATA.trans.notify_cancel_courrier_call_failed);
             })
             .catch((error) => {
                 console.error(error);
@@ -676,6 +824,12 @@ const OMNIVA_M_MANIFEST = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    OMNIVA_M_MANIFEST.init();
+    const isCourierCallList = document.querySelector('[data-courier-calls');
+    if (isCourierCallList) {
+        OMNIVA_M_MANIFEST.initCourierCallList();
+    } else {
+        OMNIVA_M_MANIFEST.init();
+    }
+
     OMNIVA_M_MANIFEST.showOverlay(false);
 });
