@@ -423,4 +423,14 @@ class Helper
 
         return array_map('trim', $array);
     }
+
+    public static function isValidTimeString($string)
+    {
+        return preg_match('/^[0-9]{2}:[0-9]{2}$/', $string);
+    }
+
+    public static function isValidCourierCallId($call_id)
+    {
+        return preg_match('/^[0-9A-Z]{1,50}$/i', $call_id);
+    }
 }

@@ -4,6 +4,7 @@
 $_['omniva_m_menu_head'] = 'Omniva';
 $_['omniva_m_menu_manifest'] = 'Manifest';
 $_['omniva_m_menu_settings'] = 'Settings';
+$_['omniva_m_menu_called_couriers'] = 'Active Courier Calls';
 
 // Heading - without prefix as thats what opencart expects
 $_['heading_title'] = 'Omniva';

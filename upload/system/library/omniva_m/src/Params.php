@@ -16,6 +16,9 @@ class Params
 
     const TERMINAL_MAX_WEIGHT = 30; // max allowed terminal weight in kg
 
+    const COURIER_CALL_HOUR_START = 8; // hour from wich couriers can be called
+    const COURIER_CALL_HOUR_END = 19; // hour until wich (not included) couriers can be called
+
     const DEFAULT_WEIGHT = 1; // by default use 1kg
 
     const DIR_MAIN = DIR_SYSTEM . 'library/omniva_m/';

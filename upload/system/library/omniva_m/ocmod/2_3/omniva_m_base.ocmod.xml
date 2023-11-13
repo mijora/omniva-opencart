@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Omniva Base Mod for OC2.3</name>
-    <version>0.0.9</version>
+    <version>1.0.0</version>
     <author>Mijora</author>
     <link>https://www.mijora.lt</link>
     <code>omniva_m_base</code>
@@ -27,6 +27,14 @@
                     $omniva_m[] = array(
                         'name'     => $this->language->get('omniva_m_menu_manifest'),
                         'href'     => $this->url->link('extension/module/omniva_m/manifest', 'token=' . $this->session->data['token'], true),
+                        'children' => []
+                    );
+                }
+
+                if ($this->user->hasPermission('access', 'extension/shipping/omniva_m')) {
+                    $omniva_m[] = array(
+                        'name'     => $this->language->get('omniva_m_menu_called_couriers'),
+                        'href'     => $this->url->link('extension/module/omniva_m/courierCallList', 'token=' . $this->session->data['token'], true),
                         'children' => []
                     );
                 }
