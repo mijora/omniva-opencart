@@ -5,6 +5,7 @@
 - Updated omniva-api library to 1.0.14
 - Updated terminal map js library to 1.1.3
 - Improved how tranlsations are loaded into templates for Opencart 2.3
+- It is now recomended to have PHP 7+ version
 
 ## [2.1.1]
 - Added new experimental quickcheckouts support (Opencart 3):
