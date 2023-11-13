@@ -139,7 +139,7 @@ class Helper
      */
     public static function downloadTerminalsJson()
     {
-        return @json_decode((string) file_get_contents(PickupPoints::LOCATIONS_URL), true);
+        return @json_decode((string) file_get_contents(Params::LOCATIONS_URL), true);
     }
 
     public static function updateTerminals()
@@ -159,6 +159,11 @@ class Helper
         foreach ($terminals_array as $terminal) {
             // if we do not allow postoffice as selection remove TYPE=1 terminals
             if (!Params::ALLOW_POSTOFFICE && (int) $terminal['TYPE'] === 1) {
+                continue;
+            }
+
+            // check coordinates is valid
+            if ((float) $terminal['X_COORDINATE'] <= 0 || (float) $terminal['Y_COORDINATE'] <= 0) {
                 continue;
             }
 
@@ -298,6 +303,16 @@ class Helper
         }
 
         if ($receive_type === Params::SHIPPING_TYPE_TERMINAL) {
+            // prevent sending to finland parcel machine if contrat origin is not EE
+            if ($deliver_country_iso_code === 'FI' && $contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
+                return null;
+            }
+
+            // Finland parcel machines are Matkahuolto, and requires CD service
+            if ($deliver_country_iso_code === 'FI') {
+                return 'CD';
+            }
+
             switch ($sendoff_type) {
                 case Params::SENDOFF_TYPE_COURIER:
                     return 'PU';

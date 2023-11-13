@@ -8,6 +8,8 @@ class Params
 
     const PREFIX = 'omniva_m_';
 
+    const LOCATIONS_URL = 'https://www.omniva.ee/locationsfull.json';
+
     const GIT_VERSION_CHECK = 'https://api.github.com/repos/mijora/omniva-opencart/releases/latest';
     const GIT_URL = 'https://github.com/mijora/omniva-opencart/releases/latest';
     const GIT_CHECK_EVERY_HOURS = 24; // how often to check git for version. Default 24h
