@@ -692,4 +692,16 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         return 'token=' . $this->session->data['token'];
     }
+
+    protected function loadOmnivaTranslations($translation)
+    {
+        $omniva_m_translations = $this->load->language($translation);
+
+        if (version_compare(VERSION, '3.0.0', '>=')) {
+            return [];
+        }
+
+        // only before opencart v3.0 was needed to manually load translations into template variables
+        return $omniva_m_translations;
+    }
 }

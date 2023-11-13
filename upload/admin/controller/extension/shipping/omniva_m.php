@@ -85,7 +85,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
 
     public function index()
     {
-        $this->load->language('extension/shipping/omniva_m');
+        $omniva_m_translations = $this->load->language('extension/shipping/omniva_m');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
@@ -163,59 +163,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
 
         // OC3 automatically loads translations into view with $this->load->language, but versions before it requires manual
         if (version_compare(VERSION, '3.0.0', '<')) {
-            $translations = [
-                // Generic Options
-                'generic_none', 'generic_enabled', 'generic_disabled',
-                // Generic buttons
-                'generic_btn_save', 'generic_btn_cancel',
-                // Notification about need to fix db
-                'db_fix_notify', 'button_fix_db',
-                // Notification about xml update
-                'xml_fix_notify', 'button_fix_xml',
-                // New version notifications
-                'new_version_notify', 'button_download_version',
-                // Tabs
-                'tab_api', 'tab_general', 'tab_sender_info', 'tab_price', 'tab_cod',
-                'tab_terminals', 'tab_tracking_email', 'tab_advanced',
-                // API Tab
-                'title_api_settings', 'placeholder_api_url', 'label_api_url', 'label_contract_origin', 'label_api_user',
-                'label_api_pass', 'label_api_sendoff_type', 'label_api_label_print_type', 'option_courier',
-                'option_terminal', 'option_sorting_center', 'option_label_print_a4', 'option_label_print_a6',
-                'option_contract_estonia', 'option_contract_other', 'option_courier_estonia', 'option_courier_finland',
-                'label_api_add_comment', 'option_no', 'option_yes',
-                'label_api_show_return_code', 'option_addto_sms_email', 'option_addto_sms', 'option_addto_email', 'option_addto_dont',
-                // General Tab
-                'title_edit', 'label_tax_class', 'label_geo_zone', 'option_all_zones', 'label_status', 'label_sort_order',
-                'label_order_status_registered', 'help_order_status_registered', 'label_order_status_error', 'help_order_status_error',
-                'label_disable_cart_weight_check', 'label_use_simple_terminal_check',
-                'help_disable_cart_weight_check', 'help_use_simple_terminal_check',
-                // Sender Tab
-                'title_sender_settings', 'label_sender_name', 'label_sender_street', 'label_sender_postcode',
-                'label_sender_city', 'label_sender_country', 'label_sender_phone', 'label_sender_email',
-                // Price Tab
-                'title_price_settings', 'label_price_country', 'label_price_terminal', 'label_price_courier',
-                'label_price_range_type', 'button_add_price', 'button_save_price', 'placeholder_price_country',
-                'header_actions', 'help_price', 'help_price_country', 'range_type_cart',
-                'range_type_weight', 'help_courier_options',
-                // COD Tab
-                'title_cod_settings', 'label_cod_status', 'label_cod_options',
-                'label_cod_receiver', 'label_bic', 'label_iban', 'help_cod_options',
-                // Terminals tab
-                'title_terminals', 'label_last_update', 'label_total_terminals', 'label_cron_url',
-                'button_update', 'help_terminals', 'help_terminals_empty',
-                // tracking email tab
-                'title_tracking_email', 'label_tracking_email_status', 'label_tracking_url',
-                'label_tracking_email_subject', 'label_tracking_email_template',
-                'error_tracking_email_disabled', 'help_tracking_url', 'help_tracking_email_template',
-                // General Errors
-                'error_permission',
-                // General Messages
-                'msg_setting_saved', 'alert_settings'
-            ];
-
-            foreach ($translations as $key) {
-                $data[Params::PREFIX . $key] = $this->language->get(Params::PREFIX . $key);
-            }
+            $data = array_merge($data, $omniva_m_translations);
         }
 
         $data['success'] = '';
