@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.3]
+- Updated omniva-api library to 1.0.15 
+
 ## [2.1.2]
 - Added codebase to allow FI terminals for EE buiseness clients
 - Updated omniva-api library to 1.0.14
