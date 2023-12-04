@@ -76,7 +76,7 @@ class ModelExtensionShippingOmnivaM extends Model
             );
         }
         
-        $terminal_cost = $this->determineTerminalCost($price_data);
+        $terminal_cost = $this->determineTerminalCost($price_data, $address['iso_code_2']);
 
         if ($terminal_cost >= 0) {
             $terminals = Helper::loadTerminalListByCountry($address['iso_code_2']);
@@ -117,12 +117,12 @@ class ModelExtensionShippingOmnivaM extends Model
         return $method_data;
     }
 
-    protected function determineTerminalCost($price_data)
+    protected function determineTerminalCost($price_data, $delivery_country = null)
     {
         $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
 
         // disable terminals for FINLAND if contract origin not ESTONIA
-        if ($contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
+        if ($delivery_country === 'FI' && $contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
             return -1;
         }
 
