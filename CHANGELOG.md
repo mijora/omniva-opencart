@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.1.4]
+- Fixed an issue where terminal listwas unintentionaly limited to non estonian contrancts only
+
 ## [2.1.3]
 - Updated omniva-api library to 1.0.15 
 
