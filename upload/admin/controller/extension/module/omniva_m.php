@@ -244,6 +244,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ->setBankAccount($cod_iban)
                 ->setReceiverName($cod_receiver)
                 ->setReferenceNumber(Helper::calculateCodReference((int) $id_order));
+            if ( $receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ) {
+                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', $this->formatServicesString($service_code, $additional_services), true);
+                return ['error' => 'Additional service COD is not available in this country.'];
+            }
         }
 
         $weight = $order_data['set_weight'];

@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Created an error message that COD payment is not available when sending to Matkahuolto parcel terminal in Finland
+
 ## [2.1.4]
 - Fixed an issue where terminal listwas unintentionaly limited to non estonian contrancts only
 
