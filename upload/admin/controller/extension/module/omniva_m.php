@@ -238,6 +238,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $cod = null;
         if ($order_data['cod']['enabled'] && $order_data['cod']['use']) {
+            if ( $receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ) {
+                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', $this->formatServicesString($service_code, $additional_services), true);
+                return ['error' => 'Additional service COD is not available in this country.'];
+            }
             $additional_services[] = 'BP';
             $cod = (new Cod())
                 ->setAmount((float) $order_data['cod']['amount'])
