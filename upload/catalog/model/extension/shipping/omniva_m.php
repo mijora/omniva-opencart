@@ -8,6 +8,24 @@ use Mijora\OmnivaOpencart\Price;
 
 class ModelExtensionShippingOmnivaM extends Model
 {
+    private function getTextTitle($country = '')
+    {
+        if ($country == 'FI') {
+            return $this->language->get('text_title_mh');
+        }
+
+        return $this->language->get('text_title');
+    }
+
+    private function getTextPrefix($country = '')
+    {
+        if ($country == 'FI') {
+            return $this->language->get('text_prefix_mh');
+        }
+
+        return $this->language->get('text_prefix');
+    }
+
     public function getQuote($address)
     {
         $this->load->language('extension/shipping/omniva_m');
@@ -62,7 +80,7 @@ class ModelExtensionShippingOmnivaM extends Model
         if ($courier_cost >= 0) {
             $quote_data['courier'] = array(
                 'code'         => 'omniva_m.courier',
-                'title'        => $this->language->get('text_prefix') . $this->language->get('text_courier'),
+                'title'        => $this->getTextPrefix() . $this->language->get('text_courier'),
                 'cost'         => $courier_cost,
                 'tax_class_id' => $tax_class_id,
                 'text'         => $this->currency->format(
@@ -85,7 +103,7 @@ class ModelExtensionShippingOmnivaM extends Model
                 $key = 'terminal_' . $terminal['ZIP'];
                 $quote_data[$key] = array(
                     'code'         => 'omniva_m.' . $key,
-                    'title'        => $this->language->get('text_prefix')
+                    'title'        => $this->getTextPrefix($address['iso_code_2'])
                         . Helper::getFormatedTerminalAddress($terminal),
                     'cost'         => $terminal_cost,
                     'tax_class_id' => $tax_class_id,
@@ -108,7 +126,7 @@ class ModelExtensionShippingOmnivaM extends Model
 
         $method_data = array(
             'code'       => 'omniva_m',
-            'title'      => $this->language->get('text_title'),
+            'title'      => $this->getTextTitle(),
             'quote'      => $quote_data,
             'sort_order' => $this->config->get($setting_prefix . Params::PREFIX . 'sort_order'),
             'error'      => false

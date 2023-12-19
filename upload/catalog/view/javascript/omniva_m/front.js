@@ -14,6 +14,7 @@ const OMNIVA_M = {
         integrity: 'sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==',
         crossOrigin: ''
     },
+    txtPrefix : '',
 
     observe: function () {
         const targetNode = document.body;
@@ -66,6 +67,10 @@ const OMNIVA_M = {
 
         if (typeof omniva_m_status !== 'boolean' || !omniva_m_status) {
             return;
+        }
+
+        if (typeof omniva_m_country_code !== 'undefined' && omniva_m_country_code == 'FI') {
+            this.txtPrefix = 'mh_';
         }
 
         console.log('Omniva_m starting');
@@ -129,6 +134,11 @@ const OMNIVA_M = {
             newInput = this.buildForBasicOpencart3_0(inputs);
         }
 
+        let mapTranslations = omniva_m_js_translation;
+        if (this.txtPrefix != '') {
+            mapTranslations.modal_header = omniva_m_js_translation[this.txtPrefix + 'modal_header'];
+        }
+
         this.omnivaModule = $(newInput).omniva({
             country_code: omniva_m_country_code,
             path_to_img: 'image/catalog/omniva_m/',
@@ -143,7 +153,7 @@ const OMNIVA_M = {
                     OMNIVA_M[`handleSelection${OMNIVA_M.checkoutModule}`](manual);
                 }
             },
-            translate: omniva_m_js_translation,
+            translate: mapTranslations,
             terminals: terminals,
         });
 
@@ -177,7 +187,7 @@ const OMNIVA_M = {
 
         newNode.innerHTML = `
             <input type="radio" name="shipping_method" value="">
-            ${omniva_m_js_translation.shipping_method_terminal} - ${omniva_m_terminal_price}
+            ${omniva_m_js_translation[this.txtPrefix + 'shipping_method_terminal']} - ${omniva_m_terminal_price}
         `;
 
         let refNode = inputs[0].closest('label');
@@ -276,7 +286,7 @@ const OMNIVA_M = {
                 refNode.querySelectorAll('label').forEach((label) => {
                     label.attributes.for.value = 'omniva_m.terminals';
                     label.querySelectorAll('span.text').forEach(span => {
-                        span.innerText = omniva_m_js_translation.shipping_option_title;
+                        span.innerText = omniva_m_js_translation[this.txtPrefix + 'shipping_option_title'];
                     });
                 });
                 refNode.classList.remove('hidden');
@@ -296,8 +306,8 @@ const OMNIVA_M = {
                 const selected_node = $("input[name=\"shipping_method\"]:checked");
                 if (selected_node.length && selected_node.attr('id').startsWith('omniva_m.terminals') && (!selected_node.val() || selected_node.val() == '0')) {
                     jqXhr.abort();
-                    if (omniva_m_js_translation && omniva_m_js_translation['select_option_warning']) {
-                        alert(omniva_m_js_translation['select_option_warning']);
+                    if (omniva_m_js_translation && omniva_m_js_translation[this.txtPrefix + 'select_option_warning']) {
+                        alert(omniva_m_js_translation[this.txtPrefix + 'select_option_warning']);
                     } else {
                         alert('Please select Omniva parcel terminal!');
                     }
@@ -337,7 +347,7 @@ const OMNIVA_M = {
                 refNode.querySelectorAll('label').forEach((label, lIndex) => {
                     label.attributes.for.value = 'omniva_m.terminals';
                     if (lIndex === 0) {
-                        label.lastChild.textContent = label.lastChild.textContent.replaceAll(/.+\]/ig, omniva_m_js_translation.shipping_option_title)
+                        label.lastChild.textContent = label.lastChild.textContent.replaceAll(/.+\]/ig, omniva_m_js_translation[this.txtPrefix + 'shipping_option_title'])
                     }
                 });
                 refNode.classList.remove('hidden');
@@ -361,8 +371,8 @@ const OMNIVA_M = {
                 const selected_node = $("input[name=\"shipping_method\"]:checked");
                 if (selected_node.length && selected_node.attr('id').startsWith('omniva_m.terminals') && (!selected_node.val() || selected_node.val() == '0')) {
                     jqXhr.abort();
-                    if (omniva_m_js_translation && omniva_m_js_translation['select_option_warning']) {
-                        alert(omniva_m_js_translation['select_option_warning']);
+                    if (omniva_m_js_translation && omniva_m_js_translation[this.txtPrefix + 'select_option_warning']) {
+                        alert(omniva_m_js_translation[this.txtPrefix + 'select_option_warning']);
                     } else {
                         alert('Please select Omniva parcel terminal!');
                     }
@@ -424,7 +434,7 @@ const OMNIVA_M = {
                 firstEl.dataset.initialized = 'omniva_m';
                 clone.querySelectorAll('label').forEach((label) => {
                     label.querySelectorAll('span.shipping-quote-title').forEach(span => {
-                        span.lastChild.textContent = span.lastChild.textContent.replaceAll(/.+\]/ig, omniva_m_js_translation.shipping_option_title)
+                        span.lastChild.textContent = span.lastChild.textContent.replaceAll(/.+\]/ig, omniva_m_js_translation[this.txtPrefix + 'shipping_option_title'])
                     });
                 });
 
@@ -451,8 +461,8 @@ const OMNIVA_M = {
                 const selected_node = $("input[name=\"shipping_method\"]:checked");
                 if (selected_node.length && selected_node.attr('id') && selected_node.attr('id').startsWith('omniva_m.terminals') && (!selected_node.val() || selected_node.val() == '0')) {
                     jqXhr.abort();
-                    if (omniva_m_js_translation && omniva_m_js_translation['select_option_warning']) {
-                        alert(omniva_m_js_translation['select_option_warning']);
+                    if (omniva_m_js_translation && omniva_m_js_translation[this.txtPrefix + 'select_option_warning']) {
+                        alert(omniva_m_js_translation[this.txtPrefix + 'select_option_warning']);
                     } else {
                         alert('Please select Omniva parcel terminal!');
                     }
