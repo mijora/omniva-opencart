@@ -139,9 +139,15 @@ const OMNIVA_M = {
             mapTranslations.modal_header = omniva_m_js_translation[this.txtPrefix + 'modal_header'];
         }
 
+        let marker_img = 'sasi.png';
+        if (omniva_m_country_code == 'FI') {
+            marker_img = 'sasi_matkahuolto.svg';
+        }
+
         this.omnivaModule = $(newInput).omniva({
             country_code: omniva_m_country_code,
             path_to_img: 'image/catalog/omniva_m/',
+            marker_img: marker_img,
             callback: function (id, manual) {
                 OMNIVA_M.omnivaModule.val('omniva_m.terminal_' + id);
                 OMNIVA_M.selectedTerminal = id;

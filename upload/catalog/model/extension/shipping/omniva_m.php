@@ -80,7 +80,7 @@ class ModelExtensionShippingOmnivaM extends Model
         if ($courier_cost >= 0) {
             $quote_data['courier'] = array(
                 'code'         => 'omniva_m.courier',
-                'title'        => $this->getTextPrefix() . $this->language->get('text_courier'),
+                'title'        => $this->getTextPrefix($address['iso_code_2']) . $this->language->get('text_courier'),
                 'cost'         => $courier_cost,
                 'tax_class_id' => $tax_class_id,
                 'text'         => $this->currency->format(
@@ -126,7 +126,7 @@ class ModelExtensionShippingOmnivaM extends Model
 
         $method_data = array(
             'code'       => 'omniva_m',
-            'title'      => $this->getTextTitle(),
+            'title'      => $this->getTextTitle($address['iso_code_2']),
             'quote'      => $quote_data,
             'sort_order' => $this->config->get($setting_prefix . Params::PREFIX . 'sort_order'),
             'error'      => false
