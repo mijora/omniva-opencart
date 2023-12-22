@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.1.6]
+- Changed name of Finland delivery methods from Omniva to Matkahuolto
+- Updated terminal map js library to 1.1.4
+- Changed the Omniva marker to Matkahuolto on the map of Finland parcel terminals
+
 ## [2.1.5]
 - Created an error message that COD payment is not available when sending to Matkahuolto parcel terminal in Finland
 

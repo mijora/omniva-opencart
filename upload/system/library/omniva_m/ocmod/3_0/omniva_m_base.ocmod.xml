@@ -202,7 +202,8 @@
                     $omniva_m_js_translation_keys = [
                         'modal_header', 'search_bar_title', 'select_terminal', 'search_bar_placeholder',
                         'place_not_found', 'show_on_map', 'show_more', 'search_back_to_list',
-                        'terminal_not_selected', 'shipping_method_terminal'
+                        'terminal_not_selected', 'shipping_method_terminal', 'mh_modal_header',
+                        'mh_shipping_method_terminal'
                     ];
 
                     $data['omniva_m_js_translation'] = [];
