@@ -514,7 +514,9 @@ const OMNIVA_M = {
             return;
         }
         console.log('Selected: ' + OMNIVA_M.selectedTerminal);
-        _QuickCheckout.forceLoadingOverlay()
+        if ( typeof _QuickCheckout.forceLoadingOverlay === 'function' ) {
+            _QuickCheckout.forceLoadingOverlay();
+        }
         _QuickCheckout.order_data.shipping_code = OMNIVA_M.omnivaModule.val();
     },
 
@@ -598,7 +600,11 @@ const OMNIVA_M = {
     },
 
     getShippingCountryJournal3: function () {
-        if (document.querySelector('.checkout-same-address input[type="checkbox"]').checked) {
+        let addressCheckbox = document.querySelector('.checkout-same-address input[type="checkbox"]');
+        if ( ! addressCheckbox ) {
+            addressCheckbox = document.querySelector('.checkout-section.payment-address input[type="checkbox"]');
+        }
+        if (addressCheckbox.checked) {
             return document.querySelector('select#input-payment-country').value;
         }
 
