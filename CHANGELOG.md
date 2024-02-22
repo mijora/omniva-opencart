@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Improved module work in Journal 3.0.46
+
 ## [2.1.6]
 - Changed name of Finland delivery methods from Omniva to Matkahuolto
 - Updated terminal map js library to 1.1.4
