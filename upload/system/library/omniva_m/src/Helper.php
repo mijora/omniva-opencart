@@ -271,7 +271,8 @@ class Helper
         $receive_type,
         $contract_origin,
         $courier_options,
-        $deliver_country_iso_code
+        $deliver_country_iso_code,
+        $sender_country_iso_code
     ) {
         if ($receive_type === Params::SHIPPING_TYPE_COURIER) {
             $courrier_service_code = 'QH'; // default service code
@@ -303,8 +304,8 @@ class Helper
         }
 
         if ($receive_type === Params::SHIPPING_TYPE_TERMINAL) {
-            // prevent sending to finland parcel machine if contrat origin is not EE
-            if ($deliver_country_iso_code === 'FI' && $contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
+            // prevent sending to finland parcel machine if sender is from LT
+            if ($deliver_country_iso_code === 'FI' && $sender_country_iso_code === 'LT') {
                 return null;
             }
 
