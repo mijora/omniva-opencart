@@ -16,25 +16,24 @@ const OMNIVA_M = {
     },
     txtPrefix : '',
 
+    observer: new MutationObserver(function(mutationsList, observer) {
+        if (
+            document.querySelector('input[value^="omniva_m.terminal_"]')
+            && !document.querySelector('input[value^="omniva_m.terminal_"][data-initialized="omniva_m"]')
+        ) {
+            console.log('Omniva_m initializing terminals');
+            OMNIVA_M.detectCheckout();
+            document.querySelector('input[value^="omniva_m.terminal_"]').dataset.initialized = 'omniva_m';
+            OMNIVA_M.init();
+        }
+    }),
+
     observe: function () {
         const targetNode = document.body;
 
         const config = { attributes: false, childList: true, subtree: true };
 
-        const callback = function (mutationsList, observer) {
-            if (
-                document.querySelector('input[value^="omniva_m.terminal_"]')
-                && !document.querySelector('input[value^="omniva_m.terminal_"][data-initialized="omniva_m"]')
-            ) {
-                console.log('Omniva_m initializing terminals');
-                OMNIVA_M.detectCheckout();
-                document.querySelector('input[value^="omniva_m.terminal_"]').dataset.initialized = 'omniva_m';
-                OMNIVA_M.init();
-            }
-        };
-
-        const observer = new MutationObserver(callback);
-        observer.observe(targetNode, config);
+        OMNIVA_M.observer.observe(targetNode, config);
     },
 
     detectCheckout: function () {
@@ -55,6 +54,11 @@ const OMNIVA_M = {
 
         if (document.getElementById('onepcheckout')) {
             OMNIVA_M.checkoutModule = "Onepc";
+            return;
+        }
+
+        if (document.getElementById('unicheckout')) {
+            OMNIVA_M.checkoutModule = "Unicheckout";
             return;
         }
     },
@@ -132,6 +136,10 @@ const OMNIVA_M = {
             }
         } else {
             newInput = this.buildForBasicOpencart3_0(inputs);
+        }
+
+        if (typeof(newInput) == 'undefined' || newInput == null) {
+            return;
         }
 
         let mapTranslations = omniva_m_js_translation;
@@ -408,6 +416,48 @@ const OMNIVA_M = {
      * Custom Onepcheckout - Onepc
      */
     handleSelectionOnepc: function (manual) {
+        if (!manual) {
+            return;
+        }
+
+        OMNIVA_M.omnivaModule.trigger('change');
+    },
+
+    /**
+     * Custom Onepcheckout - Unicheckout
+     */
+    buildForUnicheckout: function (inputs) {
+        let refNode = null;
+        let firstEl = null;
+        inputs.forEach((el, index) => {
+            refNode = el.closest('div');
+            if (index === 1) {
+                firstEl = el;
+
+                firstEl.id = 'omniva_m.terminals';
+                firstEl.value = '';
+                firstEl.dataset.initialized = 'omniva_m';
+
+                let omniva_container = refNode.querySelector('.omniva-terminal-container');
+                if (typeof(omniva_container) != 'undefined' && omniva_container != null) {
+                    firstEl = null;
+                }
+
+                refNode.querySelectorAll('label').forEach((label) => {
+                    label.setAttribute('for', 'omniva_m.terminals');
+                    label.querySelectorAll('span.method')[0].innerText = omniva_m_js_translation[this.txtPrefix + 'shipping_option_title'];
+                });
+                refNode.classList.remove('hidden');
+
+                return;
+            }
+
+            refNode.classList.add('hidden');
+        });
+        return firstEl;
+    },
+
+    handleSelectionUnicheckout: function (manual) {
         if (!manual) {
             return;
         }

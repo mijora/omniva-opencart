@@ -3,6 +3,8 @@
 ## [Unreleased]
 - Improved module work in Journal 3.0.46
 - Allow FI terminals for LV senders
+- Added new experimental quickcheckouts support (Opencart 3):
+    - Unicheckout (Unicheckout)
 
 ## [2.1.6]
 - Changed name of Finland delivery methods from Omniva to Matkahuolto
