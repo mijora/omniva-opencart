@@ -138,9 +138,10 @@ class ModelExtensionShippingOmnivaM extends Model
     protected function determineTerminalCost($price_data, $delivery_country = null)
     {
         $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
+        $sender_country_iso = $this->config->get(Params::PREFIX . 'sender_country');
 
-        // disable terminals for FINLAND if contract origin not ESTONIA
-        if ($delivery_country === 'FI' && $contract_origin !== Params::CONTRACT_ORIGIN_ESTONIA) {
+        // disable terminals for FINLAND if sender is set to LT
+        if ($delivery_country === 'FI' && $sender_country_iso === 'LT') {
             return -1;
         }
 

@@ -205,8 +205,14 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $order_data['shipping_type'],
             $contract_origin,
             $courier_options,
-            $order_data['oc_order']['shipping_iso_code_2']
+            $order_data['oc_order']['shipping_iso_code_2'],
+            $this->config->get(Params::PREFIX . 'sender_country')
         );
+
+        if (!$service_code) {
+            $this->saveLabelHistory($order_data, 'Could not determine service code for label creation.', '-', true);
+            return ['error' => 'Could not determine service code for label creation.'];
+        }
 
         $offload_code = null;
         if ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
