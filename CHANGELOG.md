@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
+
 ## [2.1.7]
 - Improved module work in Journal 3.0.46
 - Allow FI terminals for LV senders
