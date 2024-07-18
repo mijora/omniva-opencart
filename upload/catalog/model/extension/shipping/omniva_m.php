@@ -141,9 +141,9 @@ class ModelExtensionShippingOmnivaM extends Model
         $sender_country_iso = $this->config->get(Params::PREFIX . 'sender_country');
 
         // disable terminals for FINLAND if sender is set to LT
-        if ($delivery_country === 'FI' && $sender_country_iso === 'LT') {
-            return -1;
-        }
+        // if ($delivery_country === 'FI' && $sender_country_iso === 'LT') {
+        //     return -1;
+        // }
 
         $terminal_cost = (float) $this->calculateCost(
             $price_data['terminal_price'],

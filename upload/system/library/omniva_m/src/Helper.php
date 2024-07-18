@@ -305,9 +305,9 @@ class Helper
 
         if ($receive_type === Params::SHIPPING_TYPE_TERMINAL) {
             // prevent sending to finland parcel machine if sender is from LT
-            if ($deliver_country_iso_code === 'FI' && $sender_country_iso_code === 'LT') {
-                return null;
-            }
+            // if ($deliver_country_iso_code === 'FI' && $sender_country_iso_code === 'LT') {
+            //     return null;
+            // }
 
             // Finland parcel machines are Matkahuolto, and requires CD service
             if ($deliver_country_iso_code === 'FI') {
