@@ -13,7 +13,7 @@ Omniva API library, to help to integrate with other systems
 - List parcel terminals.
 
 ## Requirements
-- Minimum PHP 7.0, tested up to PHP 7.4
+- Minimum PHP 5.6, tested up to PHP 7.4
 
 ## Instalation
 
@@ -59,7 +59,7 @@ Use `example/config.php` to enter your API username and password for testing the
     //new shipment package object, required
     $package = new Package();
     $package
-            ->setId('54155454') //id number, optional
+            ->setId('5454') //id number, optional. Use same ID for several Package if want use multiparcels service
             ->setService('QH'); //service code of package
 
     //create additional services and add to package, optional        
@@ -82,7 +82,7 @@ Use `example/config.php` to enter your API username and password for testing the
             ->setAmount(66.72) //set cod amount
             ->setBankAccount('GB33BUKB20201555555555') //set bank account
             ->setReceiverName('Test Company') //set company name
-            ->setReferenceNumber('23232323232323'); //set reference number of cod
+            ->setReferenceNumber('2323'); //set reference number of COD. For Estonia the number is generated according to Method 7-3-1 (https://www.pangaliit.ee/arveldused/viitenumber/7-3-1meetod)
     $package->setCod($cod); //assign cod to package
 
     //set sender and reeiver address
@@ -130,7 +130,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get shipment label
-
 ```php
 
     use Mijora\Omniva\OmnivaException;
@@ -150,7 +149,6 @@ Use `example/config.php` to enter your API username and password for testing the
 ```
 
 ## Get manifest
-
 ```php
 
     use Mijora\Omniva\OmnivaException;
@@ -272,7 +270,6 @@ Anytime during setup or when calling api Exception can be thrown with errors. Re
 ```
 
 ## Get list of parcel terminals
-
 ```php
 
     use Mijora\Omniva\Locations\PickupPoints;
@@ -285,7 +282,6 @@ Anytime during setup or when calling api Exception can be thrown with errors. Re
 ```
 
 ## Get tracking information
-
 ```php
 
     use Mijora\Omniva\Shipment\Tracking;

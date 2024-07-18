@@ -21,9 +21,9 @@ class Label
      * @param string $api_url
      */
 
-    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee')
+    public function setAuth($username, $password, $api_url = 'https://edixml.post.ee', $debug = false)
     {
-        $this->request = new Request($username, $password, $api_url);
+        $this->request = new Request($username, $password, $api_url, $debug);
     }
 
     /**
@@ -45,7 +45,7 @@ class Label
             throw new OmnivaException("Please set username and password");
         }
 
-        $result = $use_legacy_api ? $this->request->get_labels($barcodes) : $this->request->getLabelsOmx($barcodes, $send_to_email);
+        $result = $use_legacy_api ? $this->request->getLabels($barcodes) : $this->request->getLabelsOmx($barcodes, $send_to_email);
 
         return $result;
     }
