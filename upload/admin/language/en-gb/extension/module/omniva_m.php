@@ -52,7 +52,8 @@ $_['omniva_m_tooltip_call_courier'] = 'Call Courier';
 $_['omniva_m_btn_filter'] = 'Filter';
 
 // General messages
-$_['omniva_m_help_weight_multiparcel'] = 'If multiparcel is used, weight will be divided by multiparcel number.';
+$_['omniva_m_help_weight_multiparcel'] = 'If more than one package is assigned, weight will be divided by package number.';
+$_['omniva_m_help_multi_type_change'] = 'Changing will reset packages back to 1 package.';
 
 $_['omniva_m_error_no_oc_order'] = 'Could not find Opencart Order Information!';
 $_['omniva_m_error_no_barcodes_found'] = 'No barcode information received';
@@ -94,6 +95,10 @@ $_['omniva_m_js_no_results'] = 'No results!';
 $_['omniva_m_js_canceled'] = 'Canceled';
 $_['omniva_m_js_notify_cancel_courrier_call_failed'] = 'Request to cancel courier pickup failed';
 $_['omniva_m_js_confirm_cancel_courier_call'] = 'Are you sure you want to cancel this courier pickup call?';
+$_['omniva_m_js_package_num'] = 'Package #';
+$_['omniva_m_js_package_num_suffix'] = ' additional services';
+$_['omniva_m_js_add_package_btn'] = 'Add package';
+$_['omniva_m_js_del_package_btn'] = 'Remove';
 
 // Call Courier template
 $_['omniva_m_cc_label_called_times'] = 'You have called courier for these times:';

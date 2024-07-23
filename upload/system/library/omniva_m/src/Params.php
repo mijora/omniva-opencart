@@ -4,7 +4,7 @@ namespace Mijora\OmnivaOpencart;
 
 class Params
 {
-    const VERSION = '2.1.7';
+    const VERSION = '2.2.0';
 
     const PREFIX = 'omniva_m_';
 
@@ -14,7 +14,7 @@ class Params
     const GIT_URL = 'https://github.com/mijora/omniva-opencart/releases/latest';
     const GIT_CHECK_EVERY_HOURS = 24; // how often to check git for version. Default 24h
 
-    const TERMINAL_MAX_WEIGHT = 30; // max allowed terminal weight in kg
+    const TERMINAL_MAX_WEIGHT = 25; // max allowed terminal weight in kg
 
     const COURIER_CALL_HOUR_START = 8; // hour from wich couriers can be called
     const COURIER_CALL_HOUR_END = 19; // hour until wich (not included) couriers can be called

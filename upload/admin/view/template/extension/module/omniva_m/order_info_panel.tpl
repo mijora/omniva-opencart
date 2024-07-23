@@ -57,6 +57,13 @@
 							</div>
 						</div>
                         <?php endif; ?>
+
+                        <!-- Multiparcel/Consolidation identifier -->
+                        <input type="hidden" name="omniva_m_multi_type" value="<?php echo $omniva_m_order['multi_type']; ?>">
+
+                        <!-- Packages container -->
+                        <div class="form-group omniva_m-packages-container">
+                        </div>
                         
                         <!-- Parcel weight -->
                         <div class="form-group">
@@ -90,6 +97,7 @@
                                             <?php if ($omniva_m_order['cod']['use']) { echo 'selected'; } ?>
                                         ><?php echo $omniva_m_option_yes; ?></option>
                                     </select>
+                                    <p class="help-block"><?php echo $omniva_m_help_multi_type_change; ?></p>
                                 </div>
                                 <label class="col-sm-2 control-label" for="input-omniva_m-cod-amount"><?php echo $omniva_m_label_cod_amount; ?></label>
                                 <div class="col-sm-4">
@@ -170,3 +178,4 @@
     const OMNIVA_M_ORDER_DATA = <?php echo json_encode($omniva_m_order); ?>;
     const OMNIVA_M_INFO_PANEL_TRANSLATION = <?php echo json_encode($omniva_m_info_panel_translation); ?>;
 </script>
+<script src="view/javascript/omniva_m/order_info.js?202407231710" type="text/javascript"></script>

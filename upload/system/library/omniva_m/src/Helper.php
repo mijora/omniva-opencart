@@ -2,7 +2,8 @@
 
 namespace Mijora\OmnivaOpencart;
 
-use Mijora\Omniva\Locations\PickupPoints;
+use Mijora\Omniva\Shipment\AdditionalService\DeliveryToAnAdultService;
+use Mijora\Omniva\Shipment\AdditionalService\FragileService;
 
 class Helper
 {
@@ -432,5 +433,44 @@ class Helper
     public static function isValidCourierCallId($call_id)
     {
         return preg_match('/^[0-9A-Z]{1,50}$/i', $call_id);
+    }
+
+    public static function getAdditionalServicesList()
+    {
+        return [
+            'consolidate' => [
+                FragileService::CODE => FragileService::PARAMS_LIST,
+            ],
+            'multiparcel' => [
+                FragileService::CODE => FragileService::PARAMS_LIST,
+                DeliveryToAnAdultService::CODE => DeliveryToAnAdultService::PARAMS_LIST,
+            ],
+        ];
+    }
+
+    public static function getOmxServiceObj($code) {
+        switch ($code) {
+            case FragileService::CODE:
+                return new FragileService();
+                break;
+            case DeliveryToAnAdultService::CODE:
+                return new DeliveryToAnAdultService();
+                break;
+            
+            default:
+                return null;
+        }
+
+        return null;
+    }
+
+    public static function getMultiType($shipping_type, $is_cod)
+    {
+        if ($shipping_type === Params::SHIPPING_TYPE_COURIER && $is_cod) {
+            return 'consolidate';
+        }
+
+        // all other cases are multiparcel
+        return 'multiparcel';
     }
 }

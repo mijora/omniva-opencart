@@ -102,11 +102,15 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $order_data = new Order($id_order, $this->db);
 
-        if (isset($this->request->post['multiparcel'])) {
-            $multiparcel = (int) $this->request->post['multiparcel'];
-            if ($multiparcel > 1) {
-                $order_data->setMultiparcel($multiparcel);
+        // packages data is transmited as base64 encoded json string
+        if (isset($this->request->post['packages'])) {
+            try {
+                $packages = json_decode(base64_decode($this->request->post['packages']), true);
+            } catch (\Throwable $th) {
+                $packages = [[]]; // reset to one package
             }
+
+            $order_data->setDataValue('packages', $packages);
         }
 
         if (isset($this->request->post['weight'])) {
@@ -388,15 +392,21 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ->setReceiverName($cod_receiver)
                 ->setReferenceNumber(Helper::calculateCodReference((int) $id_order));
             if ( $receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ) {
-                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', $this->formatServicesString($service_code, $additional_services), true);
+                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', 'COD', true);
                 return ['error' => 'Additional service COD is not available in this country.'];
             }
         }
 
         $weight = $order_data['set_weight'];
 
-        if ($order_data['multiparcel'] > 1) {
-            $weight = round($weight / $order_data['multiparcel'], 3);
+        $order_packages_services = $order_data['order_data']['packages'] ?? [];
+        $package_count = count($order_packages_services);
+        if ($package_count === 0) {
+            $package_count = 1;
+        }
+
+        if ($package_count > 1) {
+            $weight = round($weight / $package_count, 3);
         }
 
         try {
@@ -438,21 +448,53 @@ class ControllerExtensionModuleOmnivaM extends Controller
             }
 
             // create packages
+            $multi_type = $order_data['multi_type'] ?? 'multiparcel';
+            if (!in_array($multi_type, ['consolidate', 'multiparcel'])) {
+                $multi_type = 'multiparcel';
+            }
+
             $packages = [];
-            for ($i = 0; $i < $order_data['multiparcel']; $i++) {
+            for ($i = 0; $i < $package_count; $i++) {
+                $package_id = $id_order;
+                // only alter package id if there is more than one package and multiparcel
+                if ($package_count > 1 && $multi_type === 'multiparcel') {
+                    $package_id .= '-' . $i;
+                }
                 $package = (new Package())
-                    ->setId($id_order)
+                    ->setId($package_id)
                     ->setService($service_code)
                     ->setMeasures($measures)
                     ->setReceiverContact($receiverContact)
                     ->setSenderContact($senderContact);
 
-                if (!empty($services_to_register)) {
-                    $package->setAdditionalServices($services_to_register);
+                // add full services list to first package or all packages if not consolidate type
+                if ($multi_type === 'multiparcel' || 0 === $i) {
+                    if (!empty($services_to_register)) {
+                        $package->setAdditionalServices($services_to_register);
+                    }
+    
+                    if ($cod) {
+                        $package->setCod($cod);
+                    }
                 }
 
-                if ($cod) {
-                    $package->setCod($cod);
+                $order_services = $order_packages_services[$i] ?? [];
+
+                foreach ($order_services as $order_service_code => $service_params) {
+                    $omx_service = Helper::getOmxServiceObj($order_service_code);
+
+                    if (!$omx_service) {
+                        continue;
+                    }
+
+                    $omx_service_params = $omx_service->getServiceParams();
+                    if ($omx_service_params) {
+                        foreach ($omx_service_params as $param_key => $param_value) {
+                            $omx_service->setParam($param_key, $service_params[$param_key] ?? null);
+                        }
+                    }
+
+                    $package->setAdditionalServiceOmx($omx_service);
                 }
 
                 $packages[] = $package;
@@ -478,7 +520,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
             $result = $shipment->registerShipment();
             if (isset($result['barcodes'])) {
-                $this->saveLabelHistory($order_data, $result['barcodes'], $this->formatServicesString($service_code, $additional_services));
+                $this->saveLabelHistory($order_data, $result['barcodes'], $this->formatServicesString($shipment));
 
                 $barcodes_string = implode(', ', $result['barcodes']);
 
@@ -488,17 +530,48 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            $this->saveLabelHistory($order_data, $e->getMessage(), $this->formatServicesString($service_code, $additional_services), true);
-            return ['error' => $e->getMessage()];
+            $this->saveLabelHistory($order_data, $e->getMessage(), '--', true);
+            
+            return [
+                'error' => $e->getMessage()
+            ];
         }
 
-        $this->saveLabelHistory($order_data, 'Omniva API responded without tracking numbers!', $this->formatServicesString($service_code, $additional_services), true);
+        $this->saveLabelHistory($order_data, 'Omniva API responded without tracking numbers!', '--', true);
         return ['error' => 'Omniva API responded without tracking numbers!'];
     }
 
-    private function formatServicesString($service, $services)
+    private function formatServicesString(Shipment $shipment)
     {
-        return $service . (!empty($services) ? ' + ' . implode(', ', $services) : '');
+        if (!$shipment) {
+            return '--';
+        }
+
+        $packages = $shipment->getPackages();
+        $packages_num = count($packages);
+
+        $services_string = '';
+        
+        foreach ($packages as $index => $package) {
+            $services = $package->getAdditionalServicesOmx();
+
+            if (!$services) {
+                continue;
+            }
+
+            if ($services_string !== '') {
+                $services_string .= '<br>';
+            }
+
+            $package_prefix = '';
+            if ($packages_num > 1) {
+                $package_prefix = '#' . ($index + 1) . ': ';
+            }
+            
+            $services_string .= $package_prefix . implode(', ', array_keys($services));
+        }
+
+        return $services_string ? $services_string : '--';
     }
 
     private function getShowReturnCode()

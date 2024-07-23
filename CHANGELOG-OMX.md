@@ -1,11 +1,16 @@
 # Changelog for OMX branch
 
-## [experimental release]
+## [2.2.0 experimental release]
 - Updated omniva-api library to dev-omx-api-rework
 - Downgraded setasign/fpdf 1.8.2
 - Updated setasign/fpdi to v2.6.0
 - Updated tecnickcom/tcpdf to 6.7.5
-- 
+- Added support for multiple packages and consolidation
+- Added support for Fragile and Delivery to adult additional services
+- Changed how label history display service codes
+- Weight class finding should now work with russian language
+- Max weight chck is now 25Kg
+- Courier calls can be canceled
 
 ## [2.1.7]
 - Improved module work in Journal 3.0.46
