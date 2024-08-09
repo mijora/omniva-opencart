@@ -140,7 +140,21 @@ class Helper
      */
     public static function downloadTerminalsJson()
     {
-        return @json_decode((string) file_get_contents(Params::LOCATIONS_URL), true);
+        $terminals = file_get_contents(Params::LOCATIONS_URL);
+        if ( ! $terminals ) {
+            $terminals = self::getContentsViaCurl(Params::LOCATIONS_URL);
+        }
+        return @json_decode((string) $terminals, true);
+    }
+
+    public static function getContentsViaCurl( $url )
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return $response;
     }
 
     public static function updateTerminals()
