@@ -4,12 +4,15 @@ namespace Mijora\Omniva\Shipment;
 
 use Mijora\Omniva\OmnivaException;
 use Mijora\Omniva\Request;
+use Mijora\Omniva\Shipment\Package\Package;
+use Mijora\Omniva\Shipment\Request\ShipmentOmxRequest;
 
 class Shipment
 {
     const CONTACT_TYPES = ['receiver' => 'receiverAddressee', 'sender' => 'returnAddressee'];
 
     const TERMINAL_SERVICES = ['PA', 'PU', 'PV', 'PP', 'CE', 'CD'];
+    const MULTIPARCELS_SERVICES = ['PK', 'QH', 'DD', 'DE', 'CI', 'LX', 'LH', 'CN', 'CE'];
 
     const ADDITIONAL_SERVICES = ['cod' => 'BP'];
 
@@ -37,7 +40,7 @@ class Shipment
         'PU'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   1,   1,   1,   1,   1,   1,   0,   1,   1,   1,   0],
         'PV'   => [   0,   0,   1,   0,   1,   0,   0,   0,   1,   1,   0,   0,   1,   1,   0,   1,   1,   1,   1,   1,   0,   1,   1,   0,   0],
         'QB'   => [   0,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0],
-        'QH'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   1,   1,   1,   1,   0,   1,   0,   0,   0,   0,   1,   0,   0,   1],
+        'QH'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   1,   1,   1,   1,   0,   1,   1,   0,   0,   0,   1,   1,   0,   1],
         'QK'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
         'QL'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   0,   0,   1,   0,   0,   1],
         'QP'   => [   0,   0,   1,   0,   1,   1,   0,   0,   1,   1,   0,   0,   0,   0,   1,   1,   1,   1,   1,   0,   1,   1,   1,   1,   1],
@@ -79,18 +82,18 @@ class Shipment
     private $partnerId;
 
     /**
-     * @var array
+     * @var Package[]
      */
-    private $packages;
+    private $packages = [];
     
     /**
      * @var Request
      */
     private $request;
     
-    public function setAuth($username, $password)
+    public function setAuth( $username, $password, $api_url = 'https://edixml.post.ee', $debug = false )
     {
-        $this->request = new Request($username, $password);
+        $this->request = new Request($username, $password, $api_url, $debug);
     }
 
     /**
@@ -105,7 +108,7 @@ class Shipment
      * @param ShipmentHeader $header
      * @return Shipment
      */
-    public function setShipmentHeader($header)
+    public function setShipmentHeader( $header )
     {
         if(!$header->getSenderCd()) {
             throw new OmnivaException("Incorrect XML data provided: Sender ID (sender_cd) is required.");
@@ -117,16 +120,17 @@ class Shipment
     /*
      * @return mixed
      */
-    public function registerShipment()
+    public function registerShipment($use_old_api = false)
     {
         if ( empty($this->request) ) {
             throw new OmnivaException("Please set username and password");
         }
-        return $this->request->call($this->toXml()->asXML());
+
+        return $use_old_api ? $this->request->call($this->toXml()->asXML()) : $this->request->registerShipmentOmx($this->getOmxShipmentRequest());
     }
 
     /**
-     * @return array
+     * @return Package[]
      */
     public function getPackages()
     {
@@ -134,12 +138,30 @@ class Shipment
     }
 
     /**
-     * @param array $packages
+     * @param Package[]|Package $packages Array of Package objects or just Package obj by itself
+     * @param bool $replace Should given packages replace currently set ones. If true replaces whole array with new values, if false will add to array
+     * 
      * @return Shipment
+     * @throws OmnivaException
      */
-    public function setPackages($packages)
+    public function setPackages($packages, $replace = false)
     {
-        $this->packages = $packages;
+        if (!is_array($packages)) {
+            $packages = [$packages];
+        }
+
+        if ($replace) {
+            $this->packages = [];
+        }
+
+        foreach ($packages as $package) {
+            if (Package::class !== get_class($package)) {
+                throw new OmnivaException("Trying to add package that is not of class Package");
+            }
+
+            $this->packages[] = $package;
+        }
+
         return $this;
     }
 
@@ -155,7 +177,7 @@ class Shipment
      * @param string $comment
      * @return Shipment
      */
-    public function setComment($comment)
+    public function setComment( $comment )
     {
         $this->comment = $comment;
         return $this;
@@ -181,7 +203,7 @@ class Shipment
      * @param bool $showReturnCodeSms
      * @return Shipment
      */
-    public function setShowReturnCodeSms($showReturnCodeSms)
+    public function setShowReturnCodeSms( $showReturnCodeSms )
     {
         $this->showReturnCodeSms = $showReturnCodeSms;
         return $this;
@@ -207,7 +229,7 @@ class Shipment
      * @param bool $showReturnCodeEmail
      * @return Shipment
      */
-    public function setShowReturnCodeEmail($showReturnCodeEmail)
+    public function setShowReturnCodeEmail( $showReturnCodeEmail )
     {
         $this->showReturnCodeEmail = $showReturnCodeEmail;
         return $this;
@@ -225,13 +247,13 @@ class Shipment
      * @param string $partnerId
      * @return Shipment
      */
-    public function setPartnerId($partnerId)
+    public function setPartnerId( $partnerId )
     {
         $this->partnerId = $partnerId;
         return $this;
     }
 
-    public static function getAdditionalServicesForShipment($shipmentServiceCode)
+    public static function getAdditionalServicesForShipment( $shipmentServiceCode )
     {
         if ( ! isset(self::ADDITIONAL_SERVICES_MAP[$shipmentServiceCode]) ) {
             return array();
@@ -247,7 +269,7 @@ class Shipment
         return $services;
     }
 
-    public static function getAdditionalServiceConditionsForShipment($shipmentServiceCode, $additionServiceCode)
+    public static function getAdditionalServiceConditionsForShipment( $shipmentServiceCode, $additionServiceCode )
     {
         if ( ! isset(self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode]) ) {
             return (object) array();
@@ -257,6 +279,28 @@ class Shipment
         }
 
         return (object) self::ADDITIONAL_SERVICES_CONDITIONS[$shipmentServiceCode][$additionServiceCode];
+    }
+
+    /**
+     * @return ShipmentOmxRequest
+     */
+    public function getOmxShipmentRequest()
+    {
+        $omxRequest = new ShipmentOmxRequest();
+
+        $header = $this->getShipmentHeader();
+        $omxRequest->customerCode = $header->getSenderCd();
+        $omxRequest->fileId = $header->getFileId();
+        
+        $packages = $this->getPackages();
+        foreach ($packages as $package) {
+            // legacy comment was on main shipment
+            $package->setComment($this->getComment());
+
+            $omxRequest->addShipment($package);
+        }
+
+        return $omxRequest;
     }
 
     public function toXml()
@@ -280,10 +324,17 @@ class Shipment
 
         // Add all packaged to item list.
         $packages = $this->getPackages();
+        $mpsPackages = $this->calcMpsPackages();
         foreach ($packages as $package) {
             $item = $itemList->addChild('item');
             if ($package->getService()) {
                 $item->addAttribute('service', $package->getService());
+            }
+            if ($package->getId() && $mpsPackages[$package->getId()] > 1) {
+                if (!in_array($package->getService(), self::MULTIPARCELS_SERVICES)) {
+                    throw new OmnivaException("Multi-parcel shipment is not available for selected service");
+                }
+                $item->addAttribute('packetUnitIdentificator', $package->getId());
             }
 
             // Additional package services.
@@ -352,59 +403,76 @@ class Shipment
             // Receiver contact data.
             $receiverAddressee = $package->getReceiverContact();
             $receiverAddresseeNode = $item->addChild('receiverAddressee');
-            $receiverAddresseeNode->addChild('person_name', $this->escape_value($receiverAddressee->getPersonName()));
+            $receiverAddresseeNode->addChild('person_name', $this->escapeValue($receiverAddressee->getPersonName()));
             if ($receiverAddressee->getPhone()) {
-                $receiverAddresseeNode->addChild('phone', $this->escape_value($receiverAddressee->getPhone()));
+                $receiverAddresseeNode->addChild('phone', $this->escapeValue($receiverAddressee->getPhone()));
             }
             if ($receiverAddressee->getMobile()) {
-                $receiverAddresseeNode->addChild('mobile', $this->escape_value($receiverAddressee->getMobile()));
+                $receiverAddresseeNode->addChild('mobile', $this->escapeValue($receiverAddressee->getMobile()));
             }
             if ($receiverAddressee->getEmail()) {
-                $receiverAddresseeNode->addChild('email', $this->escape_value($receiverAddressee->getEmail(), 'email'));
+                $receiverAddresseeNode->addChild('email', $this->escapeValue($receiverAddressee->getEmail(), 'email'));
             }
             $address = $receiverAddressee->getAddress();
             $addressNode = $receiverAddresseeNode->addChild('address');
             if($address->getPostcode()) {
-                $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
+                $addressNode->addAttribute('postcode', $this->escapeValue($address->getPostcode()));
             }
             if($address->getOffloadPostcode() && in_array($package->getService(), self::TERMINAL_SERVICES)) {
                 $addressNode->addAttribute('offloadPostcode', $address->getOffloadPostcode());
             }
             if($address->getDeliverypoint()) {
-                $addressNode->addAttribute('deliverypoint', $this->escape_value($address->getDeliverypoint()));
+                $addressNode->addAttribute('deliverypoint', $this->escapeValue($address->getDeliverypoint()));
             }
             if($address->getStreet()) {
-                $addressNode->addAttribute('street', $this->escape_value($address->getStreet()));
+                $addressNode->addAttribute('street', $this->escapeValue($address->getStreet()));
             }
-            $addressNode->addAttribute('country', $this->escape_value($address->getCountry()));
+            $addressNode->addAttribute('country', $this->escapeValue($address->getCountry()));
 
             // Sender contact data.
             $senderAddressee = $package->getSenderContact();
             $senderAddresseeNode = $item->addChild('returnAddressee');
-            $senderAddresseeNode->addChild('person_name', $this->escape_value($senderAddressee->getPersonName()));
+            $senderAddresseeNode->addChild('person_name', $this->escapeValue($senderAddressee->getPersonName()));
             if ($senderAddressee->getPhone()) {
-                $senderAddresseeNode->addChild('phone', $this->escape_value($senderAddressee->getPhone()));
+                $senderAddresseeNode->addChild('phone', $this->escapeValue($senderAddressee->getPhone()));
             }
             if ($senderAddressee->getMobile()) {
-                $senderAddresseeNode->addChild('mobile', $this->escape_value($senderAddressee->getMobile()));
+                $senderAddresseeNode->addChild('mobile', $this->escapeValue($senderAddressee->getMobile()));
             }
             if ($senderAddressee->getEmail()) {
-                $senderAddresseeNode->addChild('email', $this->escape_value($senderAddressee->getEmail(), 'email'));
+                $senderAddresseeNode->addChild('email', $this->escapeValue($senderAddressee->getEmail(), 'email'));
             }
             $address = $senderAddressee->getAddress();
             $addressNode = $senderAddresseeNode->addChild('address');
             if($address->getPostcode()) {
-                $addressNode->addAttribute('postcode', $this->escape_value($address->getPostcode()));
+                $addressNode->addAttribute('postcode', $this->escapeValue($address->getPostcode()));
             }
             if($address->getDeliverypoint()) {
                 $addressNode->addAttribute('deliverypoint', $address->getDeliverypoint());
             }
             if($address->getStreet()) {
-                $addressNode->addAttribute('street', $this->escape_value($address->getStreet()));
+                $addressNode->addAttribute('street', $this->escapeValue($address->getStreet()));
             }
-            $addressNode->addAttribute('country', $this->escape_value($address->getCountry()));
+            $addressNode->addAttribute('country', $this->escapeValue($address->getCountry()));
         }
         return $xml;
+    }
+
+    /**
+     * @return array
+     */
+    private function calcMpsPackages()
+    {
+        $mpsPackages = array();
+        $packages = $this->getPackages();
+        foreach ($packages as $package) {
+            if ( ! isset($mpsPackages[$package->getId()]) ) {
+                $mpsPackages[$package->getId()] = 0;
+            }
+            $mpsPackages[$package->getId()]++;
+        }
+
+        return $mpsPackages;
     }
 
     /**
@@ -412,7 +480,7 @@ class Shipment
      * @param string $type
      * @return string
      */
-    private function escape_value($value, $type = '')
+    private function escapeValue( $value, $type = '' )
     {
         switch ($type) {
             case 'email':

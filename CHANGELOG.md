@@ -1,7 +1,17 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.0]
 - Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
+- Updated omniva-api library to 1.1.0
+- Updated setasign/fpdf 1.8.6
+- Updated setasign/fpdi to v2.6.0
+- Updated tecnickcom/tcpdf to 6.7.5
+- Added support for multiple packages and consolidation
+- Added support for Fragile and Delivery to adult additional services
+- Changed how label history display service codes
+- Weight class finding should now work with russian language
+- Max weight chck is now 25Kg
+- Courier calls can be canceled
 
 ## [2.1.7]
 - Improved module work in Journal 3.0.46

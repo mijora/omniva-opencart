@@ -165,3 +165,11 @@ a.omniva_m-btn-order-action * {
     height: 5em;
     border-width: 0.5em;
 }
+
+#omniva_m-panel .omniva_m-packages-container [data-package] {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(230, 92, 0, 0.1);
+    padding: 10px;
+    margin-bottom: 1rem;
+}

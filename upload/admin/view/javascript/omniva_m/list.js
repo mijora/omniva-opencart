@@ -120,7 +120,9 @@ const OMNIVA_M_LIST = {
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close omniva_m-btn-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close omniva_m-btn-close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                         <h4 class="modal-title">Omniva</h4>
                     </div>
                     
@@ -141,7 +143,7 @@ const OMNIVA_M_LIST = {
         fragment.innerHTML = html;
 
         fragment.addEventListener('click', function (e) {
-            if (e.target.matches('.omniva_m-btn-close') || e.target.matches('.omniva_m-btn-no')) {
+            if (e.target.matches('.omniva_m-btn-close') || e.target.matches('.omniva_m-btn-no') || e.target.matches('.modal.omniva_m-modal')) {
                 e.preventDefault();
                 console.log('confirm: NO');
                 if (typeof OMNIVA_M_LIST.confirm_action_no === 'function') {
@@ -249,7 +251,37 @@ const OMNIVA_M_LIST = {
             OMNIVA_M_LIST.showWorking(false, '.btn-omniva_m.omniva_m-call-courier');
         };
 
-        OMNIVA_M_LIST.confirm(OMNIVA_M_DATA.trans.confirm_call_courier + OMNIVA_M_DATA.call_courier_address);
+        let called = '';
+
+        fetch(OMNIVA_M_DATA.ajax_url + '&action=checkCourier', {
+            method: 'GET',
+        })
+        .then(res => res.json())
+        .then(json => {
+            console.log(json);
+
+            if (typeof json.data === 'undefined') {
+                console.log(OMNIVA_M_DATA.trans.alert_bad_response);
+                return;
+            }
+
+            if (typeof json.data.error !== 'undefined') {
+                console.log(OMNIVA_M_DATA.trans.alert_response_error + json.data.error);
+                return;
+            }
+
+            if (json.data.html) {
+                    called = json.data.html;
+                return;
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        })
+        .finally(() => {
+            OMNIVA_M_LIST.confirm(OMNIVA_M_DATA.trans.confirm_call_courier + OMNIVA_M_DATA.call_courier_address + called);
+        });
+
     },
 
     printLabelsAction: function () {

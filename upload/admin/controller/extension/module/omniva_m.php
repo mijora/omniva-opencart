@@ -14,6 +14,7 @@ use Mijora\Omniva\Shipment\ShipmentHeader;
 use Mijora\Omniva\Shipment\Label;
 use Mijora\Omniva\Shipment\Manifest;
 use Mijora\Omniva\Shipment\Order as ApiOrder;
+use Mijora\OmnivaOpencart\CourierCall;
 use Mijora\OmnivaOpencart\Helper;
 use Mijora\OmnivaOpencart\Params;
 use Mijora\OmnivaOpencart\Order;
@@ -72,6 +73,16 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 echo json_encode(['data' => $this->callCourier()]);
                 exit();
                 break;
+            case 'checkCourier':
+                header('Content-Type: application/json');
+                echo json_encode(['data' => $this->checkCourier()]);
+                exit();
+                break;
+            case 'cancelCourierCall':
+                header('Content-Type: application/json');
+                echo json_encode(['data' => $this->cancelCourierCall()]);
+                exit();
+                break;
             case 'getManifestOrders':
                 header('Content-Type: application/json');
                 echo json_encode(['data' => $this->getManifestOrders()]);
@@ -91,11 +102,15 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $order_data = new Order($id_order, $this->db);
 
-        if (isset($this->request->post['multiparcel'])) {
-            $multiparcel = (int) $this->request->post['multiparcel'];
-            if ($multiparcel > 1) {
-                $order_data->setMultiparcel($multiparcel);
+        // packages data is transmited as base64 encoded json string
+        if (isset($this->request->post['packages'])) {
+            try {
+                $packages = json_decode(base64_decode($this->request->post['packages']), true);
+            } catch (\Throwable $th) {
+                $packages = [[]]; // reset to one package
             }
+
+            $order_data->setDataValue('packages', $packages);
         }
 
         if (isset($this->request->post['weight'])) {
@@ -125,7 +140,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
     private function callCourier()
     {
-        $this->load->language('extension/module/omniva_m');
+        $this->loadOmnivaTranslations('extension/module/omniva_m');
 
         $username = $this->config->get(Params::PREFIX . 'api_user');
         $password = $this->config->get(Params::PREFIX . 'api_pass');
@@ -137,20 +152,146 @@ class ControllerExtensionModuleOmnivaM extends Controller
             ];
         }
 
-        $sender_contact = $this->getSenderContact();
+        try {
+            $sender_contact = $this->getSenderContact();
 
-        $destination_country = $sender_contact->getAddress()->getCountry();
-        if ($origin === Params::CONTRACT_ORIGIN_ESTONIA) {
-            $destination_country = 'estonia'; // api expects this way for CI service, finland for CE service, anything else for QH
+            $destination_country = $sender_contact->getAddress()->getCountry();
+            if ($origin === Params::CONTRACT_ORIGIN_ESTONIA) {
+                $destination_country = 'estonia'; // api expects this way for CI service, finland for CE service, anything else for QH
+            }
+
+            $call = new CallCourier();
+            $call->setDestinationCountry($destination_country);
+            $call->setAuth($username, $password);
+            $call->setSender($sender_contact);
+
+            $start = isset($this->request->post['omniva_m_cc_start']) ? $this->request->post['omniva_m_cc_start'] : '8:00';
+            $end = isset($this->request->post['omniva_m_cc_end']) ? $this->request->post['omniva_m_cc_end'] : '18:00';
+            $parcels = isset($this->request->post['omniva_m_cc_parcels']) ? (int) $this->request->post['omniva_m_cc_parcels'] : 1;
+
+            if (!Helper::isValidTimeString($start) || !Helper::isValidTimeString($end)) {
+                return ['error' => $this->language->get(Params::PREFIX . 'error_bad_time_format')];
+            }
+
+            if ($parcels <= 0) {
+                $parcels = 1;
+            }
+
+            $call->setParcelsNumber($parcels);
+            $call->setEarliestPickupTime($start);
+            $call->setLatestPickupTime($end);
+
+            $response = $call->callCourier();
+
+            // save call info
+            if ($response) {
+                CourierCall::saveCourierCall($this->db, $call);
+            }
+
+            return $response
+                ? ('ID: ' . $call->getResponseCallNumber() . ' ' . Helper::convertUtcTimeToLocal($call->getResponseTimeStart()) . ' - ' . Helper::convertUtcTimeToLocal($call->getResponseTimeEnd()))
+                : $response;
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    private function cancelCourierCall()
+    {
+        $this->loadOmnivaTranslations('extension/module/omniva_m');
+
+        $username = $this->config->get(Params::PREFIX . 'api_user');
+        $password = $this->config->get(Params::PREFIX . 'api_pass');
+        $origin = $this->config->get(Params::PREFIX . 'api_contract_origin');
+
+        if (!in_array($origin, Params::CONTRACT_AVAILABLE_ORIGINS)) {
+            return [
+                'error' => $this->language->get(Params::PREFIX . 'error_missing_origin')
+            ];
         }
 
-        $call = new CallCourier();
-        $call->setDestinationCountry($destination_country);
-        $call->setAuth($username, $password);
-        $call->setSender($sender_contact);
+        $call_id = isset($this->request->post['omniva_m_cc_id']) ? $this->request->post['omniva_m_cc_id'] : null;
+
+        if (!$call_id || !Helper::isValidCourierCallId($call_id)) {
+            return [
+                'error' => $this->language->get(Params::PREFIX . 'error_cc_bad_id')
+            ];
+        }
 
         try {
-            return $call->callCourier();
+
+            $call = new CallCourier();
+            $call->setAuth($username, $password);
+
+            $response = $call->cancelCourierOmx($call_id);
+
+            $response_body = $call->getResponseBody();
+
+            $result_code = isset($response_body['resultCode']) ? $response_body['resultCode'] : '';
+            $error_code = isset($response_body['errorDetailsCode']) ? $response_body['errorDetailsCode'] : '';
+            $trans_key = Params::PREFIX . 'error_cc_' . $error_code;
+            $translate_error_code = $this->language->get($trans_key);
+
+            // IF we get error that its already cancelled force it as correct cancelation so it is saved localy
+            if ($error_code === 'COURIER_ORDER_ALREADY_CANCELLED') {
+                $response = true;
+            }
+
+            // save call info
+            if ($response) {
+                CourierCall::cancelCall($this->db, $call_id);
+            }
+
+            if (!$response && strtoupper($result_code) === 'ERROR') {
+                return [
+                    'error' => $translate_error_code !== $trans_key ? $translate_error_code : $error_code
+                ];
+            }
+
+            return [
+                'canceled' => $response,
+            ];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    private function checkCourier()
+    {
+        $omniva_m_translations = $this->loadOmnivaTranslations('extension/module/omniva_m');
+
+        $origin = $this->config->get(Params::PREFIX . 'api_contract_origin');
+
+        if (!in_array($origin, Params::CONTRACT_AVAILABLE_ORIGINS)) {
+            return [
+                'error' => $this->language->get(Params::PREFIX . 'error_missing_origin')
+            ];
+        }
+
+        try {
+
+            $response = CourierCall::getActiveCalls($this->db);
+
+            $times = [];
+            for ($i = Params::COURIER_CALL_HOUR_START; $i < Params::COURIER_CALL_HOUR_END; $i++) {
+                $time = str_pad($i, 2, '0', STR_PAD_LEFT) . ':00';
+                $times[] = $time;
+            }
+
+            $data = [
+                'callTimes' => $response ? implode('<br>' . PHP_EOL, $response) : [],
+                'timeRangeStart' => array_slice($times, 0, -1),
+                'timeRangeEnd' => array_slice($times, 1),
+                'timeHourStart' => date('H', strtotime(' +1 hour ')) . ':00',
+                'timeHourEnd' => '18:00',
+            ];
+
+            $data = array_merge($data, $omniva_m_translations);
+
+            return [
+                'html' => $this->load->view('extension/module/omniva_m/call_courier', $data),
+                'test' => date('H', strtotime("H +1 hours")) . ':00',
+            ];
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -251,15 +392,21 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ->setReceiverName($cod_receiver)
                 ->setReferenceNumber(Helper::calculateCodReference((int) $id_order));
             if ( $receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ) {
-                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', $this->formatServicesString($service_code, $additional_services), true);
+                $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', 'COD', true);
                 return ['error' => 'Additional service COD is not available in this country.'];
             }
         }
 
         $weight = $order_data['set_weight'];
 
-        if ($order_data['multiparcel'] > 1) {
-            $weight = round($weight / $order_data['multiparcel'], 3);
+        $order_packages_services = $order_data['order_data']['packages'] ?? [];
+        $package_count = count($order_packages_services);
+        if ($package_count === 0) {
+            $package_count = 1;
+        }
+
+        if ($package_count > 1) {
+            $weight = round($weight / $package_count, 3);
         }
 
         try {
@@ -301,21 +448,53 @@ class ControllerExtensionModuleOmnivaM extends Controller
             }
 
             // create packages
+            $multi_type = $order_data['multi_type'] ?? 'multiparcel';
+            if (!in_array($multi_type, ['consolidate', 'multiparcel'])) {
+                $multi_type = 'multiparcel';
+            }
+
             $packages = [];
-            for ($i = 0; $i < $order_data['multiparcel']; $i++) {
+            for ($i = 0; $i < $package_count; $i++) {
+                $package_id = $id_order;
+                // only alter package id if there is more than one package and multiparcel
+                if ($package_count > 1 && $multi_type === 'multiparcel') {
+                    $package_id .= '-' . $i;
+                }
                 $package = (new Package())
-                    ->setId($id_order)
+                    ->setId($package_id)
                     ->setService($service_code)
                     ->setMeasures($measures)
                     ->setReceiverContact($receiverContact)
                     ->setSenderContact($senderContact);
 
-                if (!empty($services_to_register)) {
-                    $package->setAdditionalServices($services_to_register);
+                // add full services list to first package or all packages if not consolidate type
+                if ($multi_type === 'multiparcel' || 0 === $i) {
+                    if (!empty($services_to_register)) {
+                        $package->setAdditionalServices($services_to_register);
+                    }
+    
+                    if ($cod) {
+                        $package->setCod($cod);
+                    }
                 }
 
-                if ($cod) {
-                    $package->setCod($cod);
+                $order_services = $order_packages_services[$i] ?? [];
+
+                foreach ($order_services as $order_service_code => $service_params) {
+                    $omx_service = Helper::getOmxServiceObj($order_service_code);
+
+                    if (!$omx_service) {
+                        continue;
+                    }
+
+                    $omx_service_params = $omx_service->getServiceParams();
+                    if ($omx_service_params) {
+                        foreach ($omx_service_params as $param_key => $param_value) {
+                            $omx_service->setParam($param_key, $service_params[$param_key] ?? null);
+                        }
+                    }
+
+                    $package->setAdditionalServiceOmx($omx_service);
                 }
 
                 $packages[] = $package;
@@ -341,7 +520,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
             $result = $shipment->registerShipment();
             if (isset($result['barcodes'])) {
-                $this->saveLabelHistory($order_data, $result['barcodes'], $this->formatServicesString($service_code, $additional_services));
+                $this->saveLabelHistory($order_data, $result['barcodes'], $this->formatServicesString($shipment));
 
                 $barcodes_string = implode(', ', $result['barcodes']);
 
@@ -351,17 +530,48 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ];
             }
         } catch (\Exception $e) {
-            $this->saveLabelHistory($order_data, $e->getMessage(), $this->formatServicesString($service_code, $additional_services), true);
-            return ['error' => $e->getMessage()];
+            $this->saveLabelHistory($order_data, $e->getMessage(), '--', true);
+            
+            return [
+                'error' => $e->getMessage()
+            ];
         }
 
-        $this->saveLabelHistory($order_data, 'Omniva API responded without tracking numbers!', $this->formatServicesString($service_code, $additional_services), true);
+        $this->saveLabelHistory($order_data, 'Omniva API responded without tracking numbers!', '--', true);
         return ['error' => 'Omniva API responded without tracking numbers!'];
     }
 
-    private function formatServicesString($service, $services)
+    private function formatServicesString(Shipment $shipment)
     {
-        return $service . (!empty($services) ? ' + ' . implode(', ', $services) : '');
+        if (!$shipment) {
+            return '--';
+        }
+
+        $packages = $shipment->getPackages();
+        $packages_num = count($packages);
+
+        $services_string = '';
+        
+        foreach ($packages as $index => $package) {
+            $services = $package->getAdditionalServicesOmx();
+
+            if (!$services) {
+                continue;
+            }
+
+            if ($services_string !== '') {
+                $services_string .= '<br>';
+            }
+
+            $package_prefix = '';
+            if ($packages_num > 1) {
+                $package_prefix = '#' . ($index + 1) . ': ';
+            }
+            
+            $services_string .= $package_prefix . implode(', ', array_keys($services));
+        }
+
+        return $services_string ? $services_string : '--';
     }
 
     private function getShowReturnCode()
@@ -513,6 +723,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             foreach ($barcodes as $barcode) {
                 $order = new ApiOrder();
                 $order->setTracking($barcode);
+                $order->setOrderNumber($order_id);
                 $order->setQuantity(1);
                 $order->setWeight($parcel_weight);
                 $order->setReceiver($receiver_address);
@@ -571,6 +782,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             foreach ($barcodes as $barcode) {
                 $order = new ApiOrder();
                 $order->setTracking($barcode);
+                $order->setOrderNumber($order_id);
                 $order->setQuantity(1);
                 $order->setWeight($parcel_weight);
                 $order->setReceiver($receiver_address);
@@ -691,7 +903,37 @@ class ControllerExtensionModuleOmnivaM extends Controller
             'trans' => $this->model_extension_module_omniva_m_order->getJsTranslations(),
         ];
 
+        $data['now'] = time();
+
         $this->response->setOutput($this->load->view('extension/module/omniva_m/manifest', $data));
+    }
+
+    public function courierCallList()
+    {
+        $this->load->language('extension/module/omniva_m');
+
+        $data = [];
+
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['footer'] = $this->load->controller('common/footer');
+
+
+        $this->load->model('extension/module/omniva_m/order');
+
+        $omniva_m_translation = $this->model_extension_module_omniva_m_order->loadAdminModuleTranslations();
+        $data = array_merge($data, $omniva_m_translation);
+
+        $data['omniva_m_data'] = [
+            'ajax_url' => 'index.php?route=extension/module/omniva_m/ajax&' . $this->getUserToken(),
+            'trans' => $this->model_extension_module_omniva_m_order->getJsTranslations(),
+        ];
+
+        $data['callTimes'] = CourierCall::getActiveCalls($this->db);
+
+        $data['now'] = time();
+
+        $this->response->setOutput($this->load->view('extension/module/omniva_m/courier_call_list', $data));
     }
 
     protected function getUserToken()
