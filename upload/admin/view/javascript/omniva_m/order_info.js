@@ -1,13 +1,41 @@
 const OMNIVA_M_ORDER_INFO = {
 
     refreshNowBtnHtml: `<a href="#" class="btn btn-default omniva_m-refresh-now-btn">${OMNIVA_M_INFO_PANEL_TRANSLATION.refresh_now_btn}</a>`,
+    addPackageBtnHtml: `<div class="col-sm-12 text-center omniva_m-add-package-btn-container"><button class="btn btn-default omniva_m-add-package-btn">${OMNIVA_M_INFO_PANEL_TRANSLATION.add_package_btn}</button></div>`,
+    packagesContainer: null,
 
     init: function () {
         this.addOrderInformationPanel();
+        this.generatePackages();
+        this.showLastDelPackageBtn();
         this.registerListeners();
     },
 
     registerListeners: function () {
+        document.addEventListener('change', function (e) {
+            if (e.target.matches('select[name="omniva_m_cod_use"]')) {
+                e.preventDefault();
+
+                const multiTypeValue = document.querySelector(`input[name="omniva_m_multi_type"]`);
+                if (multiTypeValue) {
+                    multiTypeValue.value = 'multiparcel';
+                    if (
+                        OMNIVA_M_ORDER_DATA.shipping_type !== OMNIVA_M_ORDER_DATA.shipping_types.terminal
+                        && e.target.value == '1'
+                    ) {
+                        multiTypeValue.value = 'consolidate';
+                    }
+                }
+                OMNIVA_M_ORDER_INFO.generatePackages();
+                const packages = OMNIVA_M_ORDER_INFO.packagesContainer.querySelectorAll('[data-package]');
+                for (let index = 2; index <= packages.length; index++) {
+                    OMNIVA_M_ORDER_INFO.delPackage(index);
+                }
+
+                return;
+            }
+        });
+
         document.addEventListener('click', function (e) {
             if (e.target.matches('.omniva_m-register-label-btn')) {
                 e.preventDefault();
@@ -46,6 +74,20 @@ const OMNIVA_M_ORDER_INFO = {
                 window.location.reload();
                 return;
             }
+
+            if (e.target.matches('.omniva_m-add-package-btn')) {
+                e.preventDefault();
+                OMNIVA_M_ORDER_INFO.addPackage();
+                OMNIVA_M_ORDER_INFO.showLastDelPackageBtn();
+                return;
+            }
+
+            if (e.target.matches('.omniva_m-del-package-btn')) {
+                e.preventDefault();
+                OMNIVA_M_ORDER_INFO.delPackage(e.target.dataset.packageDel);
+                OMNIVA_M_ORDER_INFO.showLastDelPackageBtn();
+                return;
+            }
         });
     },
 
@@ -75,8 +117,8 @@ const OMNIVA_M_ORDER_INFO = {
         const omnivaPanel = document.querySelector('#omniva_m-panel');
         const weight = omnivaPanel.querySelector('#input-omniva_m-total-weight').value;
         const order_id = omnivaPanel.querySelector('input[name="omniva_m_order_id"]').value;
-        // const data = {};
-        data = new FormData();
+
+        const data = new FormData();
         data.omniva_m_has_data = false;
         data.append('order_id', order_id);
 
@@ -107,20 +149,34 @@ const OMNIVA_M_ORDER_INFO = {
 
         // const data = { weight, cod_amount, cod_use, order_id };
 
-        if (omnivaPanel.querySelector('#input-omniva_m-multiparcel')) {
-            const multiparcel = omnivaPanel.querySelector('#input-omniva_m-multiparcel').value;
-            if (OMNIVA_M_ORDER_DATA.multiparcel != multiparcel) {
+        const packages = omnivaPanel.querySelectorAll('[data-package]');
+        if (packages) {
+            if (OMNIVA_M_ORDER_DATA.multiparcel != packages.length) {
                 data.omniva_m_has_data = true;
-                data.append('multiparcel', multiparcel);
+                data.append('multiparcel', packages.length);
             }
+
+            let packagesData = [];
+            packages.forEach((el, index) => {
+                let services = {};
+                el.querySelectorAll('input[data-service]:checked').forEach(checkbox => {
+                    const serviceKey = checkbox.dataset.service;
+                    services[checkbox.dataset.service] = {};
+                    if (OMNIVA_M_ORDER_DATA.add_services[serviceKey]) {
+                        OMNIVA_M_ORDER_DATA.add_services[serviceKey].forEach(serviceParam => {
+                            const serviceParamValue = el.querySelector(`[data-service-value="${serviceKey}_${serviceParam}"]`);
+                            if (serviceParamValue) {
+                                services[checkbox.dataset.service][serviceParam] = serviceParamValue.value;
+                            }
+                        });
+                    }
+                });
+                packagesData.push(services);
+            });
+
+            data.append('packages', btoa(JSON.stringify(packagesData)));
         }
 
-        console.log(data);
-
-        // if (Object.keys(data).length < 1) {
-        //     console.log('No changes');
-        //     return;
-        // }
         if (!data.omniva_m_has_data) {
             this.showResponseInfo(OMNIVA_M_INFO_PANEL_TRANSLATION.no_data_changes, 'success');
             return;
@@ -248,7 +304,147 @@ const OMNIVA_M_ORDER_INFO = {
         link.click(); // This will download the data file
 
         link.remove();
-    }
+    },
+
+    generatePackages: function() {
+        OMNIVA_M_ORDER_INFO.packagesContainer = document.querySelector('.omniva_m-packages-container');
+        
+        if (!OMNIVA_M_ORDER_INFO.packagesContainer) {
+            return;
+        }
+
+        OMNIVA_M_ORDER_INFO.packagesContainer.innerHTML = OMNIVA_M_ORDER_INFO.addPackageBtnHtml;
+        
+        const codUsage = document.querySelector(`select[name="omniva_m_cod_use"]`)?.value;
+
+        if (OMNIVA_M_ORDER_DATA.shipping_type === OMNIVA_M_ORDER_DATA.shipping_types.terminal && codUsage == '1') {
+            OMNIVA_M_ORDER_INFO.packagesContainer.innerHTML = '';
+        }
+
+        const btnContainer = OMNIVA_M_ORDER_INFO.packagesContainer.querySelector('.omniva_m-add-package-btn-container');
+
+        OMNIVA_M_ORDER_INFO.packagesContainer.insertBefore(OMNIVA_M_ORDER_INFO.generatePacakgeHtml(1), btnContainer);
+
+        if (OMNIVA_M_ORDER_DATA.order_data && OMNIVA_M_ORDER_DATA.order_data.packages) {
+            OMNIVA_M_ORDER_DATA.order_data.packages.forEach((data, index) => {
+                if (index > 0) {
+                    OMNIVA_M_ORDER_INFO.packagesContainer.insertBefore(OMNIVA_M_ORDER_INFO.generatePacakgeHtml(index + 1), btnContainer);
+                }
+
+                if (!data) {
+                    return;
+                }
+
+                const package = OMNIVA_M_ORDER_INFO.packagesContainer.querySelector(`[data-package="${index + 1}"]`);
+
+                Object.keys(data).forEach(key => {
+                    const checkbox = package.querySelector(`input[data-service="${key}"]`);
+                    if (!checkbox) {
+                        return;
+                    }
+
+                    checkbox.checked = true;
+
+                    if (data[key]) {
+                        Object.keys(data[key]).forEach(param => {
+                            const paramInput = package.querySelector(`input[data-service-value="${key}_${param}"]`);
+                            if (paramInput) {
+                                paramInput.value = data[key][param];
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    },
+
+    addPackage: function() {
+        if (!OMNIVA_M_ORDER_INFO.packagesContainer) {
+            return;
+        }
+
+        const btnContainer = OMNIVA_M_ORDER_INFO.packagesContainer.querySelector('.omniva_m-add-package-btn-container');
+
+        const packages = OMNIVA_M_ORDER_INFO.packagesContainer.querySelectorAll('[data-package]');
+
+        OMNIVA_M_ORDER_INFO.packagesContainer.insertBefore(OMNIVA_M_ORDER_INFO.generatePacakgeHtml(packages.length + 1), btnContainer);
+    },
+
+    delPackage: function(index) {
+        if (!OMNIVA_M_ORDER_INFO.packagesContainer) {
+            return;
+        }
+
+        const targetPackage = OMNIVA_M_ORDER_INFO.packagesContainer.querySelector(`[data-package="${index}"]`);
+
+        if (!targetPackage) {
+            return;
+        }
+
+        targetPackage.remove();
+    },
+
+    showLastDelPackageBtn: function() {
+        if (!OMNIVA_M_ORDER_INFO.packagesContainer) {
+            return;
+        }
+
+        const delButtons = OMNIVA_M_ORDER_INFO.packagesContainer.querySelectorAll('.omniva_m-del-package-btn');
+
+        const lastIndex = delButtons.length - 1;
+        delButtons.forEach((el, index) => {
+            el.style.display = index === lastIndex ? 'inline-block' : 'none';
+        });
+    },
+
+    generatePacakgeHtml: function(index) {
+        const fragment = new DocumentFragment();
+
+        const span = document.createElement("span");
+        span.dataset.package = index;
+
+        let multiType = document.querySelector('input[name="omniva_m_multi_type"]')?.value;
+
+        // first package and when set as multiparcel show all available services
+        if (index === 1 || !multiType) {
+            multiType = 'multiparcel';
+        }
+
+        let services = '';
+        Object.keys(OMNIVA_M_ORDER_DATA.add_services[multiType]).forEach((key) => {
+            let input_value = '';
+            if (OMNIVA_M_ORDER_DATA.add_services[multiType][key]) {
+                OMNIVA_M_ORDER_DATA.add_services[multiType][key].forEach(value => {
+                    input_value += `<label>${value}: <input type="text" data-service-value="${key}_${value}"></input></label>`;
+                });
+            }
+            services += `
+            <div class="col-sm-12 checkbox">
+                <label>
+                    <input type="checkbox" data-service="${key}"> ${key}
+                </label>
+                ${input_value}
+            </div>
+            `
+        });
+
+        let del_button = '';
+        if (index > 1) {
+            del_button = `<button class="btn btn-warning omniva_m-del-package-btn" data-package-del="${index}">${OMNIVA_M_INFO_PANEL_TRANSLATION.del_package_btn}</button>`;
+        }
+
+        span.innerHTML = `
+            <h4 class="col-sm-12 text-center">
+                ${OMNIVA_M_INFO_PANEL_TRANSLATION.package_num}${index}${OMNIVA_M_INFO_PANEL_TRANSLATION.package_num_suffix}
+                ${del_button}
+            </h4>
+            ${services}
+        `;
+
+        fragment.append(span);
+
+        return fragment;
+    },
 }
 
 document.addEventListener('DOMContentLoaded', function () {

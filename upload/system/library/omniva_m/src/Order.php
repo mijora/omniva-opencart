@@ -85,6 +85,12 @@ class Order
         return $this;
     }
 
+    public function setDataValue($key, $value)
+    {
+        $this->data[$key] = $value;
+        return $this;
+    }
+
     public function save()
     {
         return self::saveOrderDataStatic($this->id_order, $this->data, $this->db);

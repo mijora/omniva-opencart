@@ -19,7 +19,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
     {
         $sql_array = [
             "
-            CREATE TABLE `" . DB_PREFIX . "omniva_m_price` (
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omniva_m_price` (
                 `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `country_code` varchar(2) DEFAULT NULL,
                 `price_data` text,
@@ -28,7 +28,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
             ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
             ",
             "
-            CREATE TABLE `" . DB_PREFIX . "omniva_m_label_history` (
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omniva_m_label_history` (
                 `id_label_history` int(11) unsigned NOT NULL AUTO_INCREMENT,
                 `order_id` int(11) unsigned DEFAULT NULL,
                 `is_error` tinyint(1) DEFAULT NULL,
@@ -40,7 +40,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
             ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4;
             ",
             "
-            CREATE TABLE `" . DB_PREFIX . "omniva_m_order_data` (
+            CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "omniva_m_order_data` (
                 `order_id` int(11) unsigned NOT NULL,
                 `data` text,
                 `manifest_id` int(11) unsigned DEFAULT NULL,
@@ -73,6 +73,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
             "DROP TABLE IF EXISTS `" . DB_PREFIX . "omniva_m_price`",
             "DROP TABLE IF EXISTS `" . DB_PREFIX . "omniva_m_label_history`",
             "DROP TABLE IF EXISTS `" . DB_PREFIX . "omniva_m_order_data`",
+            "DROP TABLE IF EXISTS `" . DB_PREFIX . "omniva_m_courier_call`", // created by CourierCall class
         ];
 
         foreach ($sql_array as $sql) {

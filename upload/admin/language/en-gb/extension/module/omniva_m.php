@@ -52,7 +52,8 @@ $_['omniva_m_tooltip_call_courier'] = 'Call Courier';
 $_['omniva_m_btn_filter'] = 'Filter';
 
 // General messages
-$_['omniva_m_help_weight_multiparcel'] = 'If multiparcel is used, weight will be divided by multiparcel number.';
+$_['omniva_m_help_weight_multiparcel'] = 'If more than one package is assigned, weight will be divided by package number.';
+$_['omniva_m_help_multi_type_change'] = 'Changing will reset packages back to 1 package.';
 
 $_['omniva_m_error_no_oc_order'] = 'Could not find Opencart Order Information!';
 $_['omniva_m_error_no_barcodes_found'] = 'No barcode information received';
@@ -91,3 +92,26 @@ $_['omniva_m_js_alert_bad_response'] = 'Bad response from server!';
 $_['omniva_m_js_notify_courrier_called'] = 'Request for courier pickup sent';
 $_['omniva_m_js_notify_courrier_call_failed'] = 'Request for courier pickup failed';
 $_['omniva_m_js_no_results'] = 'No results!';
+$_['omniva_m_js_canceled'] = 'Canceled';
+$_['omniva_m_js_notify_cancel_courrier_call_failed'] = 'Request to cancel courier pickup failed';
+$_['omniva_m_js_confirm_cancel_courier_call'] = 'Are you sure you want to cancel this courier pickup call?';
+$_['omniva_m_js_package_num'] = 'Package #';
+$_['omniva_m_js_package_num_suffix'] = ' additional services';
+$_['omniva_m_js_add_package_btn'] = 'Add package';
+$_['omniva_m_js_del_package_btn'] = 'Remove';
+
+// Call Courier template
+$_['omniva_m_cc_label_called_times'] = 'You have called courier for these times:';
+$_['omniva_m_cc_available_time'] = 'Time for pickup';
+$_['omniva_m_cc_help_available_time'] = 'If selected time allready passed it will be moved automatically to next day';
+$_['omniva_m_cc_parcels'] = 'Parcel Count';
+$_['omniva_m_cc_help_parcels'] = 'How many parcels is planned to send';
+$_['omniva_m_error_bad_time_format'] = 'Bad time format!';
+$_['omniva_m_title_courier_calls'] = 'Called Omniva couriers';
+$_['omniva_m_column_call_id'] = 'ID';
+$_['omniva_m_column_timerange'] = 'Pickup time range';
+$_['omniva_m_courier_calls_no_results'] = 'There is no active courier calls';
+$_['omniva_m_help_courier_calls_list'] = 'Only active calls and with future pickup end date is shown.';
+$_['omniva_m_courier_call_list_action_tootip_cancel'] = 'Cancel courier call';
+$_['omniva_m_error_cc_bad_id'] = 'Bad call ID';
+$_['omniva_m_error_cc_COURIER_ORDER_ALREADY_CANCELLED'] = 'This courier call already canceled';

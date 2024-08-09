@@ -42,21 +42,12 @@
                         <div class="omniva_m_alert alert-warning"><?php echo $omniva_m_warning_order_data_changed; ?></div>
                         <?php endif; ?>
 
-                        <!-- Multiparcel only for Courier -->
-                        <?php if ($omniva_m_order['shipping_types']['courier'] == $omniva_m_order['shipping_type']): ?>
-                        <div class="form-group">
-							<label class="col-sm-2 control-label" for="input-omniva_m-multiparcel"><?php echo $omniva_m_label_multiparcel; ?></label>
-							<div class="col-sm-10">
-                                <select name="omniva_m_multiparcel" id="input-omniva_m-multiparcel" class="form-control">
-                                    <?php for ($amount = 1; $amount < 6; $amount++): ?>
-                                        <option value="<?php echo $amount; ?>" 
-                                            <?php if ($amount == $omniva_m_order['multiparcel']) { echo "selected"; } ?>
-                                        ><?php echo $amount; ?></option>
-                                    <?php endfor; ?>
-                                </select>
-							</div>
-						</div>
-                        <?php endif; ?>
+                        <!-- Multiparcel/Consolidation identifier -->
+                        <input type="hidden" name="omniva_m_multi_type" value="<?php echo $omniva_m_order['multi_type']; ?>">
+
+                        <!-- Packages container -->
+                        <div class="form-group omniva_m-packages-container">
+                        </div>
                         
                         <!-- Parcel weight -->
                         <div class="form-group">
@@ -90,6 +81,7 @@
                                             <?php if ($omniva_m_order['cod']['use']) { echo 'selected'; } ?>
                                         ><?php echo $omniva_m_option_yes; ?></option>
                                     </select>
+                                    <p class="help-block"><?php echo $omniva_m_help_multi_type_change; ?></p>
                                 </div>
                                 <label class="col-sm-2 control-label" for="input-omniva_m-cod-amount"><?php echo $omniva_m_label_cod_amount; ?></label>
                                 <div class="col-sm-4">
@@ -170,3 +162,4 @@
     const OMNIVA_M_ORDER_DATA = <?php echo json_encode($omniva_m_order); ?>;
     const OMNIVA_M_INFO_PANEL_TRANSLATION = <?php echo json_encode($omniva_m_info_panel_translation); ?>;
 </script>
+<script src="view/javascript/omniva_m/order_info.js?202407231710" type="text/javascript"></script>

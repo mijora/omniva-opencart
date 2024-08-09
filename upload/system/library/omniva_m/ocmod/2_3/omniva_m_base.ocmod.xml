@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <modification>
     <name>Omniva Base Mod for OC2.3</name>
-    <version>0.0.9</version>
+    <version>1.0.2</version>
     <author>Mijora</author>
     <link>https://www.mijora.lt</link>
     <code>omniva_m_base</code>
@@ -27,6 +27,14 @@
                     $omniva_m[] = array(
                         'name'     => $this->language->get('omniva_m_menu_manifest'),
                         'href'     => $this->url->link('extension/module/omniva_m/manifest', 'token=' . $this->session->data['token'], true),
+                        'children' => []
+                    );
+                }
+
+                if ($this->user->hasPermission('access', 'extension/shipping/omniva_m')) {
+                    $omniva_m[] = array(
+                        'name'     => $this->language->get('omniva_m_menu_called_couriers'),
+                        'href'     => $this->url->link('extension/module/omniva_m/courierCallList', 'token=' . $this->session->data['token'], true),
                         'children' => []
                     );
                 }
@@ -85,10 +93,9 @@
                     $this->load->model('extension/module/omniva_m/order');
                     
                     $omniva_m_translation = $this->model_extension_module_omniva_m_order->loadAdminModuleTranslations();
-					$data = array_merge($data, $omniva_m_translation);
-                    $data['omniva_m_order'] = $this->model_extension_module_omniva_m_order->loadOrder($order_id);
-                    $data['omniva_m_label_history'] = $this->model_extension_module_omniva_m_order->loadOrderHistory($order_id);
-                    $data['omniva_m_info_panel_translation'] = $this->model_extension_module_omniva_m_order->loadInfoPanelTranslation();
+                    $omniva_m_info_panel_data = $this->model_extension_module_omniva_m_order->loadOrderInfoPanelData($order_id);
+
+                    $data = array_merge($data, $omniva_m_translation, $omniva_m_info_panel_data);
 
                     $data['omniva_m_panel'] = $this->load->view('extension/module/omniva_m/order_info_panel', $data);
                 }
@@ -160,7 +167,6 @@
                 <!-- OMNIVA_M -->
                 <?php if ($omniva_m_panel): ?>
                     <?php echo $omniva_m_panel; ?>
-                    <script src="view/javascript/omniva_m/order_info.js?20220310" type="text/javascript"></script>
                 <?php endif; ?>
                 <!-- OMNIVA_M END -->
             ]]></add>

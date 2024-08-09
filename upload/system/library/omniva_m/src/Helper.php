@@ -2,7 +2,8 @@
 
 namespace Mijora\OmnivaOpencart;
 
-use Mijora\Omniva\Locations\PickupPoints;
+use Mijora\Omniva\Shipment\AdditionalService\DeliveryToAnAdultService;
+use Mijora\Omniva\Shipment\AdditionalService\FragileService;
 
 class Helper
 {
@@ -139,7 +140,21 @@ class Helper
      */
     public static function downloadTerminalsJson()
     {
-        return @json_decode((string) file_get_contents(Params::LOCATIONS_URL), true);
+        $terminals = file_get_contents(Params::LOCATIONS_URL);
+        if ( ! $terminals ) {
+            $terminals = self::getContentsViaCurl(Params::LOCATIONS_URL);
+        }
+        return @json_decode((string) $terminals, true);
+    }
+
+    public static function getContentsViaCurl( $url )
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        return $response;
     }
 
     public static function updateTerminals()
@@ -305,9 +320,9 @@ class Helper
 
         if ($receive_type === Params::SHIPPING_TYPE_TERMINAL) {
             // prevent sending to finland parcel machine if sender is from LT
-            if ($deliver_country_iso_code === 'FI' && $sender_country_iso_code === 'LT') {
-                return null;
-            }
+            // if ($deliver_country_iso_code === 'FI' && $sender_country_iso_code === 'LT') {
+            //     return null;
+            // }
 
             // Finland parcel machines are Matkahuolto, and requires CD service
             if ($deliver_country_iso_code === 'FI') {
@@ -422,5 +437,62 @@ class Helper
         $array = explode(',', $string);
 
         return array_map('trim', $array);
+    }
+
+    public static function isValidTimeString($string)
+    {
+        return preg_match('/^[0-9]{2}:[0-9]{2}$/', $string);
+    }
+
+    public static function isValidCourierCallId($call_id)
+    {
+        return preg_match('/^[0-9A-Z]{1,50}$/i', $call_id);
+    }
+
+    public static function getAdditionalServicesList()
+    {
+        return [
+            'consolidate' => [
+                FragileService::CODE => FragileService::PARAMS_LIST,
+            ],
+            'multiparcel' => [
+                FragileService::CODE => FragileService::PARAMS_LIST,
+                DeliveryToAnAdultService::CODE => DeliveryToAnAdultService::PARAMS_LIST,
+            ],
+        ];
+    }
+
+    public static function getOmxServiceObj($code) {
+        switch ($code) {
+            case FragileService::CODE:
+                return new FragileService();
+                break;
+            case DeliveryToAnAdultService::CODE:
+                return new DeliveryToAnAdultService();
+                break;
+            
+            default:
+                return null;
+        }
+
+        return null;
+    }
+
+    public static function getMultiType($shipping_type, $is_cod)
+    {
+        if ($shipping_type === Params::SHIPPING_TYPE_COURIER && $is_cod) {
+            return 'consolidate';
+        }
+
+        // all other cases are multiparcel
+        return 'multiparcel';
+    }
+
+    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s')
+    {
+        if (is_numeric($time)) { // convert timestamp to string
+            $time = date($output_format, $time);
+        }
+        return date($output_format, strtotime($time . ' UTC'));
     }
 }

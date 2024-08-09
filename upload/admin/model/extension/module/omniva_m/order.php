@@ -22,7 +22,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 'courier' => Params::SHIPPING_TYPE_COURIER,
                 'terminal' => Params::SHIPPING_TYPE_TERMINAL
             ],
-            'multiparcel' => 1,
+            'multi_type' => 'multiparcel',
             'cod' => [
                 'enabled' => false,
                 'use' => 0,
@@ -31,6 +31,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 'order_use' => false // identifies if OC order uses COD (works only if settings are correct)
             ],
             'order_data' => false, // any chages that differs from original order information for omniva
+            'add_services' => Helper::getAdditionalServicesList(), // additional services list to use for generating packages
             'label_history' => [
                 'total' => 0,
                 'last_error' => false,
@@ -83,11 +84,11 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             $cod_options = [];
         }
         if (in_array($oc_order['payment_code'], $cod_options)) {
-            $data['cod']['use'] = 1;
+            $data['cod']['use'] = $cod_enabled ? 1 : 0;
             $data['cod']['order_use'] = true;
 
             if ($order_data->getData('cod_use') !== null) {
-                $data['cod']['use'] = (int) $order_data->getData('cod_use');
+                $data['cod']['use'] = $cod_enabled ? (int) $order_data->getData('cod_use') : 0;
             }
         }
 
@@ -107,6 +108,9 @@ class ModelExtensionModuleOmnivaMOrder extends Model
 
             $data['terminal_overweight'] = $data['set_weight'] > Params::TERMINAL_MAX_WEIGHT;
         }
+
+        // determine multi_type
+        $data['multi_type'] = Helper::getMultiType($data['shipping_type'], $data['cod']['use']);
 
         // data for history tab
         $data['label_history']['total'] = $this->getOrderHistoryTotal($id_order);
@@ -323,6 +327,11 @@ class ModelExtensionModuleOmnivaMOrder extends Model
 
             //$decoded_barcodes = json_decode((string) $row['barcodes'], true);
             $backward_barcodes_string = str_replace([' ','[',']','"'], '', $row['barcodes']);
+
+            if (empty($backward_barcodes_string)) {
+                continue;
+            }
+
             $decoded_barcodes = explode(',', $backward_barcodes_string);
 
             if (empty($decoded_barcodes)) {
@@ -481,7 +490,8 @@ class ModelExtensionModuleOmnivaMOrder extends Model
 
         $weight_class = $this->db->query("
             SELECT * FROM " . DB_PREFIX . "weight_class_description
-            WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' AND unit = 'kg'
+            WHERE language_id = '" . (int)$this->config->get('config_language_id') . "' AND unit IN ('kg', 'кг')
+            LIMIT 1
         ");
 
         $kg_class_id = $weight_class->row['weight_class_id'];
@@ -597,5 +607,16 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         }
 
         return $translations;
+    }
+
+    public function loadOrderInfoPanelData($order_id)
+    {
+        $order_data = $this->loadOrder($order_id);
+
+        return [
+            'omniva_m_order' => $order_data,
+            'omniva_m_label_history' => $this->loadOrderHistory($order_id),
+            'omniva_m_info_panel_translation' => $this->loadInfoPanelTranslation(),
+        ];
     }
 }
