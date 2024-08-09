@@ -473,4 +473,12 @@ class Helper
         // all other cases are multiparcel
         return 'multiparcel';
     }
+
+    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s')
+    {
+        if (is_numeric($time)) { // convert timestamp to string
+            $time = date($output_format, $time);
+        }
+        return date($output_format, strtotime($time . ' UTC'));
+    }
 }
