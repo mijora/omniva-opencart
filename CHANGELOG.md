@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.2.0]
+- Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
+- The module is adapted to work with Omniva OMX
+- Updated omniva-api library to 1.1.0
+
 ## [2.1.7]
 - Improved module work in Journal 3.0.46
 - Allow FI terminals for LV senders

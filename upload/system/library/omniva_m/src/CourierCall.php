@@ -74,7 +74,7 @@ class CourierCall
 
         $list = [];
         foreach ($result->rows as $row) {
-            $list[$row['call_id']] = $row['date_from'] . ' - ' . $row['date_to'] . ' UTC';
+            $list[$row['call_id']] = Helper::convertUtcTimeToLocal($row['date_from'], 'Y-m-d H:i') . ' - ' . Helper::convertUtcTimeToLocal($row['date_to'], 'Y-m-d H:i');
         }
 
         return $list;

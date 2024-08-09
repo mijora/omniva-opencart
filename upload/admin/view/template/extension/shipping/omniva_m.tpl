@@ -14,7 +14,7 @@
                 endforeach;
                 ?>
             </ul>
-            <span class="omniva-version">v<?php echo $omniva_m_version; ?> - OMX</span>
+            <span class="omniva-version">v<?php echo $omniva_m_version; ?></span>
         </div>
     </div>
 
