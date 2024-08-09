@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41b12ed3fa537a036fa01257c427da10",
+    "content-hash": "08b12d97a961d88540e9d5296be6f7c1",
     "packages": [
         {
             "name": "mijora/omniva-api",
-            "version": "dev-omx-api-rework",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                "reference": "ad4424af29fb02031d69d7cfbcf5a640d4cb4361"
+                "reference": "4452637367fa7a898404f7101d3d4ecf86e138d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/ad4424af29fb02031d69d7cfbcf5a640d4cb4361",
-                "reference": "ad4424af29fb02031d69d7cfbcf5a640d4cb4361",
+                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/4452637367fa7a898404f7101d3d4ecf86e138d7",
+                "reference": "4452637367fa7a898404f7101d3d4ecf86e138d7",
                 "shasum": ""
             },
             "require": {
@@ -48,25 +48,25 @@
                 }
             ],
             "description": "Omniva API wrapper",
-            "support": {
-                "issues": "https://github.com/omniva-baltic/omniva-api-lib/issues",
-                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/omx-api-rework"
-            },
-            "time": "2024-07-15T09:33:26+00:00"
+            "time": "2024-08-06T10:59:24+00:00"
         },
         {
             "name": "setasign/fpdf",
-            "version": "1.8.2",
+            "version": "1.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Setasign/FPDF.git",
-                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a"
+                "reference": "0838e0ee4925716fcbbc50ad9e1799b5edfae0a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Setasign/FPDF/zipball/d77904018090c17dc9f3ab6e944679a7a47e710a",
-                "reference": "d77904018090c17dc9f3ab6e944679a7a47e710a",
+                "url": "https://api.github.com/repos/Setasign/FPDF/zipball/0838e0ee4925716fcbbc50ad9e1799b5edfae0a0",
+                "reference": "0838e0ee4925716fcbbc50ad9e1799b5edfae0a0",
                 "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "ext-zlib": "*"
             },
             "type": "library",
             "autoload": {
@@ -91,10 +91,7 @@
                 "fpdf",
                 "pdf"
             ],
-            "support": {
-                "source": "https://github.com/Setasign/FPDF/tree/1.8.2"
-            },
-            "time": "2019-12-08T10:32:10+00:00"
+            "time": "2023-06-26T14:44:25+00:00"
         },
         {
             "name": "setasign/fpdi",
@@ -244,12 +241,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mijora/omniva-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "1.1.0"
 }
