@@ -723,6 +723,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             foreach ($barcodes as $barcode) {
                 $order = new ApiOrder();
                 $order->setTracking($barcode);
+                $order->setOrderNumber($order_id);
                 $order->setQuantity(1);
                 $order->setWeight($parcel_weight);
                 $order->setReceiver($receiver_address);
@@ -781,6 +782,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             foreach ($barcodes as $barcode) {
                 $order = new ApiOrder();
                 $order->setTracking($barcode);
+                $order->setOrderNumber($order_id);
                 $order->setQuantity(1);
                 $order->setWeight($parcel_weight);
                 $order->setReceiver($receiver_address);
