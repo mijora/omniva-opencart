@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '189f9985db21c7dab9f508837cae9bb0d266c907',
+        'reference' => '2f2d6aa8651105452535d3a20933dbe62567c024',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '189f9985db21c7dab9f508837cae9bb0d266c907',
+            'reference' => '2f2d6aa8651105452535d3a20933dbe62567c024',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'mijora/omniva-api' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'da5b99635f181d25f0db5bf1ea63bd908c276403',
+            'reference' => 'd25bcb58994fb8e988d81344a4bc051cd148a27a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mijora/omniva-api',
             'aliases' => array(

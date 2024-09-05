@@ -7,12 +7,12 @@
                         "source": {
                                 "type": "git",
                                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                                "reference": "da5b99635f181d25f0db5bf1ea63bd908c276403"
+                                "reference": "d25bcb58994fb8e988d81344a4bc051cd148a27a"
                         },
                         "dist": {
                                 "type": "zip",
-                                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/da5b99635f181d25f0db5bf1ea63bd908c276403",
-                                "reference": "da5b99635f181d25f0db5bf1ea63bd908c276403",
+                                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/d25bcb58994fb8e988d81344a4bc051cd148a27a",
+                                "reference": "d25bcb58994fb8e988d81344a4bc051cd148a27a",
                                 "shasum": ""
                         },
                         "require": {
@@ -20,7 +20,7 @@
                                 "setasign/fpdi": "^2.3",
                                 "tecnickcom/tcpdf": "^6.3"
                         },
-                        "time": "2024-08-22T14:11:10+00:00",
+                        "time": "2024-09-04T13:58:09+00:00",
                         "default-branch": true,
                         "type": "library",
                         "installation-source": "dist",
