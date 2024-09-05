@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Calling courier window now displays timezone (either set in opencart or server)
+
 ## [2.2.0]
 - Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
 - Updated omniva-api library to 1.1.0

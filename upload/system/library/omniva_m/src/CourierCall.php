@@ -57,7 +57,7 @@ class CourierCall
         ");
     }
 
-    public static function getActiveCalls($db)
+    public static function getActiveCalls($db, $config)
     {
         self::checkTable($db);
 
@@ -72,9 +72,17 @@ class CourierCall
             return [];
         }
 
+        $timezone = $config->get('config_timezone');
+        if (!$timezone) {
+            $timezone = date_default_timezone_get();
+        }
+
+        $timezone = 'UTC';
+
         $list = [];
         foreach ($result->rows as $row) {
-            $list[$row['call_id']] = Helper::convertUtcTimeToLocal($row['date_from'], 'Y-m-d H:i') . ' - ' . Helper::convertUtcTimeToLocal($row['date_to'], 'Y-m-d H:i');
+            $list[$row['call_id']] = Helper::convertUtcTimeToLocal($row['date_from'], 'Y-m-d H:i', $timezone) 
+                . ' - ' . Helper::convertUtcTimeToLocal($row['date_to'], 'Y-m-d H:i', $timezone);
         }
 
         return $list;

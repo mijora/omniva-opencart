@@ -2,6 +2,8 @@
 
 namespace Mijora\OmnivaOpencart;
 
+use DateTime;
+use DateTimeZone;
 use Mijora\Omniva\Shipment\AdditionalService\DeliveryToAnAdultService;
 use Mijora\Omniva\Shipment\AdditionalService\FragileService;
 
@@ -141,13 +143,13 @@ class Helper
     public static function downloadTerminalsJson()
     {
         $terminals = file_get_contents(Params::LOCATIONS_URL);
-        if ( ! $terminals ) {
+        if (! $terminals) {
             $terminals = self::getContentsViaCurl(Params::LOCATIONS_URL);
         }
         return @json_decode((string) $terminals, true);
     }
 
-    public static function getContentsViaCurl( $url )
+    public static function getContentsViaCurl($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -462,7 +464,8 @@ class Helper
         ];
     }
 
-    public static function getOmxServiceObj($code) {
+    public static function getOmxServiceObj($code)
+    {
         switch ($code) {
             case FragileService::CODE:
                 return new FragileService();
@@ -470,7 +473,7 @@ class Helper
             case DeliveryToAnAdultService::CODE:
                 return new DeliveryToAnAdultService();
                 break;
-            
+
             default:
                 return null;
         }
@@ -488,11 +491,27 @@ class Helper
         return 'multiparcel';
     }
 
-    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s')
+    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s', $local_timezone = null)
     {
-        if (is_numeric($time)) { // convert timestamp to string
-            $time = date($output_format, $time);
+        $utc_timezone = new DateTimeZone('UTC');
+        $datetime = new DateTime(
+            (is_numeric($time) ? 'now' : $time),
+            $utc_timezone
+        );
+
+        // given time is numeric means its a timestamp and not date time string
+        if (is_numeric($time)) {
+            $datetime->setTimestamp($time);
         }
-        return date($output_format, strtotime($time . ' UTC'));
+
+        try {
+            $timezone = $local_timezone ? new DateTimeZone($local_timezone) : new DateTimeZone(date_default_timezone_get());
+        } catch (\Throwable $th) {
+            $timezone = new DateTimeZone(date_default_timezone_get());
+        }
+
+        $datetime->setTimezone($timezone);
+
+        return $datetime->format($output_format);
     }
 }
