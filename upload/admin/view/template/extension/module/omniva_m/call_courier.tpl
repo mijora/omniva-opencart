@@ -18,6 +18,7 @@
                     }
                     ?>
                 </select>
+                <span><?php echo $timezone; ?></span>
             </div>
             <p class="help-block"><?php echo $omniva_m_cc_help_available_time; ?></p>
         </div>

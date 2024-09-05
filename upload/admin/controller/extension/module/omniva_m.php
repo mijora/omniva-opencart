@@ -177,7 +177,13 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 $parcels = 1;
             }
 
+            $timezone = $this->config->get('config_timezone');
+            if (!$timezone) {
+                $timezone = date_default_timezone_get();
+            }
+
             $call->setParcelsNumber($parcels);
+            $call->setTimezone($timezone);
             $call->setEarliestPickupTime($start);
             $call->setLatestPickupTime($end);
 
@@ -189,7 +195,11 @@ class ControllerExtensionModuleOmnivaM extends Controller
             }
 
             return $response
-                ? ('ID: ' . $call->getResponseCallNumber() . ' ' . Helper::convertUtcTimeToLocal($call->getResponseTimeStart()) . ' - ' . Helper::convertUtcTimeToLocal($call->getResponseTimeEnd()))
+                ? (
+                    'ID: ' . $call->getResponseCallNumber()
+                    . ' ' . Helper::convertUtcTimeToLocal($call->getResponseTimeStart(), 'Y-m-d H:i', $timezone)
+                    . ' - ' . Helper::convertUtcTimeToLocal($call->getResponseTimeEnd(), 'Y-m-d H:i', $timezone)
+                )
                 : $response;
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
@@ -268,9 +278,14 @@ class ControllerExtensionModuleOmnivaM extends Controller
             ];
         }
 
+        $timezone = $this->config->get('config_timezone');
+        if (!$timezone) {
+            $timezone = date_default_timezone_get();
+        }
+
         try {
 
-            $response = CourierCall::getActiveCalls($this->db);
+            $response = CourierCall::getActiveCalls($this->db, $this->config);
 
             $times = [];
             for ($i = Params::COURIER_CALL_HOUR_START; $i < Params::COURIER_CALL_HOUR_END; $i++) {
@@ -284,6 +299,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 'timeRangeEnd' => array_slice($times, 1),
                 'timeHourStart' => date('H', strtotime(' +1 hour ')) . ':00',
                 'timeHourEnd' => '18:00',
+                'timezone' => $timezone,
             ];
 
             $data = array_merge($data, $omniva_m_translations);
@@ -391,7 +407,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 ->setBankAccount($cod_iban)
                 ->setReceiverName($cod_receiver)
                 ->setReferenceNumber(Helper::calculateCodReference((int) $id_order));
-            if ( $receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ) {
+            if ($receiver_country == 'FI' && $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
                 $this->saveLabelHistory($order_data, 'Additional service COD is not available in this country.', 'COD', true);
                 return ['error' => 'Additional service COD is not available in this country.'];
             }
@@ -472,7 +488,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                     if (!empty($services_to_register)) {
                         $package->setAdditionalServices($services_to_register);
                     }
-    
+
                     if ($cod) {
                         $package->setCod($cod);
                     }
@@ -531,7 +547,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             }
         } catch (\Exception $e) {
             $this->saveLabelHistory($order_data, $e->getMessage(), '--', true);
-            
+
             return [
                 'error' => $e->getMessage()
             ];
@@ -551,7 +567,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
         $packages_num = count($packages);
 
         $services_string = '';
-        
+
         foreach ($packages as $index => $package) {
             $services = $package->getAdditionalServicesOmx();
 
@@ -567,7 +583,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             if ($packages_num > 1) {
                 $package_prefix = '#' . ($index + 1) . ': ';
             }
-            
+
             $services_string .= $package_prefix . implode(', ', array_keys($services));
         }
 
@@ -929,7 +945,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             'trans' => $this->model_extension_module_omniva_m_order->getJsTranslations(),
         ];
 
-        $data['callTimes'] = CourierCall::getActiveCalls($this->db);
+        $data['callTimes'] = CourierCall::getActiveCalls($this->db, $this->config);
 
         $data['now'] = time();
 
