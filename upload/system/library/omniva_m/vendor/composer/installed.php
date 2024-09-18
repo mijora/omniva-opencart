@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2f2d6aa8651105452535d3a20933dbe62567c024',
+        'reference' => '79080992b4ff1ea17bcda1bce99ea7f78bc7ac5f',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2f2d6aa8651105452535d3a20933dbe62567c024',
+            'reference' => '79080992b4ff1ea17bcda1bce99ea7f78bc7ac5f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -22,7 +22,7 @@
         'mijora/omniva-api' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'd25bcb58994fb8e988d81344a4bc051cd148a27a',
+            'reference' => '10e803ca4f142573e65ba4fd47820c7c2a14edb9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mijora/omniva-api',
             'aliases' => array(
@@ -40,9 +40,9 @@
             'dev_requirement' => false,
         ),
         'setasign/fpdi' => array(
-            'pretty_version' => 'v2.6.0',
-            'version' => '2.6.0.0',
-            'reference' => 'a6db878129ec6c7e141316ee71872923e7f1b7ad',
+            'pretty_version' => 'v2.6.1',
+            'version' => '2.6.1.0',
+            'reference' => '09a816004fcee9ed3405bd164147e3fdbb79a56f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../setasign/fpdi',
             'aliases' => array(),
