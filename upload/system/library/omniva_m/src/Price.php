@@ -140,4 +140,38 @@ class Price
 
         return $result_string;
     }
+
+    /**
+     * Parses price string, returned prices array from range has range key as array key
+     * 
+     * @param string $price_string 
+     * @param bool $return_array should returned result be array even if bot a price range given
+     * 
+     * @return float|float[] If not range string will return value, if range then array of prices, -1 if invalid range
+     */
+    public static function parsePriceString($price_string, $return_array = false)
+    {
+        if (!self::isPriceRangeFormat($price_string)) {
+            $price_string = $price_string === '' ? -1.0 : $price_string;
+            return $return_array ? [(float) $price_string] : (float) $price_string;
+        }
+
+        $ranges = explode(';', $price_string);
+        if (!is_array($ranges)) {
+            return $return_array ? [-1.0] : -1.0;
+        }
+
+        $result = [];
+        foreach ($ranges as $range) {
+            $parts = explode(':', trim($range));
+            // check it is valid weight cost pair, skip otherwise
+            if (!is_array($parts) || count($parts) != 2) {
+                continue;
+            }
+            
+            $result[$parts[0]] = (float) trim($parts[1]);
+        }
+
+        return $result ? $result : ($return_array ? [-1.0] : -1.0);
+    }
 }

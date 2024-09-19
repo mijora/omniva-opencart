@@ -611,6 +611,8 @@ class ModelExtensionModuleOmnivaMOrder extends Model
 
     public function loadOrderInfoPanelData($order_id)
     {
+        Helper::sendPowerBi($this->db, $this->config);
+
         $order_data = $this->loadOrder($order_id);
 
         return [

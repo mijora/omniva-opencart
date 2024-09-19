@@ -469,6 +469,11 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 $multi_type = 'multiparcel';
             }
 
+            //control return code showing
+            $show_return_code = $this->getShowReturnCode();
+            // $shipment->setShowReturnCodeSms($show_return_code->sms);
+            // $shipment->setShowReturnCodeEmail($show_return_code->email);
+
             $packages = [];
             for ($i = 0; $i < $package_count; $i++) {
                 $package_id = $id_order;
@@ -481,6 +486,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
                     ->setService($service_code)
                     ->setMeasures($measures)
                     ->setReceiverContact($receiverContact)
+                    ->setReturnAllowed($show_return_code->sms || $show_return_code->email)
                     ->setSenderContact($senderContact);
 
                 // add full services list to first package or all packages if not consolidate type
@@ -525,11 +531,6 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $shipment->setShipmentHeader($shipmentHeader);
 
             $shipment->setPackages($packages);
-
-            //control return code showing
-            $show_return_code = $this->getShowReturnCode();
-            $shipment->setShowReturnCodeSms($show_return_code->sms);
-            $shipment->setShowReturnCodeEmail($show_return_code->email);
 
             //set auth data
             $shipment->setAuth($username, $password);

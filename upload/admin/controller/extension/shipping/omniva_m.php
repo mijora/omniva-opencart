@@ -86,6 +86,8 @@ class ControllerExtensionShippingOmnivaM extends Controller
 
     public function index()
     {
+        Helper::sendPowerBi($this->db, $this->config);
+
         $omniva_m_translations = $this->load->language('extension/shipping/omniva_m');
 
         $this->document->setTitle($this->language->get('heading_title'));

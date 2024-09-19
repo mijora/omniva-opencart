@@ -218,7 +218,7 @@
                         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form-omniva_m-api" class="form-horizontal">
                             <input type="hidden" name="api_settings_update">
                             
-                            <div class="form-group">
+                            <div class="form-group hidden">
                                 <label class="col-sm-4 control-label" for="input-api-url"><?php echo $omniva_m_label_api_url; ?></label>
                                 <div class="col-sm-8">
                                     <input type="text" name="omniva_m_api_url" value="<?php echo $omniva_m_api_url; ?>" placeholder="<?php echo $omniva_m_placeholder_api_url; ?>" id="input-api-url" class="form-control" disabled />
