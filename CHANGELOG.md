@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 - Calling courier window now displays timezone (either set in opencart or server)
+- Updated setasign/fpdi to v2.6.1
+- Preparations for PowerBi
 
 ## [2.2.0]
 - Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
