@@ -28,6 +28,8 @@ class ModelExtensionShippingOmnivaM extends Model
 
     public function getQuote($address)
     {
+        Helper::sendPowerBi($this->db, $this->config);
+
         $this->load->language('extension/shipping/omniva_m');
 
         $setting_prefix = '';
