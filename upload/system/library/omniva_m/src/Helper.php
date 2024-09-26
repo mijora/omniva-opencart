@@ -533,7 +533,7 @@ class Helper
 
             $last_timestamp = $config->get(Params::PREFIX . 'powerbi_timestamp');
             if (!$last_timestamp) {
-                $last_timestamp = '1970-01-01 00:00:00';
+                $last_timestamp = '1990-01-01 00:00:00';
             }
 
             $datetime = new DateTime($last_timestamp);
@@ -552,7 +552,7 @@ class Helper
             $query = $db->query("SELECT COUNT(*) as totalToCourier FROM `" . DB_PREFIX . "order` WHERE `shipping_code` LIKE 'omniva_m.courier%' AND date_added >= '" . $last_timestamp . "'");
             $totalCourier = $query->num_rows ? $query->row['totalToCourier'] : 0;
 
-            $opb = (new OmnivaPowerBi('user', 'pass'))
+            $opb = (new OmnivaPowerBi($username))
                 ->setPlatform('OpenCart v' . VERSION)
                 ->setPluginVersion(Params::VERSION)
                 ->setSenderCountry($config->get(Params::PREFIX . 'sender_country'))
