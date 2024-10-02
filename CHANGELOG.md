@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.1]
+- Calling courier window now displays timezone (either set in opencart or server)
+- Updated omniva-api library to 1.2.0
+- Updated setasign/fpdi to v2.6.1
+- Preparations for PowerBi
+- Hidden API URL field as it is no longer needed
+- Fixed return code parameter in OMX
+
 ## [2.2.0]
 - Added getting list of terminals via CURL if it fails to get them via file_get_contents() function
 - Updated omniva-api library to 1.1.0

@@ -16,6 +16,7 @@
                     <option value="{{ hour }}" {% if timeHourEnd == hour %} selected {% endif %}>{{ hour }}</option>
                     {% endfor %}
                 </select>
+                <span>{{ timezone }}</span>
             </div>
             <p class="help-block">{{ omniva_m_cc_help_available_time }}</p>
         </div>

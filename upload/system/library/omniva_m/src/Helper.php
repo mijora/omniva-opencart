@@ -2,6 +2,9 @@
 
 namespace Mijora\OmnivaOpencart;
 
+use DateTime;
+use DateTimeZone;
+use Mijora\Omniva\PowerBi\OmnivaPowerBi;
 use Mijora\Omniva\Shipment\AdditionalService\DeliveryToAnAdultService;
 use Mijora\Omniva\Shipment\AdditionalService\FragileService;
 
@@ -141,13 +144,13 @@ class Helper
     public static function downloadTerminalsJson()
     {
         $terminals = file_get_contents(Params::LOCATIONS_URL);
-        if ( ! $terminals ) {
+        if (! $terminals) {
             $terminals = self::getContentsViaCurl(Params::LOCATIONS_URL);
         }
         return @json_decode((string) $terminals, true);
     }
 
-    public static function getContentsViaCurl( $url )
+    public static function getContentsViaCurl($url)
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -462,7 +465,8 @@ class Helper
         ];
     }
 
-    public static function getOmxServiceObj($code) {
+    public static function getOmxServiceObj($code)
+    {
         switch ($code) {
             case FragileService::CODE:
                 return new FragileService();
@@ -470,7 +474,7 @@ class Helper
             case DeliveryToAnAdultService::CODE:
                 return new DeliveryToAnAdultService();
                 break;
-            
+
             default:
                 return null;
         }
@@ -488,11 +492,112 @@ class Helper
         return 'multiparcel';
     }
 
-    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s')
+    public static function convertUtcTimeToLocal($time, $output_format = 'Y-m-d H:i:s', $local_timezone = null)
     {
-        if (is_numeric($time)) { // convert timestamp to string
-            $time = date($output_format, $time);
+        $utc_timezone = new DateTimeZone('UTC');
+        $datetime = new DateTime(
+            (is_numeric($time) ? 'now' : $time),
+            $utc_timezone
+        );
+
+        // given time is numeric means its a timestamp and not date time string
+        if (is_numeric($time)) {
+            $datetime->setTimestamp($time);
         }
-        return date($output_format, strtotime($time . ' UTC'));
+
+        try {
+            $timezone = $local_timezone ? new DateTimeZone($local_timezone) : new DateTimeZone(date_default_timezone_get());
+        } catch (\Throwable $th) {
+            $timezone = new DateTimeZone(date_default_timezone_get());
+        }
+
+        $datetime->setTimezone($timezone);
+
+        return $datetime->format($output_format);
+    }
+
+    public static function sendPowerBi($db, $config)
+    {
+        try {
+            // if PowerBi isnt setup in api-lib yet, do not trigger info send
+            if (!OmnivaPowerBi::ENDPOINT) {
+                return;
+            }
+
+            $username = $config->get(Params::PREFIX . 'api_user');
+            $password = $config->get(Params::PREFIX . 'api_pass');
+
+            if (!$username || !$password) {
+                return;
+            }
+
+            $last_timestamp = $config->get(Params::PREFIX . 'powerbi_timestamp');
+            if (!$last_timestamp) {
+                $last_timestamp = '1990-01-01 00:00:00';
+            }
+
+            $datetime = new DateTime($last_timestamp);
+            $current_datetime = new DateTime();
+            $days_since_last_send = $datetime->diff($current_datetime)->format("%a");
+
+            $last_check = $config->get(Params::PREFIX . 'powerbi_check');
+            // send once per 30d if failed try to send again no more than once per 24h
+            if ((int) $days_since_last_send < 30 || ($last_check && ((int) $last_check + (24 * 60 * 60)) > time())) {
+                return;
+            }
+
+            $query = $db->query("SELECT COUNT(*) as totalToTerminal FROM `" . DB_PREFIX . "order` WHERE `shipping_code` LIKE 'omniva_m.terminal_%' AND date_added >= '" . $last_timestamp . "'");
+            $totalTerminal = $query->num_rows ? $query->row['totalToTerminal'] : 0;
+
+            $query = $db->query("SELECT COUNT(*) as totalToCourier FROM `" . DB_PREFIX . "order` WHERE `shipping_code` LIKE 'omniva_m.courier%' AND date_added >= '" . $last_timestamp . "'");
+            $totalCourier = $query->num_rows ? $query->row['totalToCourier'] : 0;
+
+            $opb = (new OmnivaPowerBi($username))
+                ->setPlatform('OpenCart v' . VERSION)
+                ->setPluginVersion(Params::VERSION)
+                ->setSenderCountry($config->get(Params::PREFIX . 'sender_country'))
+                ->setSenderName($config->get(Params::PREFIX . 'sender_name'))
+                ->setOrderCountCourier($totalCourier)
+                ->setOrderCountTerminal($totalTerminal)
+                ->setDateTimeStamp($last_timestamp);
+
+            $priceData = Price::getPrices(($db));
+
+            if (is_array($priceData)) {
+                foreach ($priceData as $priceCountry) {
+                    $data = json_decode($priceCountry['price_data'], true);
+
+                    // terminal price
+                    $price_array = Price::parsePriceString($data['terminal_price'], true);
+                    $price_array = array_filter($price_array, function ($item) {
+                        return $item >= 0.0;
+                    });
+                    if ($price_array) {
+                        $opb->setTerminalPrice($data['country'], min($price_array), max($price_array));
+                    }
+
+                    // courier price
+                    $price_array = Price::parsePriceString($data['courier_price'], true);
+                    $price_array = array_filter($price_array, function ($item) {
+                        return $item >= 0.0;
+                    });
+                    if ($price_array) {
+                        $opb->setCourierPrice($data['country'], min($price_array), max($price_array));
+                    }
+                }
+            }
+
+            $settings = [
+                Params::PREFIX . 'powerbi_check' => time()
+            ];
+
+            if ($opb->send()) {
+                $settings[Params::PREFIX . 'powerbi_timestamp'] = date('Y-m-d H:i:s');
+            }
+
+            self::saveSettings($db, $settings);
+        } catch (\Throwable $th) {
+            // silence is golden
+        }
     }
 }
