@@ -159,6 +159,11 @@ a.omniva_m-btn-order-action * {
     display: var(--omniva_m-show-add-price-btn);
 }
 
+#created-prices table td:first-of-type,
+#created-prices table td:last-of-type {
+    width: 150px;
+}
+
 /* Panel inside Order info */
 #omniva_m-panel {
     position: relative;
