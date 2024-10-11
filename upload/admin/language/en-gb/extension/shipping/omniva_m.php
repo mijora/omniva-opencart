@@ -72,6 +72,8 @@ $_['omniva_m_option_addto_dont'] = 'Dont add';
 // General Tab
 $_['omniva_m_title_edit'] = 'General settings';
 $_['omniva_m_label_tax_class'] = 'Tax class';
+$_['omniva_m_label_length_class'] = 'Length class (cm)';
+$_['omniva_m_label_weight_class'] = 'Weight class (kg)';
 $_['omniva_m_label_geo_zone'] = 'Geo zone';
 $_['omniva_m_option_all_zones'] = 'All Zones';
 $_['omniva_m_label_status'] = 'Module status';
@@ -84,6 +86,8 @@ $_['omniva_m_label_disable_cart_weight_check'] = 'Disable cart weight check for 
 $_['omniva_m_help_disable_cart_weight_check'] = 'If set to YES disables total cart weight check (max 25kg) for terminals';
 $_['omniva_m_label_use_simple_terminal_check'] = 'Use simple terminal fit check';
 $_['omniva_m_help_use_simple_terminal_check'] = 'Checks if cart fits terminal box dimensions W38 - H39 - L64.';
+$_['omniva_m_help_length_class'] = 'Select length class used for centimeters';
+$_['omniva_m_help_weight_class'] = 'Select weight class used for kilograms';
 
 // Sender Tab
 $_['omniva_m_title_sender_settings'] = 'Sender Information';
@@ -98,8 +102,12 @@ $_['omniva_m_label_sender_email'] = 'E-mail';
 // Price Tab
 $_['omniva_m_title_price_settings'] = 'Price Settings';
 $_['omniva_m_label_price_country'] = 'Country';
+$_['omniva_m_label_price_col'] = 'Price Data';
 $_['omniva_m_label_price_terminal'] = 'Terminal price';
 $_['omniva_m_label_price_courier'] = 'Courier price';
+$_['omniva_m_label_price_premium'] = 'Premium price';
+$_['omniva_m_label_price_standard'] = 'Standard price';
+$_['omniva_m_label_price_economy'] = 'Economy price';
 $_['omniva_m_label_price_range_type'] = 'Range type';
 $_['omniva_m_button_add_price'] = 'Add Price';
 $_['omniva_m_button_save_price'] = 'Save Price';

@@ -78,11 +78,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    width: 100%;
+    position: fixed;
+    left: 0;
+    right: 0;
     bottom: 0;
     top: 0;
     background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+}
+
+.edit-price-modal .panel {
+    max-height: 90%;
+    overflow: auto;
 }
 
 a.btn-omniva_m {
@@ -126,6 +133,30 @@ a.omniva_m-btn-order-action * {
     .omniva_m-terminal-list>div:not(:last-child) {
         margin-bottom: 1em;
     }
+}
+
+/* Price settings */
+:root {
+    --omniva_m-show-terminal: none;
+    --omniva_m-show-courier: none;
+    --omniva_m-show-services: none;
+    --omniva_m-show-add-price-btn: none;
+}
+
+[data-omniva-price="int"] {
+    display: var(--omniva_m-show-services);
+}
+
+[data-omniva-price="terminal"] {
+    display: var(--omniva_m-show-terminal);
+}
+
+[data-omniva-price="courier"] {
+    display: var(--omniva_m-show-courier);
+}
+
+[data-omniva-add-price-btn] {
+    display: var(--omniva_m-show-add-price-btn);
 }
 
 /* Panel inside Order info */

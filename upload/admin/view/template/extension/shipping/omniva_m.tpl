@@ -170,6 +170,38 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-length-class"><?php echo $omniva_m_label_length_class; ?></label>
+                        <div class="col-sm-10">
+                        <select name="omniva_m_length_class_id" id="input-length-class" class="form-control">
+                            <option value="0"><?php echo $omniva_m_generic_none; ?></option>
+                            <?php foreach ($length_classes as $length_class): ?>
+                                <?php if ($length_class['length_class_id'] == $omniva_m_length_class_id): ?>
+                                    <option value="<?php echo $length_class['length_class_id']; ?>" selected="selected"><?php echo $length_class['title']; ?></option>
+                                <?php else: ?>
+                                    <option value="<?php echo $length_class['length_class_id']; ?>"><?php echo $length_class['title']; ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="help-block"><?php echo $omniva_m_help_length_class; ?></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-weight-class"><?php echo $omniva_m_label_weight_class; ?></label>
+                        <div class="col-sm-10">
+                        <select name="omniva_m_weight_class_id" id="input-weight-class" class="form-control">
+                            <option value="0"><?php echo $omniva_m_generic_none; ?></option>
+                            <?php foreach ($weight_classes as $weight_class): ?>
+                                <?php if ($weight_class['weight_class_id'] == $omniva_m_weight_class_id): ?>
+                                    <option value="<?php echo $weight_class['weight_class_id']; ?>" selected="selected"><?php echo $weight_class['title']; ?></option>
+                                <?php else: ?>
+                                    <option value="<?php echo $weight_class['weight_class_id']; ?>"><?php echo $weight_class['title']; ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="help-block"><?php echo $omniva_m_help_weight_class; ?></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-disable_cart_weight_check"><?php echo $omniva_m_label_disable_cart_weight_check; ?></label>
                         <div class="col-sm-10">
                             <select name="omniva_m_disable_cart_weight_check" id="input-disable_cart_weight_check" class="form-control">
@@ -424,15 +456,13 @@
                                         <label class="col-sm-2 control-label" for="input-country"><?php echo $omniva_m_label_price_country; ?></label>
                                         <div class="col-sm-10">
                                             <select name="country" class="js-select2" style="width: 100%" data-placeholder="<?php echo $omniva_m_placeholder_price_country; ?>">
-                                                <?php foreach($countries as $country): ?>
-                                                <option value="<?php echo $country['iso_code_2']; ?>"><?php echo $country['name']; ?></option>
-                                                <?php endforeach; ?>
+                                                
                                             </select>
                                             <p class="help-block"><?php echo $omniva_m_help_price_country; ?></p>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" data-omniva-price="terminal">
                                         <label class="col-sm-2 control-label" for="input-terminal-price"><?php echo $omniva_m_label_price_terminal; ?></label>
                                         <div class="col-sm-4">
                                             <input type="text" name="terminal_price" value="" id="input-terminal-price" class="form-control" />
@@ -448,7 +478,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    <div class="form-group" data-omniva-price="courier">
                                         <label class="col-sm-2 control-label" for="input-courier-price"><?php echo $omniva_m_label_price_courier; ?></label>
                                         <div class="col-sm-4">
                                             <input type="text" name="courier_price" value="" id="input-courier-price" class="form-control" />
@@ -464,7 +494,55 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group text-center">
+                                    <div class="form-group" data-omniva-price="int">
+                                        <label class="col-sm-2 control-label" for="input-premium-price"><?php echo $omniva_m_label_price_premium; ?></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" name="premium_price" value="" id="input-premium-price" class="form-control" />
+                                        </div>
+
+                                        <label class="col-sm-2 control-label" for="input-premium-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                                        <div class="col-sm-4">
+                                            <select name="premium_price_range_type" value="0" id="input-premium-price-range-type" class="form-control">
+                                                <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                                    <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" data-omniva-price="int">
+                                        <label class="col-sm-2 control-label" for="input-standard-price"><?php echo $omniva_m_label_price_standard; ?></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" name="standard_price" value="" id="input-standard-price" class="form-control" />
+                                        </div>
+
+                                        <label class="col-sm-2 control-label" for="input-standard-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                                        <div class="col-sm-4">
+                                            <select name="standard_price_range_type" value="0" id="input-standard-price-range-type" class="form-control">
+                                                <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                                    <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" data-omniva-price="int">
+                                        <label class="col-sm-2 control-label" for="input-economy-price"><?php echo $omniva_m_label_price_economy; ?></label>
+                                        <div class="col-sm-4">
+                                            <input type="text" name="economy_price" value="" id="input-economy-price" class="form-control" />
+                                        </div>
+
+                                        <label class="col-sm-2 control-label" for="input-economy-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                                        <div class="col-sm-4">
+                                            <select name="economy_price_range_type" value="0" id="input-economy-price-range-type" class="form-control">
+                                                <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                                    <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group text-center" data-omniva-add-price-btn>
                                         <button id="add-price-btn" class="btn btn-default center"><?php echo $omniva_m_button_add_price; ?></button>
                                     </div>
                                 </div> <!-- price panel heading -->
@@ -474,10 +552,7 @@
                                         <thead>
                                             <tr>
                                                 <th><?php echo $omniva_m_label_price_country; ?></th>
-                                                <th><?php echo $omniva_m_label_price_terminal; ?></th>
-                                                <th><?php echo $omniva_m_label_price_range_type; ?></th>
-                                                <th><?php echo $omniva_m_label_price_courier; ?></th>
-                                                <th><?php echo $omniva_m_label_price_range_type; ?></th>
+                                                <th><?php echo $omniva_m_label_price_col; ?></th>
                                                 <th><?php echo $omniva_m_header_actions; ?></th>
                                             </tr>
                                         </thead>
@@ -492,12 +567,42 @@
                                                 <td colspan="6">No prices set</td>
                                             </tr>
                                             <?php foreach($omniva_m_prices as $price): ?>
-                                                <tr data-price-row="<?php echo $price['country']; ?>" data-price-data='<?php echo json_encode($price); ?>'>
+                                                <tr data-price-row="<?php echo $price['country']; ?>" data-price-data="<?php echo $price['base64']; ?>">
                                                     <td><?php echo $price['country_name']; ?></td>
-                                                    <td><?php echo $price['terminal_price']; ?></td>
-                                                    <td><?php echo $price_range_types[$price['terminal_price_range_type']]; ?></td>
-                                                    <td><?php echo $price['courier_price']; ?></td>
-                                                    <td><?php echo $price_range_types[$price['courier_price_range_type']]; ?></td>
+                                                    <td>
+                                                        <table class="table table-striped table-hover">
+                                                            <?php if($price['omnivaHasTerminals']): ?>
+                                                                <tr>
+                                                                    <td><?php echo $omniva_m_label_price_terminal; ?></td>
+                                                                    <td><?php echo $price['terminal_price']; ?></td>
+                                                                    <td><?php echo $price_range_types[$price['terminal_price_range_type']]; ?></td>
+                                                                </tr>
+                                                            <?php endif; ?>
+                                                            <?php if($price['omnivaType'] == 'international'): ?>
+                                                                <tr>
+                                                                    <td><?php echo $omniva_m_label_price_premium; ?></td>
+                                                                    <td><?php echo $price['premium_price']; ?></td>
+                                                                    <td><?php echo $price_range_types[$price['premium_price_range_type']]; ?></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><?php echo $omniva_m_label_price_standard; ?></td>
+                                                                    <td><?php echo $price['standard_price']; ?></td>
+                                                                    <td><?php echo $price_range_types[$price['standard_price_range_type']]; ?></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><?php echo $omniva_m_label_price_economy; ?></td>
+                                                                    <td><?php echo $price['economy_price']; ?></td>
+                                                                    <td><?php echo $price_range_types[$price['economy_price_range_type']]; ?></td>
+                                                                </tr>
+                                                            <?php else: ?>
+                                                                <tr>
+                                                                    <td><?php echo $omniva_m_label_price_courier; ?></td>
+                                                                    <td><?php echo $price['courier_price']; ?></td>
+                                                                    <td><?php echo $price_range_types[$price['courier_price_range_type']]; ?></td>
+                                                                </tr>
+                                                            <?php endif; ?>
+                                                        </table>
+                                                    </td>
                                                     <td>
                                                         <button data-edit-btn class="btn btn-primary"><i class="fa fa-edit"></i></button>
                                                         <button data-delete-btn class="btn btn-danger"><i class="fa fa-trash"></i></button>
@@ -703,7 +808,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" data-omniva-price="terminal">
                     <label class="col-sm-2 control-label" for="input-modal-terminal-price"><?php echo $omniva_m_label_price_terminal; ?></label>
                     <div class="col-sm-4">
                         <input type="text" name="terminal_price" value="" id="input-modal-terminal-price" class="form-control" />
@@ -719,7 +824,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" data-omniva-price="courier">
                     <label class="col-sm-2 control-label" for="input-modal-courier-price"><?php echo $omniva_m_label_price_courier; ?></label>
                     <div class="col-sm-4">
                         <input type="text" name="courier_price" value="" id="input-modal-courier-price" class="form-control" />
@@ -728,6 +833,54 @@
                     <label class="col-sm-2 control-label" for="input-modal-courier-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
                     <div class="col-sm-4">
                         <select name="courier_price_range_type" value="0" id="input-modal-courier-price-range-type" class="form-control">
+                            <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" data-omniva-price="int">
+                    <label class="col-sm-2 control-label" for="input-modal-premium-price"><?php echo $omniva_m_label_price_premium; ?></label>
+                    <div class="col-sm-4">
+                        <input type="text" name="premium_price" value="" id="input-modal-premium-price" class="form-control" />
+                    </div>
+
+                    <label class="col-sm-2 control-label" for="input-modal-premium-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                    <div class="col-sm-4">
+                        <select name="premium_price_range_type" value="0" id="input-modal-premium-price-range-type" class="form-control">
+                            <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" data-omniva-price="int">
+                    <label class="col-sm-2 control-label" for="input-modal-standard-price"><?php echo $omniva_m_label_price_standard; ?></label>
+                    <div class="col-sm-4">
+                        <input type="text" name="standard_price" value="" id="input-modal-standard-price" class="form-control" />
+                    </div>
+
+                    <label class="col-sm-2 control-label" for="input-modal-standard-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                    <div class="col-sm-4">
+                        <select name="standard_price_range_type" value="0" id="input-modal-standard-price-range-type" class="form-control">
+                            <?php foreach($price_range_types as $range_key => $price_range_type): ?>
+                                <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" data-omniva-price="int">
+                    <label class="col-sm-2 control-label" for="input-modal-economy-price"><?php echo $omniva_m_label_price_economy; ?></label>
+                    <div class="col-sm-4">
+                        <input type="text" name="economy_price" value="" id="input-modal-economy-price" class="form-control" />
+                    </div>
+
+                    <label class="col-sm-2 control-label" for="input-modal-economy-price-range-type"><?php echo $omniva_m_label_price_range_type; ?></label>
+                    <div class="col-sm-4">
+                        <select name="economy_price_range_type" value="0" id="input-modal-economy-price-range-type" class="form-control">
                             <?php foreach($price_range_types as $range_key => $price_range_type): ?>
                                 <option value="<?php echo $range_key; ?>"><?php echo $price_range_type; ?></option>
                             <?php endforeach; ?>
@@ -746,7 +899,7 @@
 
 <link rel="stylesheet" href="view/javascript/omniva_m/select2.min.css">
 <script src="view/javascript/omniva_m/select2.min.js"></script>
-<link rel="stylesheet" href="view/javascript/omniva_m/settings.css?20220401">
+<link rel="stylesheet" href="view/javascript/omniva_m/settings.css?202410101630">
 <script>
   $(document).ready(function() {
     $('.js-select-sender').select2();
@@ -760,11 +913,15 @@
   var price_range_types = <?php echo json_encode($price_range_types); ?>;
   var omniva_m_current_tab = '#<?php echo $omniva_m_current_tab; ?>';
   const OMNIVA_DATA = {
-      contractCourierOptions: <?php echo json_encode($courier_options); ?>,
-      contractOrigins: <?php echo json_encode($contract_origins); ?>,
-      contractEnableCourieroptions: '<?php echo $contract_enable_courier_services; ?>'
+    prices: <?php echo json_encode($omniva_m_prices); ?>,
+    contractCourierOptions: <?php echo json_encode($courier_options); ?>,
+    contractOrigins: <?php echo json_encode($contract_origins); ?>,
+    contractEnableCourieroptions: '<?php echo $contract_enable_courier_services; ?>',
+    length: <?php echo json_encode($length_classes); ?>,
+    weight: <?php echo json_encode($weight_classes); ?>,
+    trans: <?php echo json_encode($omniva_m_trans); ?>
   };
 </script>
-<script src="view/javascript/omniva_m/settings.js?01"></script>
+<script src="view/javascript/omniva_m/settings.js?202410101630"></script>
 
 <?php echo $footer; ?>
