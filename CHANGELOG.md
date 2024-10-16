@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.2]
 - Added Eurozone shipping support
 - Reworked how module price settings works and is displayed
 - Started on converting/removing old non OMX code/functionality
