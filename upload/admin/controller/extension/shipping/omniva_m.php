@@ -220,6 +220,14 @@ class ControllerExtensionShippingOmnivaM extends Controller
 
         $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
+        $this->load->model('localisation/length_class');
+
+        $data['length_classes'] = $this->model_localisation_length_class->getLengthClasses();
+        
+        $this->load->model('localisation/weight_class');
+
+        $data['weight_classes'] = $this->model_localisation_weight_class->getWeightClasses();
+
         $data['ajax_url'] = 'index.php?route=extension/shipping/omniva_m/ajax&' . $this->getUserToken();
 
         // opencart 3 expects status and sort_order begin with shipping_ 
@@ -245,7 +253,7 @@ class ControllerExtensionShippingOmnivaM extends Controller
         $module_settings = [
             // general tab
             'tax_class_id', 'geo_zone_id', 'order_status_registered', 'order_status_error', 'disable_cart_weight_check',
-            'use_simple_terminal_check',
+            'use_simple_terminal_check', 'length_class_id', 'weight_class_id',
             // api tab
             'api_user', 'api_pass', 'api_url', 'api_sendoff_type', 'api_label_print_type',
             'api_add_comment', 'api_contract_origin', 'api_show_return_code',
@@ -333,9 +341,40 @@ class ControllerExtensionShippingOmnivaM extends Controller
             }
         }
 
+        $data[Params::PREFIX . 'trans'] = array_filter($omniva_m_translations, function($item) {
+            return strpos($item, Params::PREFIX) === 0;
+        }, ARRAY_FILTER_USE_KEY);
+
+        $price = new Price($this->db);
+        $services = $price->getCountries(0); // 0 gives all countries data
         $data[Params::PREFIX . 'prices'] = array_map(
-            function ($price) {
-                return json_decode((string) $price['price_data'], true);
+            function ($price) use ($services) {
+                $parsed = json_decode((string) $price['price_data'], true);
+
+                $omnivaType = $services[$parsed['country']]['omnivaType'] ?? '';
+                // backwards compatability for filling missing prices (catalog model handles missing info for front display)
+                $isParsedModified = false;
+                if ($omnivaType === 'international') {
+                    // we expect these three params
+                    foreach (['premium', 'standard', 'economy'] as $key) {
+                        if (!isset($parsed[$key . '_price'])) {
+                            $parsed[$key . '_price'] = '';
+                            $parsed[$key . '_price_range_type'] = Price::RANGE_TYPE_CART_PRICE;
+                            $isParsedModified = true;
+                        }
+                    }
+                }
+
+                // in case missing data was found
+                if ($isParsedModified) {
+                    $price['price_data'] = json_encode($parsed);
+                }
+
+                $parsed['base64'] = base64_encode((string) $price['price_data']);
+                $parsed['omnivaHasTerminals'] = $services[$parsed['country']]['omnivaHasTerminals'] ?? false;
+                $parsed['omnivaType'] = $omnivaType;
+
+                return $parsed;
             },
             Price::getPrices($this->db) //$this->getPrices()
         );

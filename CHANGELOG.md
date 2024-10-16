@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.2]
+- Added Eurozone shipping support
+- Reworked how module price settings works and is displayed
+- Started on converting/removing old non OMX code/functionality
+- Added settings for selecting weight and length classes
+
 ## [2.2.1]
 - Calling courier window now displays timezone (either set in opencart or server)
 - Updated omniva-api library to 1.2.0

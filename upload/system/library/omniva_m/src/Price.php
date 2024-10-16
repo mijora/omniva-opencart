@@ -2,6 +2,8 @@
 
 namespace Mijora\OmnivaOpencart;
 
+use Mijora\Omniva\ServicePackageHelper\ServicePackageHelper;
+
 class Price
 {
     const RANGE_TYPE_CART_PRICE = 0;
@@ -34,7 +36,30 @@ class Price
 
         $result = $this->db->query($sql);
 
-        return $result->rows;
+        if (!$result->rows) {
+            return [];
+        }
+
+        $intServices = ServicePackageHelper::getServices();
+        $list = [
+            // 'services' => $intServices,
+        ];
+        foreach ($result->rows as $row) {
+            $iso = $row['iso_code_2'];
+            $is_baltic = in_array($iso, ['LT', 'LV', 'EE']);
+            if (!isset($intServices[$iso]) && !$is_baltic) {
+                continue;
+            }
+
+            $row['omnivaService'] = array_keys($intServices[$iso]['package'] ?? []);
+            $row['omnivaHasTerminals'] = ($is_baltic || $iso === 'FI');
+            $row['omnivaType'] = $is_baltic ? 'baltic' : 'international';// $intServices[$row['iso_code_2']]['eu'];
+            
+            $list[$iso] = $row;
+        }
+
+        return $list;
+        // return $result->rows;
     }
 
     public static function getPriceData($db, $country_code)

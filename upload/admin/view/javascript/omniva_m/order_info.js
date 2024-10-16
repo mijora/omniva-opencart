@@ -411,31 +411,39 @@ const OMNIVA_M_ORDER_INFO = {
         }
 
         let services = '';
-        Object.keys(OMNIVA_M_ORDER_DATA.add_services[multiType]).forEach((key) => {
-            let input_value = '';
-            if (OMNIVA_M_ORDER_DATA.add_services[multiType][key]) {
-                OMNIVA_M_ORDER_DATA.add_services[multiType][key].forEach(value => {
-                    input_value += `<label>${value}: <input type="text" data-service-value="${key}_${value}"></input></label>`;
-                });
-            }
-            services += `
-            <div class="col-sm-12 checkbox">
-                <label>
-                    <input type="checkbox" data-service="${key}"> ${key}
-                </label>
-                ${input_value}
-            </div>
-            `
-        });
+        // no services for international
+        if (!OMNIVA_M_ORDER_DATA.is_international) {
+            Object.keys(OMNIVA_M_ORDER_DATA.add_services[multiType]).forEach((key) => {
+                let input_value = '';
+                if (OMNIVA_M_ORDER_DATA.add_services[multiType][key]) {
+                    OMNIVA_M_ORDER_DATA.add_services[multiType][key].forEach(value => {
+                        input_value += `<label>${value}: <input type="text" data-service-value="${key}_${value}"></input></label>`;
+                    });
+                }
+                services += `
+                <div class="col-sm-12 checkbox">
+                    <label>
+                        <input type="checkbox" data-service="${key}"> ${key}
+                    </label>
+                    ${input_value}
+                </div>
+                `
+            });
+        }
 
         let del_button = '';
         if (index > 1) {
             del_button = `<button class="btn btn-warning omniva_m-del-package-btn" data-package-del="${index}">${OMNIVA_M_INFO_PANEL_TRANSLATION.del_package_btn}</button>`;
         }
 
+        let packageTitle = OMNIVA_M_INFO_PANEL_TRANSLATION.package_num + index;
+        if (!OMNIVA_M_ORDER_DATA.is_international) {
+            packageTitle += OMNIVA_M_INFO_PANEL_TRANSLATION.package_num_suffix;
+        }
+
         span.innerHTML = `
             <h4 class="col-sm-12 text-center">
-                ${OMNIVA_M_INFO_PANEL_TRANSLATION.package_num}${index}${OMNIVA_M_INFO_PANEL_TRANSLATION.package_num_suffix}
+                ${packageTitle}
                 ${del_button}
             </h4>
             ${services}

@@ -2,6 +2,7 @@
 
 require_once(DIR_SYSTEM . 'library/omniva_m/vendor/autoload.php');
 
+use Mijora\Omniva\ServicePackageHelper\ServicePackageHelper;
 use Mijora\Omniva\Shipment\CallCourier;
 use Mijora\Omniva\Shipment\Package\AdditionalService;
 use Mijora\Omniva\Shipment\Package\Address;
@@ -14,6 +15,7 @@ use Mijora\Omniva\Shipment\ShipmentHeader;
 use Mijora\Omniva\Shipment\Label;
 use Mijora\Omniva\Shipment\Manifest;
 use Mijora\Omniva\Shipment\Order as ApiOrder;
+use Mijora\Omniva\Shipment\Package\ServicePackage;
 use Mijora\OmnivaOpencart\CourierCall;
 use Mijora\OmnivaOpencart\Helper;
 use Mijora\OmnivaOpencart\Params;
@@ -357,19 +359,6 @@ class ControllerExtensionModuleOmnivaM extends Controller
         if (!is_array($courier_options)) {
             $courier_options = [];
         }
-        $service_code = Helper::decideServiceCode(
-            $sendoff_type,
-            $order_data['shipping_type'],
-            $contract_origin,
-            $courier_options,
-            $order_data['oc_order']['shipping_iso_code_2'],
-            $this->config->get(Params::PREFIX . 'sender_country')
-        );
-
-        if (!$service_code) {
-            $this->saveLabelHistory($order_data, 'Could not determine service code for label creation.', '-', true);
-            return ['error' => 'Could not determine service code for label creation.'];
-        }
 
         $offload_code = null;
         if ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
@@ -443,7 +432,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
             if ($offload_code) {
                 $receiver_address->setOffloadPostcode($offload_code);
-            } elseif (in_array(strtoupper($service_code), Shipment::TERMINAL_SERVICES)) {
+            } elseif ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
                 $receiver_address->setOffloadPostcode($receiver_postcode);
             }
 
@@ -474,6 +463,18 @@ class ControllerExtensionModuleOmnivaM extends Controller
             // $shipment->setShowReturnCodeSms($show_return_code->sms);
             // $shipment->setShowReturnCodeEmail($show_return_code->email);
 
+            $servicePackage = null;
+            if ($order_data['is_international']) {
+                $servicePackage = new ServicePackage(ServicePackageHelper::getServicePackageCode($order_data['shipping_code']));
+            }
+
+            // when terminals used and receiver country is Finland requires STANDARD servicePackage
+            if ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL && $receiver_country === 'FI') {
+                $servicePackage = new ServicePackage(ServicePackage::CODE_STANDARD);
+            }
+
+            $channel = $order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL ? Package::CHANNEL_PARCEL_MACHINE : Package::CHANNEL_COURIER;
+
             $packages = [];
             for ($i = 0; $i < $package_count; $i++) {
                 $package_id = $id_order;
@@ -483,11 +484,15 @@ class ControllerExtensionModuleOmnivaM extends Controller
                 }
                 $package = (new Package())
                     ->setId($package_id)
-                    ->setService($service_code)
+                    ->setService(Package::MAIN_SERVICE_PARCEL, $channel)
                     ->setMeasures($measures)
                     ->setReceiverContact($receiverContact)
                     ->setReturnAllowed($show_return_code->sms || $show_return_code->email)
                     ->setSenderContact($senderContact);
+
+                if ($servicePackage) {
+                    $package->setServicePackage($servicePackage);
+                }
 
                 // add full services list to first package or all packages if not consolidate type
                 if ($multi_type === 'multiparcel' || 0 === $i) {

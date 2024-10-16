@@ -1,4 +1,6 @@
 const OMNIVA_M_SETTINGS = {
+    countryList: {},
+
     showTab: function (tabId) {
         let tabLink = document.querySelector(`a[href="${tabId}"]`);
 
@@ -10,8 +12,24 @@ const OMNIVA_M_SETTINGS = {
     init: function () {
         console.log('Omniva_m settings activated');
         this.initPriceSettings();
+        this.globalListener();
         this.listenForContractOrigin();
         this.handleContractCourierOptions();
+    },
+
+    addGlobalListener: function (type, selector, callback, options, parent = document) {
+        parent.addEventListener(type, (e) => {
+            if (e.target.matches(selector)) {
+                callback(e);
+            }
+        }, options);
+    },
+
+    globalListener: function() {
+        $('[name="country"]').on('select2:select', function (e) {
+            const data = e.params.data;
+            OMNIVA_M_SETTINGS.showPriceOptions(data.element.value, document.querySelector('#price-table'), true);
+        });
     },
 
     handleContractCourierOptions: function() {
@@ -28,6 +46,39 @@ const OMNIVA_M_SETTINGS = {
         originEl.addEventListener('change', function(e) {
             OMNIVA_M_SETTINGS.handleContractCourierOptions();
         });
+    },
+
+    getCountryPriceLimits: function(country)
+    {
+        const countryData = OMNIVA_M_SETTINGS.countryList[country];
+
+        return {
+            isTerminal: countryData?.omnivaHasTerminals,
+            isBaltic: countryData?.omnivaType === 'baltic',
+            isInternational: countryData?.omnivaType === 'international'
+        };
+    },
+
+    showPriceOptions: function(country, mainEl, clearInputs = false) {
+        console.log('UPDATE:', country, mainEl);
+
+        if (!mainEl) {
+            return;
+        }
+
+        const countryData = OMNIVA_M_SETTINGS.getCountryPriceLimits(country);
+
+        mainEl.style.setProperty('--omniva_m-show-terminal', countryData.isTerminal ? 'block' : 'none');
+        mainEl.style.setProperty('--omniva_m-show-courier', countryData.isBaltic ? 'block' : 'none');
+        mainEl.style.setProperty('--omniva_m-show-services', countryData.isInternational ? 'block' : 'none');
+        mainEl.style.setProperty('--omniva_m-show-add-price-btn', (countryData.isBaltic || countryData.isInternational || countryData.isTerminal) ? 'block' : 'none');
+
+        // clear inputs
+        if (clearInputs) {
+            mainEl.querySelectorAll('[data-omniva-price] input').forEach(item => {
+                item.value = '';
+            });
+        }
     },
 
     initPriceSettings: function() {
@@ -114,7 +165,13 @@ const OMNIVA_M_SETTINGS = {
                 terminal_price: $('.edit-price-modal [name="terminal_price"]').val(),
                 terminal_price_range_type: $('.edit-price-modal [name="terminal_price_range_type"]').val(),
                 courier_price: $('.edit-price-modal [name="courier_price"]').val(),
-                courier_price_range_type: $('.edit-price-modal [name="courier_price_range_type"]').val()
+                courier_price_range_type: $('.edit-price-modal [name="courier_price_range_type"]').val(),
+                premium_price: $('.edit-price-modal [name="premium_price"]').val(),
+                premium_price_range_type: $('.edit-price-modal [name="premium_price_range_type"]').val(),
+                standard_price: $('.edit-price-modal [name="standard_price"]').val(),
+                standard_price_range_type: $('.edit-price-modal [name="standard_price_range_type"]').val(),
+                economy_price: $('.edit-price-modal [name="economy_price"]').val(),
+                economy_price_range_type: $('.edit-price-modal [name="economy_price_range_type"]').val()
             };
             OMNIVA_M_SETTINGS.savePrice(data);
             OMNIVA_M_SETTINGS.cleanPriceModal();
@@ -139,7 +196,13 @@ const OMNIVA_M_SETTINGS = {
                 terminal_price: $('#price-table [name="terminal_price"]').val(),
                 terminal_price_range_type: $('#price-table [name="terminal_price_range_type"]').val(),
                 courier_price: $('#price-table [name="courier_price"]').val(),
-                courier_price_range_type: $('#price-table [name="courier_price_range_type"]').val()
+                courier_price_range_type: $('#price-table [name="courier_price_range_type"]').val(),
+                economy_price: $('#price-table [name="economy_price"]').val(),
+                economy_price_range_type: $('#price-table [name="economy_price_range_type"]').val(),
+                standard_price: $('#price-table [name="standard_price"]').val(),
+                standard_price_range_type: $('#price-table [name="standard_price_range_type"]').val(),
+                premium_price: $('#price-table [name="premium_price"]').val(),
+                premium_price_range_type: $('#price-table [name="premium_price_range_type"]').val()
             };
             OMNIVA_M_SETTINGS.savePrice(data);
         });
@@ -149,15 +212,23 @@ const OMNIVA_M_SETTINGS = {
         if (json.length < 1) {
             return;
         }
-        var html = json.map(function (country) {
+
+        OMNIVA_M_SETTINGS.countryList = json;
+
+        var html = Object.values(json).map(function (country) {
             if ($('[data-price-row="' + country.iso_code_2 + '"]').length > 0) {
                 return '';
             }
-            return `<option value="${country.iso_code_2}">${country.name}</option>`
+            return `<option 
+                value="${country.iso_code_2}"
+                data-omniva-has-terminals="${country.omnivaHasTerminals}"
+                data-omniva-type="${country.omnivaType}"
+                >${country.name}</option>`
         }).join('\n');
 
         $('[name="country"]').html(html);
         $('[name="country"]').trigger('change');
+        OMNIVA_M_SETTINGS.showPriceOptions($('[name="country"]').val(), document.querySelector('#price-table'), true);
     },
 
     updatePriceNotification: function () {
@@ -170,20 +241,30 @@ const OMNIVA_M_SETTINGS = {
     },
 
     jsonEncodeToHTML: function (json) {
-        return JSON.stringify(json);
+        return btoa(JSON.stringify(json));
     },
 
     jsonDecodeFromHTML: function (json_string) {
-        return JSON.parse(json_string);
+        return JSON.parse(atob(json_string));
     },
 
     fillPriceModal: function (data) {
+        console.log(data);
         $('.edit-price-modal [name="country"]').val(data.country);
         $('.edit-price-modal [name="country_name"]').val(data.country_name);
         $('.edit-price-modal [name="terminal_price"]').val(data.terminal_price);
         $('.edit-price-modal [name="terminal_price_range_type"]').val(data.terminal_price_range_type);
         $('.edit-price-modal [name="courier_price"]').val(data.courier_price);
         $('.edit-price-modal [name="courier_price_range_type"]').val(data.courier_price_range_type);
+        $('.edit-price-modal [name="premium_price"]').val(data.premium_price);
+        $('.edit-price-modal [name="premium_price_range_type"]').val(data.premium_price_range_type);
+        $('.edit-price-modal [name="standard_price"]').val(data.standard_price);
+        $('.edit-price-modal [name="standard_price_range_type"]').val(data.standard_price_range_type);
+        $('.edit-price-modal [name="economy_price"]').val(data.economy_price);
+        $('.edit-price-modal [name="economy_price_range_type"]').val(data.economy_price_range_type);
+
+        // mange visible fields
+        OMNIVA_M_SETTINGS.showPriceOptions(data.country, document.querySelector('.edit-price-modal'), false);
     },
 
     cleanPriceModal: function () {
@@ -193,6 +274,12 @@ const OMNIVA_M_SETTINGS = {
         $('.edit-price-modal [name="terminal_price_range_type"]').val('');
         $('.edit-price-modal [name="courier_price"]').val('');
         $('.edit-price-modal [name="courier_price_range_type"]').val('');
+        $('.edit-price-modal [name="premium_price"]').val('');
+        $('.edit-price-modal [name="premium_price_range_type"]').val('');
+        $('.edit-price-modal [name="standard_price"]').val('');
+        $('.edit-price-modal [name="standard_price_range_type"]').val('');
+        $('.edit-price-modal [name="economy_price"]').val('');
+        $('.edit-price-modal [name="economy_price_range_type"]').val('');
     },
 
     sortPrices: function () {
@@ -215,6 +302,7 @@ const OMNIVA_M_SETTINGS = {
                 console.log(json);
                 $('[name="country"]').append($('<option value="' + data.country + '">' + data.country_name + '</option>'));
                 $('[name="country"]').trigger('change');
+                OMNIVA_M_SETTINGS.showPriceOptions($('[name="country"]').val(), document.querySelector('#price-table'), true);
                 $('[data-price-row="' + data.country + '"]').remove();
                 OMNIVA_M_SETTINGS.updatePriceNotification();
             },
@@ -237,18 +325,60 @@ const OMNIVA_M_SETTINGS = {
             data: data,
             success: function (json) {
                 console.log(json);
+                const countryData = OMNIVA_M_SETTINGS.getCountryPriceLimits(data.country);
+
                 $('[name="country"]').find('[value="' + data.country + '"]').remove();
                 var buttons = `
                     <button data-edit-btn class="btn btn-primary"><i class="fa fa-edit"></i></button>
                     <button data-delete-btn class="btn btn-danger"><i class="fa fa-trash"></i></button>
                 `;
+
+                let priceHtml = '';
+
+                if (countryData.isTerminal) {
+                    priceHtml += `
+                        <tr>
+                            <td>${OMNIVA_DATA.trans.omniva_m_label_price_terminal}</td>
+                            <td>${json.data.terminal_price}</td>
+                            <td>${price_range_types[data.terminal_price_range_type]}</td>
+                        </tr>
+                    `;
+                }
+
+                if (countryData.isInternational) {
+                    priceHtml += `
+                        <tr>
+                            <td>${OMNIVA_DATA.trans.omniva_m_label_price_premium}</td>
+                            <td>${json.data.premium_price}</td>
+                            <td>${price_range_types[data.premium_price_range_type]}</td>
+                        </tr>
+                        <tr>
+                            <td>${OMNIVA_DATA.trans.omniva_m_label_price_standard}</td>
+                            <td>${json.data.standard_price}</td>
+                            <td>${price_range_types[data.standard_price_range_type]}</td>
+                        </tr>
+                        <tr>
+                            <td>${OMNIVA_DATA.trans.omniva_m_label_price_economy}</td>
+                            <td>${json.data.economy_price}</td>
+                            <td>${price_range_types[data.economy_price_range_type]}</td>
+                        </tr>
+                    `;
+                } else {
+                    priceHtml += `
+                        <td>${OMNIVA_DATA.trans.omniva_m_label_price_courier}</td>
+                        <td>${json.data.courier_price}</td>
+                        <td>${price_range_types[data.courier_price_range_type]}</td>
+                    `;
+                }
+
                 $row = $(`
                     <tr data-price-row="${data.country}" data-price-data='${OMNIVA_M_SETTINGS.jsonEncodeToHTML(json.data)}'>
                         <td>${data.country_name}</td>
-                        <td>${json.data.terminal_price}</td>
-                        <td>${price_range_types[data.terminal_price_range_type]}</td>
-                        <td>${json.data.courier_price}</td>
-                        <td>${price_range_types[data.courier_price_range_type]}</td>
+                        <td>
+                            <table class="table table-striped table-hover">
+                            ${priceHtml}
+                            </table>
+                        </td>
                         <td>${buttons}</td>
                     </tr>
                 `);
@@ -261,6 +391,9 @@ const OMNIVA_M_SETTINGS = {
                 $('#created-prices').append($row);
                 OMNIVA_M_SETTINGS.updatePriceNotification();
                 OMNIVA_M_SETTINGS.sortPrices();
+
+                // update price fields
+                OMNIVA_M_SETTINGS.showPriceOptions($('[name="country"]').val(), document.querySelector('#price-table'), true);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

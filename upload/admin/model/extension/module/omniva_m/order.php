@@ -40,6 +40,8 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             'total_weight' => 0.1, // default set as 0.1kg
             'set_weight' => 0.1, // default set as 0.1kg
             'manifest_id' => 0, // default no manifest
+            'shipping_code' => '',
+            'is_international' => false,
         ];
 
         $oc_order = $this->model_sale_order->getOrder((int) $id_order);
@@ -61,6 +63,9 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         if (empty($data['order_data'])) {
             $data['order_data'] = false;
         }
+
+        $data['shipping_code'] = Helper::getShippingCode($oc_order['shipping_code']);
+        $data['is_international'] = Helper::isInternational($data['shipping_code']);
 
         $data['manifest_id'] = $order_data->getData('manifest_id');
 
