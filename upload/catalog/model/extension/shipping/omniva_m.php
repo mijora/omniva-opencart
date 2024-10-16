@@ -2,24 +2,26 @@
 
 require_once(DIR_SYSTEM . 'library/omniva_m/vendor/autoload.php');
 
+use Mijora\Omniva\ServicePackageHelper\PackageItem;
+use Mijora\Omniva\ServicePackageHelper\ServicePackageHelper;
 use Mijora\OmnivaOpencart\Helper;
 use Mijora\OmnivaOpencart\Params;
 use Mijora\OmnivaOpencart\Price;
 
 class ModelExtensionShippingOmnivaM extends Model
 {
-    private function getTextTitle($country = '')
+    private function getTextTitle($country = '', $terminal = false)
     {
-        if ($country == 'FI') {
+        if ($country == 'FI' && $terminal) {
             return $this->language->get('text_title_mh');
         }
 
         return $this->language->get('text_title');
     }
 
-    private function getTextPrefix($country = '')
+    private function getTextPrefix($country = '', $terminal = false)
     {
-        if ($country == 'FI') {
+        if ($country == 'FI' && $terminal) {
             return $this->language->get('text_prefix_mh');
         }
 
@@ -73,6 +75,29 @@ class ModelExtensionShippingOmnivaM extends Model
 
         $quote_data = array();
 
+        $services = $this->determineServicesCost($price_data);
+
+        foreach ($services as $service_id => $service_cost) {
+            if ($service_cost < 0) {
+                continue;
+            }
+
+            $quote_data[$service_id] = array(
+                'code'         => 'omniva_m.' . $service_id,
+                'title'        => $this->getTextPrefix($address['iso_code_2']) . $this->language->get('text_' . $service_id),
+                'cost'         => $service_cost,
+                'tax_class_id' => $tax_class_id,
+                'text'         => $this->currency->format(
+                    $this->tax->calculate(
+                        $service_cost,
+                        $tax_class_id,
+                        $this->config->get('config_tax')
+                    ),
+                    $this->session->data['currency']
+                )
+            );
+        }
+
         $courier_cost = (float) $this->calculateCost(
             $price_data['courier_price'],
             (int) $price_data['courier_price_range_type'],
@@ -95,7 +120,7 @@ class ModelExtensionShippingOmnivaM extends Model
                 )
             );
         }
-        
+
         $terminal_cost = $this->determineTerminalCost($price_data, $address['iso_code_2']);
 
         if ($terminal_cost >= 0) {
@@ -137,6 +162,38 @@ class ModelExtensionShippingOmnivaM extends Model
         return $method_data;
     }
 
+    protected function determineServicesCost($price_data, $delivery_country = null)
+    {
+        $items = $this->getFormatedCartItems();
+        if (!$items) {
+            return [];
+        }
+
+        $packageItems = [];
+        foreach ($items as $item) {
+            // items has kg and cm, we need meters
+            $packageItems[] = new PackageItem($item['weight'], $item['length'] / 100, $item['width'] / 100, $item['height'] / 100);
+        }
+
+        $services = ServicePackageHelper::getAvailablePackages($price_data['country'], $packageItems);
+
+        $result = [];
+        foreach ($services as $service) {
+            $service_prefix = strtolower($service);
+
+            $cost = isset($price_data[$service_prefix . '_price']) ? $price_data[$service_prefix . '_price'] : '';
+            $range_type = isset($price_data[$service_prefix . '_price_range_type']) ? (int) $price_data[$service_prefix . '_price_range_type'] : 0;
+            
+            $result[$service_prefix] = (float) $this->calculateCost(
+                $cost,
+                $range_type,
+                Params::SHIPPING_TYPE_COURIER
+            );
+        }
+
+        return $result;
+    }
+
     protected function determineTerminalCost($price_data, $delivery_country = null)
     {
         $contract_origin = (int) $this->config->get(Params::PREFIX . 'api_contract_origin');
@@ -155,8 +212,8 @@ class ModelExtensionShippingOmnivaM extends Model
 
         $use_simple_terminal_check = (bool) $this->config->get(Params::PREFIX . 'use_simple_terminal_check');
         if ($use_simple_terminal_check && !$this->isTerminalAllowed()) {
-			return -1; // disable terminals
-		}
+            return -1; // disable terminals
+        }
 
         return $terminal_cost;
     }
@@ -277,25 +334,33 @@ class ModelExtensionShippingOmnivaM extends Model
         return $cost;
     }
 
-    public function isTerminalAllowed() {
-		$total_height = 0;
-		$total_width = 0;
+    public function isTerminalAllowed()
+    {
+        $total_height = 0;
+        $total_width = 0;
         $total_length = 0;
 
-		$cm_length_class_id = $this->getLengthClassId();
+        // $cm_length_class_id = $this->getLengthClassId();
 
-		if (!$cm_length_class_id) {
-			return true;
-		}
+        // if (!$cm_length_class_id) {
+        //     return true;
+        // }
 
-        foreach ($this->cart->getProducts() as $product) {
-			$width  = (float) $this->length->convert($product['width'],  $product['length_class_id'], $cm_length_class_id);
-            $length = (float) $this->length->convert($product['length'], $product['length_class_id'], $cm_length_class_id);
-            $height = (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id);
-            
-			$total_height += $height * $product['quantity'];
-            $total_width += $width * $product['quantity'];
-            $total_length += $length * $product['quantity'];
+        $items = $this->getFormatedCartItems();
+
+        // no shipable items
+        if (!$items) {
+            return false;
+        }
+
+        foreach ($items as $product) {
+            // $width  = (float) $this->length->convert($product['width'],  $product['length_class_id'], $cm_length_class_id);
+            // $length = (float) $this->length->convert($product['length'], $product['length_class_id'], $cm_length_class_id);
+            // $height = (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id);
+
+            $total_height += $product['height'] * $product['quantity'];
+            $total_width += $product['width'] * $product['quantity'];
+            $total_length += $product['length'] * $product['quantity'];
 
             if ($total_height > 39 || $total_width > 38 || $total_length > 64) {
                 return false;
@@ -305,7 +370,7 @@ class ModelExtensionShippingOmnivaM extends Model
         return true;
     }
 
-	public function getLengthClassId()
+    public function getLengthClassId()
     {
         $weight_sql = $this->db->query("
             SELECT length_class_id FROM `" . DB_PREFIX . "length_class_description` WHERE `unit` = 'cm' LIMIT 1
@@ -316,5 +381,46 @@ class ModelExtensionShippingOmnivaM extends Model
         }
 
         return (int) $weight_sql->row['length_class_id'];
+    }
+
+    public function getFormatedCartItems()
+    {
+        $cm_length_class_id = $this->config->get(Params::PREFIX . 'length_class_id');
+        $kg_weight_class_id = $this->config->get(Params::PREFIX . 'weight_class_id');
+
+        if (!$cm_length_class_id) {
+            $cm_length_class_id = $this->getLengthClassId();
+        }
+
+        $cart_items = [];
+        foreach ($this->cart->getProducts() as $product) {
+            // we interested only in shippable items
+            if ((int) $product['shipping'] !== 1) {
+                continue;
+            }
+
+            $width  = $cm_length_class_id
+                ? (float) $this->length->convert($product['width'],  $product['length_class_id'], $cm_length_class_id)
+                : (float) $product['width'];
+            $length = $cm_length_class_id
+                ? (float) $this->length->convert($product['length'], $product['length_class_id'], $cm_length_class_id)
+                : (float) $product['length'];
+            $height = $cm_length_class_id
+                ? (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id)
+                : (float) $product['height'];
+            $weight = $kg_weight_class_id
+                ? (float) $this->weight->convert($product['weight'], $product['weight_class_id'], $cm_length_class_id)
+                : (float) $product['weight'];
+
+            $cart_items[] = [
+                'width' => $width,
+                'length' => $length,
+                'height' => $height,
+                'weight' => $weight,
+                'quantity' => (int) $product['quantity'],
+            ];
+        }
+
+        return $cart_items;
     }
 }

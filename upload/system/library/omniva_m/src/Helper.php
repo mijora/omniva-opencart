@@ -5,8 +5,10 @@ namespace Mijora\OmnivaOpencart;
 use DateTime;
 use DateTimeZone;
 use Mijora\Omniva\PowerBi\OmnivaPowerBi;
+use Mijora\Omniva\ServicePackageHelper\ServicePackageHelper;
 use Mijora\Omniva\Shipment\AdditionalService\DeliveryToAnAdultService;
 use Mijora\Omniva\Shipment\AdditionalService\FragileService;
+use Mijora\Omniva\Shipment\Package\ServicePackage;
 
 class Helper
 {
@@ -552,7 +554,7 @@ class Helper
             $query = $db->query("SELECT COUNT(*) as totalToCourier FROM `" . DB_PREFIX . "order` WHERE `shipping_code` LIKE 'omniva_m.courier%' AND date_added >= '" . $last_timestamp . "'");
             $totalCourier = $query->num_rows ? $query->row['totalToCourier'] : 0;
 
-            $opb = (new OmnivaPowerBi($username))
+            $opb = (new OmnivaPowerBi($username, true))
                 ->setPlatform('OpenCart v' . VERSION)
                 ->setPluginVersion(Params::VERSION)
                 ->setSenderCountry($config->get(Params::PREFIX . 'sender_country'))
@@ -599,5 +601,18 @@ class Helper
         } catch (\Throwable $th) {
             // silence is golden
         }
+    }
+
+    public static function getShippingCode($oc_shipping_code)
+    {
+        return explode('.', $oc_shipping_code)[1];
+    }
+
+    public static function isInternational($code)
+    {
+        // Since servicePackage is required only for international shipments we can assume this is premium/standard/economy if we get code back
+        $code = ServicePackageHelper::getServicePackageCode($code);
+
+        return $code !== null;
     }
 }
