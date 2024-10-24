@@ -554,7 +554,7 @@ class Helper
             $query = $db->query("SELECT COUNT(*) as totalToCourier FROM `" . DB_PREFIX . "order` WHERE `shipping_code` LIKE 'omniva_m.courier%' AND date_added >= '" . $last_timestamp . "'");
             $totalCourier = $query->num_rows ? $query->row['totalToCourier'] : 0;
 
-            $opb = (new OmnivaPowerBi($username, true))
+            $opb = (new OmnivaPowerBi($username))
                 ->setPlatform('OpenCart v' . VERSION)
                 ->setPluginVersion(Params::VERSION)
                 ->setSenderCountry($config->get(Params::PREFIX . 'sender_country'))
