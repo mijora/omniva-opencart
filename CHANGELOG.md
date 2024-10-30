@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+- Updated omniva-api library to 1.2.1
+- Sender name should now correctly handle double quotes when registering label
+
 ## [2.2.2]
 - Added Eurozone shipping support
 - Reworked how module price settings works and is displayed
