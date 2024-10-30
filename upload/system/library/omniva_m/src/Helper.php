@@ -558,7 +558,7 @@ class Helper
                 ->setPlatform('OpenCart v' . VERSION)
                 ->setPluginVersion(Params::VERSION)
                 ->setSenderCountry($config->get(Params::PREFIX . 'sender_country'))
-                ->setSenderName($config->get(Params::PREFIX . 'sender_name'))
+                ->setSenderName(htmlspecialchars_decode($config->get(Params::PREFIX . 'sender_name')))
                 ->setOrderCountCourier($totalCourier)
                 ->setOrderCountTerminal($totalTerminal)
                 ->setDateTimeStamp($last_timestamp);

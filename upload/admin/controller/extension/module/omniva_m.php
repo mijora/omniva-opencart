@@ -317,7 +317,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
     private function getSenderContact()
     {
-        $sender_name = $this->config->get(Params::PREFIX . 'sender_name');
+        $sender_name = htmlspecialchars_decode($this->config->get(Params::PREFIX . 'sender_name'));
         $sender_mobile = $this->config->get(Params::PREFIX . 'sender_phone');
         $sender_street = $this->config->get(Params::PREFIX . 'sender_street');
         $sender_postcode = $this->config->get(Params::PREFIX . 'sender_postcode');
