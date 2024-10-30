@@ -2,17 +2,17 @@
         "packages": [
                 {
                         "name": "mijora/omniva-api",
-                        "version": "1.2.0",
-                        "version_normalized": "1.2.0.0",
+                        "version": "1.2.1",
+                        "version_normalized": "1.2.1.0",
                         "source": {
                                 "type": "git",
                                 "url": "https://github.com/omniva-baltic/omniva-api-lib.git",
-                                "reference": "8491e199a7efed9c32519b16638ea421dbee7533"
+                                "reference": "098783cd5f1c994da4cc476e867513bca808a9e0"
                         },
                         "dist": {
                                 "type": "zip",
-                                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/8491e199a7efed9c32519b16638ea421dbee7533",
-                                "reference": "8491e199a7efed9c32519b16638ea421dbee7533",
+                                "url": "https://api.github.com/repos/omniva-baltic/omniva-api-lib/zipball/098783cd5f1c994da4cc476e867513bca808a9e0",
+                                "reference": "098783cd5f1c994da4cc476e867513bca808a9e0",
                                 "shasum": ""
                         },
                         "require": {
@@ -20,7 +20,7 @@
                                 "setasign/fpdi": "^2.3",
                                 "tecnickcom/tcpdf": "^6.3"
                         },
-                        "time": "2024-09-25T13:12:14+00:00",
+                        "time": "2024-10-30T14:14:43+00:00",
                         "type": "library",
                         "installation-source": "dist",
                         "autoload": {
@@ -47,7 +47,7 @@
                         "description": "Omniva API wrapper",
                         "support": {
                                 "issues": "https://github.com/omniva-baltic/omniva-api-lib/issues",
-                                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/v1.2.0"
+                                "source": "https://github.com/omniva-baltic/omniva-api-lib/tree/v1.2.1"
                         },
                         "install-path": "../mijora/omniva-api"
                 },
