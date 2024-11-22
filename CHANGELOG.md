@@ -1,7 +1,8 @@
 # Changelog
 
 ## [Unreleased]
-- Updated omniva-api library to 1.2.1
+- Updated omniva-api library to 1.3.1
+- Updated tecnickcom/tcpdf to 6.7.7
 - Sender name should now correctly handle double quotes when registering label
 
 ## [2.2.2]
