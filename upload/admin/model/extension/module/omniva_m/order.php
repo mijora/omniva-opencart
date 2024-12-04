@@ -381,7 +381,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 LIMIT 1
             ")->row;
 
-            $last_status_id = isset($last_status_id['order_status_id']) ? $last_status_id['order_status_id'] : 0;
+            $last_status_id = isset($last_status_id['order_status_id']) ? (int) $last_status_id['order_status_id'] : 0;
             $status_id = $last_status_id;
 
             if (!$is_error) {
@@ -401,12 +401,30 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             }
 
             if ($status_id > 0) {
-                $this->db->query(
+                $query = $this->db->query(
                     "
-                    INSERT INTO `" . DB_PREFIX . "order_history` 
-                    SET `order_id` = '" . (int) $order_id . "', `order_status_id` = '" . (int) $status_id . "', `notify` = '" . $notified . "', `comment` = '" . $this->db->escape($barcodes_string) . "', `date_added` = NOW()
+                    SELECT COUNT(*) AS total 
+                    FROM `" . DB_PREFIX . "order_status` 
+                    WHERE `order_status_id` = '" . (int) $status_id . "'
                     "
                 );
+                if ($query->row['total'] > 0) {
+                    $this->db->query(
+                        "
+                        INSERT INTO `" . DB_PREFIX . "order_history` 
+                        SET `order_id` = '" . (int) $order_id . "', `order_status_id` = '" . (int) $status_id . "', `notify` = '" . $notified . "', `comment` = '" . $this->db->escape($barcodes_string) . "', `date_added` = NOW()
+                        "
+                    );
+                    if ($status_id !== $last_status_id) {
+                        $this->db->query(
+                            "
+                            UPDATE `" . DB_PREFIX . "order` 
+                            SET `order_status_id` = '" . (int) $status_id . "' 
+                            WHERE `order_id` = '" . (int) $order_id . "'
+                            "
+                        );
+                    }
+                }
             }
         }
 

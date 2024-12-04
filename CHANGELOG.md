@@ -4,6 +4,7 @@
 - Updated omniva-api library to 1.3.1
 - Updated tecnickcom/tcpdf to 6.7.7
 - Sender name should now correctly handle double quotes when registering label
+- Added order status change in the order list table when the order status is changed in the order history table
 
 ## [2.2.2]
 - Added Eurozone shipping support
