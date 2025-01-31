@@ -167,7 +167,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $call->setAuth($username, $password);
             $call->setSender($sender_contact);
 
-            $start = isset($this->request->post['omniva_m_cc_start']) ? $this->request->post['omniva_m_cc_start'] : '8:00';
+            $start = isset($this->request->post['omniva_m_cc_start']) ? $this->request->post['omniva_m_cc_start'] : '08:00';
             $end = isset($this->request->post['omniva_m_cc_end']) ? $this->request->post['omniva_m_cc_end'] : '18:00';
             $parcels = isset($this->request->post['omniva_m_cc_parcels']) ? (int) $this->request->post['omniva_m_cc_parcels'] : 1;
 

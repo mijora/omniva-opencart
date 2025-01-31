@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Fixed default courier arrival time value
+
 ## [2.2.3]
 - Updated omniva-api library to 1.3.1
 - Updated tecnickcom/tcpdf to 6.7.7
