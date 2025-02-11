@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 - Fixed default courier arrival time value
+- Added platform and version identification to all requests to the Omniva server
+- Updated omniva-api library to 1.3.2
+- Updated tecnickcom/tcpdf to 6.8.2
+- Updated setasign/fpdi to v2.6.3
 
 ## [2.2.3]
 - Updated omniva-api library to 1.3.1
