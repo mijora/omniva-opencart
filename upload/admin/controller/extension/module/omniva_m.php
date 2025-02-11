@@ -29,6 +29,11 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $_GET['action'] = 'default';
         }
 
+        if (!defined('_OMNIVA_INTEGRATION_AGENT_ID_')) {
+            $username = $this->config->get(Params::PREFIX . 'api_user');
+            define('_OMNIVA_INTEGRATION_AGENT_ID_', $username . ' Opencart v' . Params::VERSION);
+        }
+
         switch ($_GET['action']) {
             case 'saveOrderData':
                 header('Content-Type: application/json');
