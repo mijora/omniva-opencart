@@ -29,6 +29,11 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $_GET['action'] = 'default';
         }
 
+        if (!defined('_OMNIVA_INTEGRATION_AGENT_ID_')) {
+            $username = $this->config->get(Params::PREFIX . 'api_user');
+            define('_OMNIVA_INTEGRATION_AGENT_ID_', $username . ' Opencart v' . Params::VERSION);
+        }
+
         switch ($_GET['action']) {
             case 'saveOrderData':
                 header('Content-Type: application/json');
@@ -167,7 +172,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $call->setAuth($username, $password);
             $call->setSender($sender_contact);
 
-            $start = isset($this->request->post['omniva_m_cc_start']) ? $this->request->post['omniva_m_cc_start'] : '8:00';
+            $start = isset($this->request->post['omniva_m_cc_start']) ? $this->request->post['omniva_m_cc_start'] : '08:00';
             $end = isset($this->request->post['omniva_m_cc_end']) ? $this->request->post['omniva_m_cc_end'] : '18:00';
             $parcels = isset($this->request->post['omniva_m_cc_parcels']) ? (int) $this->request->post['omniva_m_cc_parcels'] : 1;
 

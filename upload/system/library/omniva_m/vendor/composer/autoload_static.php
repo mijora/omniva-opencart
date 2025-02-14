@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit41b12ed3fa537a036fa01257c427da10
+class ComposerStaticInit2cf7d2656b09e142f53056d7473f95f6
 {
     public static $files = array (
         'e1af0acb87348aa51d89cfb77fc80e82' => __DIR__ . '/..' . '/mijora/omniva-api/overrides/tcpdf/tcpdf_config.php',
@@ -19,6 +19,7 @@ class ComposerStaticInit41b12ed3fa537a036fa01257c427da10
         array (
             'Mijora\\Omniva\\' => 14,
             'Mijora\\OmnivaOpencart\\' => 22,
+            'Mijora\\BoxCalculator\\' => 21,
         ),
     );
 
@@ -35,12 +36,21 @@ class ComposerStaticInit41b12ed3fa537a036fa01257c427da10
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
+        'Mijora\\BoxCalculator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mijora/box-calculator/src',
+        ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
         'FPDF' => __DIR__ . '/..' . '/setasign/fpdf/fpdf.php',
+        'Mijora\\BoxCalculator\\CalculateBox' => __DIR__ . '/..' . '/mijora/box-calculator/src/CalculateBox.php',
+        'Mijora\\BoxCalculator\\Debug' => __DIR__ . '/..' . '/mijora/box-calculator/src/Debug.php',
+        'Mijora\\BoxCalculator\\Elements\\Box' => __DIR__ . '/..' . '/mijora/box-calculator/src/Elements/Box.php',
+        'Mijora\\BoxCalculator\\Elements\\Item' => __DIR__ . '/..' . '/mijora/box-calculator/src/Elements/Item.php',
+        'Mijora\\BoxCalculator\\Helper' => __DIR__ . '/..' . '/mijora/box-calculator/src/Helper.php',
         'Mijora\\OmnivaOpencart\\CourierCall' => __DIR__ . '/../..' . '/src/CourierCall.php',
         'Mijora\\OmnivaOpencart\\Helper' => __DIR__ . '/../..' . '/src/Helper.php',
         'Mijora\\OmnivaOpencart\\Order' => __DIR__ . '/../..' . '/src/Order.php',
@@ -156,9 +166,9 @@ class ComposerStaticInit41b12ed3fa537a036fa01257c427da10
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit41b12ed3fa537a036fa01257c427da10::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit41b12ed3fa537a036fa01257c427da10::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit41b12ed3fa537a036fa01257c427da10::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2cf7d2656b09e142f53056d7473f95f6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2cf7d2656b09e142f53056d7473f95f6::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit2cf7d2656b09e142f53056d7473f95f6::$classMap;
 
         }, null, ClassLoader::class);
     }
