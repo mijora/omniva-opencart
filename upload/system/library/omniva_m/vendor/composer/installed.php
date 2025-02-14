@@ -19,6 +19,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'mijora/box-calculator' => array(
+            'pretty_version' => '1.0.0',
+            'version' => '1.0.0.0',
+            'reference' => '8f36ce563e6accf19259e0152b32115d343f1f96',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mijora/box-calculator',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'mijora/omniva-api' => array(
             'pretty_version' => '1.3.2',
             'version' => '1.3.2.0',
