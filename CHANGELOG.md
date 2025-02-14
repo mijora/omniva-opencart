@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.4]
 - Fixed default courier arrival time value
 - Added platform and version identification to all requests to the Omniva server
 - Updated omniva-api library to 1.3.2
