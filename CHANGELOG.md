@@ -6,6 +6,8 @@
 - Updated omniva-api library to 1.3.2
 - Updated tecnickcom/tcpdf to 6.8.2
 - Updated setasign/fpdi to v2.6.3
+- Added new library box-calculator
+- Changed the simple shipment calculation function to use the box-calculator library
 
 ## [2.2.3]
 - Updated omniva-api library to 1.3.1

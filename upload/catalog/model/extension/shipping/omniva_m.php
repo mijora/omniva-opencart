@@ -7,6 +7,8 @@ use Mijora\Omniva\ServicePackageHelper\ServicePackageHelper;
 use Mijora\OmnivaOpencart\Helper;
 use Mijora\OmnivaOpencart\Params;
 use Mijora\OmnivaOpencart\Price;
+use Mijora\BoxCalculator\Elements\Item as BoxCalcItem;
+use Mijora\BoxCalculator\CalculateBox;
 
 class ModelExtensionShippingOmnivaM extends Model
 {
@@ -336,38 +338,26 @@ class ModelExtensionShippingOmnivaM extends Model
 
     public function isTerminalAllowed()
     {
-        $total_height = 0;
-        $total_width = 0;
-        $total_length = 0;
-
-        // $cm_length_class_id = $this->getLengthClassId();
-
-        // if (!$cm_length_class_id) {
-        //     return true;
-        // }
-
-        $items = $this->getFormatedCartItems();
-
-        // no shipable items
-        if (!$items) {
+        $cart_items = $this->getFormatedCartItems();
+        if ( ! $cart_items ) {
             return false;
         }
 
-        foreach ($items as $product) {
-            // $width  = (float) $this->length->convert($product['width'],  $product['length_class_id'], $cm_length_class_id);
-            // $length = (float) $this->length->convert($product['length'], $product['length_class_id'], $cm_length_class_id);
-            // $height = (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id);
-
-            $total_height += $product['height'] * $product['quantity'];
-            $total_width += $product['width'] * $product['quantity'];
-            $total_length += $product['length'] * $product['quantity'];
-
-            if ($total_height > 39 || $total_width > 38 || $total_length > 64) {
-                return false;
+        $items_list = array();
+        foreach ( $cart_items as $item ) {
+            for ( $i = 0; $i < $item['quantity']; $i++ ) {
+                $items_list[] = new BoxCalcItem($item['width'], $item['height'], $item['length']);
             }
         }
 
-        return true;
+        $box_calculator = new CalculateBox($items_list);
+        $box_calculator->setBoxWallThickness(0);
+        $box_calculator->setMaxBoxSize(64, 38, 39);
+        $box_calculator->enableDebug(true);
+
+        $box_size = $box_calculator->findBoxSizeUntilMaxSize();
+
+        return ($box_size) ? true : false;
     }
 
     public function getLengthClassId()
