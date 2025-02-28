@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Fixed weight unit conversion
+
 ## [2.2.4]
 - Fixed default courier arrival time value
 - Added platform and version identification to all requests to the Omniva server
