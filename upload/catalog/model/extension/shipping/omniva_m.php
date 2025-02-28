@@ -259,19 +259,16 @@ class ModelExtensionShippingOmnivaM extends Model
     {
         // Get cart weight
         $total_kg = $this->cart->getWeight();
-        // Make sure its in kg (we do not support imperial units, so assume weight is in metric units)
-        $weight_class_id = $this->config->get('config_weight_class_id');
-        $unit = $this->db->query("
-            SELECT unit FROM `" . DB_PREFIX . "weight_class_description` wcd 
-            WHERE (weight_class_id = " . $weight_class_id . ") 
-                AND language_id = '" . (int) $this->config->get('config_language_id') . "'
-        ");
+        $kg_weight_class_id = (int) $this->config->get(Params::PREFIX . 'weight_class_id');
+        $weight_class_id = (int) $this->config->get('config_weight_class_id');
 
-        if ($unit->row['unit'] == 'g') { // if default in grams means cart weight will be in grams as well
-            $total_kg /= 1000;
+        if ($kg_weight_class_id === $weight_class_id) {
+            return (float) $total_kg;
         }
 
-        return (float) $total_kg;
+        return $kg_weight_class_id
+                ? (float) $this->weight->convert($total_kg, $weight_class_id, $kg_weight_class_id)
+                : (float) $total_kg;
     }
 
     protected function getCostByCartTotal($cost_ranges)
@@ -399,7 +396,7 @@ class ModelExtensionShippingOmnivaM extends Model
                 ? (float) $this->length->convert($product['height'], $product['length_class_id'], $cm_length_class_id)
                 : (float) $product['height'];
             $weight = $kg_weight_class_id
-                ? (float) $this->weight->convert($product['weight'], $product['weight_class_id'], $cm_length_class_id)
+                ? (float) $this->weight->convert($product['weight'], $product['weight_class_id'], $kg_weight_class_id)
                 : (float) $product['weight'];
 
             $cart_items[] = [
