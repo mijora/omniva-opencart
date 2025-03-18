@@ -30,8 +30,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
         }
 
         if (!defined('_OMNIVA_INTEGRATION_AGENT_ID_')) {
-            $username = $this->config->get(Params::PREFIX . 'api_user');
-            define('_OMNIVA_INTEGRATION_AGENT_ID_', $username . ' Opencart v' . Params::VERSION);
+            define('_OMNIVA_INTEGRATION_AGENT_ID_', '7005511 Opencart v' . Params::VERSION);
         }
 
         switch ($_GET['action']) {

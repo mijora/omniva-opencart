@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Fixed weight unit conversion
+- Fixed agent ID
 
 ## [2.2.4]
 - Fixed default courier arrival time value
