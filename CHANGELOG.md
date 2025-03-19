@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.5]
 - Fixed weight unit conversion
 - Fixed agent ID
 
