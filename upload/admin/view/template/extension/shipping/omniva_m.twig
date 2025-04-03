@@ -321,10 +321,10 @@
                                 <label class="col-sm-4 control-label" for="input-api-show-return-code">{{ omniva_m_label_api_show_return_code}}</label>
                                 <div class="col-sm-8">
                                     <select name="omniva_m_api_show_return_code" id="input-api-show-return-code" class="form-control">
-                                        {% for key, show_status in show_return_code_types %}
-                                        <option value="{{ key }}" {% if omniva_m_api_show_return_code == key %} selected {% endif %}>{{ show_status }}</option>
-                                        {% endfor %}
+                                        <option value="0">{{ omniva_m_option_no }}</option>
+                                        <option value="1" {% if omniva_m_api_show_return_code == 1 %}selected{% endif %}>{{ omniva_m_option_yes }}</option>
                                     </select>
+                                    <p class="help-block">{{ omniva_m_help_extra_charges_note }}</p>
                                 </div>
                             </div>
                         </form>

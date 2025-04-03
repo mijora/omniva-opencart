@@ -344,12 +344,12 @@
                                 <label class="col-sm-4 control-label" for="input-api-show-return-code"><?php echo $omniva_m_label_api_show_return_code; ?></label>
                                 <div class="col-sm-8">
                                     <select name="omniva_m_api_show_return_code" id="input-api-show-return-code" class="form-control">
-                                        <?php foreach($show_return_code_types as $key => $show_status): ?>
-                                            <option value="<?php echo $key; ?>"
-                                                <?php if ($omniva_m_api_show_return_code == $key) { echo "selected"; } ?>
-                                            ><?php echo $show_status; ?></option>
-                                        <?php endforeach; ?>
+                                        <option value="0"><?php echo $omniva_m_option_no; ?></option>
+                                        <option value="1" 
+                                            <?php if ($omniva_m_api_show_return_code == 1) { echo "selected"; } ?>
+                                        ><?php echo $omniva_m_option_yes; ?></option>
                                     </select>
+                                    <p class="help-block"><?php echo $omniva_m_help_extra_charges_note; ?></p>
                                 </div>
                             </div>
                         </form>
