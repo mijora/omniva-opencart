@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Changed the "Send return code to customer" parameter values, made value "No" by default and indicated that this service may be charged additionally
+
 ## [2.2.5]
 - Fixed weight unit conversion
 - Fixed agent ID
