@@ -64,10 +64,7 @@ $_['omniva_m_option_courier_estonia'] = 'Estonian courier service';
 $_['omniva_m_option_courier_finland'] = 'Finland courier service';
 $_['omniva_m_option_no'] = 'No';
 $_['omniva_m_option_yes'] = 'Yes';
-$_['omniva_m_option_addto_sms_email'] = 'Add to SMS and email';
-$_['omniva_m_option_addto_sms'] = 'Add to SMS';
-$_['omniva_m_option_addto_email'] = 'Add to email';
-$_['omniva_m_option_addto_dont'] = 'Dont add';
+$_['omniva_m_help_extra_charges_note'] = "Please note that extra charges may apply. For more information, contact your Omniva`s business customer support.";
 
 // General Tab
 $_['omniva_m_title_edit'] = 'General settings';
