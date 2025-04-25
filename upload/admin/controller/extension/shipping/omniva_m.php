@@ -303,14 +303,6 @@ class ControllerExtensionShippingOmnivaM extends Controller
             Params::LABEL_PRINT_TYPE_A6 => $this->language->get(Params::PREFIX . 'option_label_print_a6'),
         ];
 
-        // return code display types
-        $data['show_return_code_types'] = [
-            Params::SHOW_RETURN_ALL => $this->language->get(Params::PREFIX . 'option_addto_sms_email'),
-            Params::SHOW_RETURN_SMS => $this->language->get(Params::PREFIX . 'option_addto_sms'),
-            Params::SHOW_RETURN_EMAIL => $this->language->get(Params::PREFIX . 'option_addto_email'),
-            Params::SHOW_RETURN_DONT => $this->language->get(Params::PREFIX . 'option_addto_dont'),
-        ];
-
         // special cases (that need json_decode)
         if (isset($this->request->post[Params::PREFIX . 'cod_options'])) {
             $data[Params::PREFIX . 'cod_options'] = json_decode($this->request->post[Params::PREFIX . 'cod_options']);

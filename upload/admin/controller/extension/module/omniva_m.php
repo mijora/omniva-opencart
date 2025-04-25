@@ -602,21 +602,13 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
     private function getShowReturnCode()
     {
-        $add_to_sms = true;
-        $add_to_email = true;
+        $add_to_sms = false;
+        $add_to_email = false;
 
         $show_return_code = (int) $this->config->get(Params::PREFIX . 'api_show_return_code');
-        switch ($show_return_code) {
-            case Params::SHOW_RETURN_SMS:
-                $add_to_email = false;
-                break;
-            case Params::SHOW_RETURN_EMAIL:
-                $add_to_sms = false;
-                break;
-            case Params::SHOW_RETURN_DONT:
-                $add_to_email = false;
-                $add_to_sms = false;
-                break;
+        if ($show_return_code) {
+            $add_to_email = true;
+            $add_to_sms = true;
         }
 
         return (object) array(

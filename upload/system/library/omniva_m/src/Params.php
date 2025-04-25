@@ -4,7 +4,7 @@ namespace Mijora\OmnivaOpencart;
 
 class Params
 {
-    const VERSION = '2.2.5';
+    const VERSION = '2.2.6';
 
     const PREFIX = 'omniva_m_';
 
@@ -47,11 +47,6 @@ class Params
 
     const LABEL_PRINT_TYPE_A4 = 1;
     const LABEL_PRINT_TYPE_A6 = 2;
-
-    const SHOW_RETURN_ALL = 0;
-    const SHOW_RETURN_SMS = 1;
-    const SHOW_RETURN_EMAIL = 2;
-    const SHOW_RETURN_DONT = 3;
 
     const MAX_PER_PAGE_HISTORY = 25;
 
