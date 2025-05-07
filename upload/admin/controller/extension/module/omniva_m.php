@@ -378,7 +378,10 @@ class ControllerExtensionModuleOmnivaM extends Controller
         $receiver_email = $order_data['oc_order']['email'];
 
         $cod_receiver = $this->config->get(Params::PREFIX . 'cod_receiver');
-        $cod_iban = trim(str_replace(' ', '', $this->config->get(Params::PREFIX . 'cod_iban')));
+        $cod_iban = $this->config->get(Params::PREFIX . 'cod_iban');
+        if ( ! empty($cod_iban) ) {
+            $cod_iban = trim(str_replace(' ', '', $cod_iban));
+        }
 
         $additional_services = [];
         if ($order_data['shipping_type'] === Params::SHIPPING_TYPE_TERMINAL) {
