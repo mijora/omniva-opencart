@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Updated user manual
+- Fixed bug when IBAN value is not entered
 
 ## [2.2.6]
 - Changed the "Send return code to customer" parameter values, made value "No" by default and indicated that this service may be charged additionally
