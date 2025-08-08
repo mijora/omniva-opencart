@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Updated user manual
+- Fixed bug when IBAN value is not entered
 - Updated box-calculator library to 1.1.0
 - Changed the method for calculating the shipment size to a more advanced Heuristic3D
 
