@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'mijora/box-calculator' => array(
-            'pretty_version' => '1.0.0',
-            'version' => '1.0.0.0',
-            'reference' => '8f36ce563e6accf19259e0152b32115d343f1f96',
+            'pretty_version' => '1.1.0',
+            'version' => '1.1.0.0',
+            'reference' => '7c40f5e5022aa2c31f4c76c9d8033713a998d7e4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mijora/box-calculator',
             'aliases' => array(),

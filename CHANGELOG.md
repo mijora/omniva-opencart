@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 - Updated user manual
+- Updated box-calculator library to 1.1.0
+- Changed the method for calculating the shipment size to a more advanced Heuristic3D
 
 ## [2.2.6]
 - Changed the "Send return code to customer" parameter values, made value "No" by default and indicated that this service may be charged additionally
