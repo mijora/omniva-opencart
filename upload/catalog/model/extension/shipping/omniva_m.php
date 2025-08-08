@@ -351,6 +351,7 @@ class ModelExtensionShippingOmnivaM extends Model
         $box_calculator->setBoxWallThickness(0);
         $box_calculator->setMaxBoxSize(64, 38, 39);
         $box_calculator->enableDebug(true);
+        $box_calculator->setMethod('Heuristic3D');
 
         $box_size = $box_calculator->findBoxSizeUntilMaxSize();
 
