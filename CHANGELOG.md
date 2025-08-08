@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.7]
 - Updated user manual
 - Fixed bug when IBAN value is not entered
 - Updated box-calculator library to 1.1.0
