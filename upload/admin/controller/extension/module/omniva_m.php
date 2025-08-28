@@ -395,6 +395,8 @@ class ControllerExtensionModuleOmnivaM extends Controller
             $comment = 'Order ID: ' . (int) $id_order;
         }
 
+        $content_desription = $this->prepareContentDescription($order_data['products']);
+
         $cod = null;
         if ($order_data['cod']['enabled'] && $order_data['cod']['use']) {
             $additional_services[] = 'BP';
@@ -539,6 +541,7 @@ class ControllerExtensionModuleOmnivaM extends Controller
             if ($add_comment) {
                 $shipment->setComment($comment);
             }
+            $shipment->setContentDescription($content_desription);
 
             $shipment->setShipmentHeader($shipmentHeader);
 
@@ -568,6 +571,19 @@ class ControllerExtensionModuleOmnivaM extends Controller
 
         $this->saveLabelHistory($order_data, 'Omniva API responded without tracking numbers!', '--', true);
         return ['error' => 'Omniva API responded without tracking numbers!'];
+    }
+
+    private function prepareContentDescription($products)
+    {
+        $products_names = array();
+        foreach ( $products as $product ) {
+            $qty = (isset($product['quantity'])) ? $product['quantity'] : 1;
+            $name = (! empty($product['name'])) ? $product['name'] : 'Unknown product';
+            $name = substr($name, 0, 31);
+            $products_names[] = $qty . '×' . trim($name);
+        }
+
+        return implode('; ', $products_names);
     }
 
     private function formatServicesString(Shipment $shipment)
