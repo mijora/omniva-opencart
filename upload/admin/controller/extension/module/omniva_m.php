@@ -497,7 +497,8 @@ class ControllerExtensionModuleOmnivaM extends Controller
                     ->setMeasures($measures)
                     ->setReceiverContact($receiverContact)
                     ->setReturnAllowed($show_return_code->sms || $show_return_code->email)
-                    ->setSenderContact($senderContact);
+                    ->setSenderContact($senderContact)
+                    ->setContentDescription($content_desription);
 
                 if ($servicePackage) {
                     $package->setServicePackage($servicePackage);
@@ -541,7 +542,6 @@ class ControllerExtensionModuleOmnivaM extends Controller
             if ($add_comment) {
                 $shipment->setComment($comment);
             }
-            $shipment->setContentDescription($content_desription);
 
             $shipment->setShipmentHeader($shipmentHeader);
 
