@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.2.8]
 - Added description of shipment contents when registering a shipment
 - Updated omniva-api library to 1.3.5
 - Updated tecnickcom/tcpdf to 6.10.0
