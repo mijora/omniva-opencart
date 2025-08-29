@@ -14,8 +14,9 @@ use Mijora\Omniva\Shipment\Shipment;
 
 class Package
 {
-    /** Shipment comment string symbol limit */
+    /** Shipment strings symbol limit */
     const LIMIT_COMMENT_LENGTH = 128;
+    const LIMIT_CONTENT_DESC_LENGTH = 500;
 
     const MAIN_SERVICE_PARCEL = 'PARCEL';
     const MAIN_SERVICE_LETTER = 'LETTER';
@@ -29,6 +30,7 @@ class Package
 
     const CHANNEL_PARCEL_MACHINE = 'PARCEL_MACHINE';
     const CHANNEL_POST_OFFICE = 'POST_OFFICE';
+    const CHANNEL_POST_BOX = 'POST_BOX';
     const CHANNEL_COURIER = 'COURIER';
     /** @deprecated No longer used */
     const CHANNEL_PICK_UP_POINT = 'PICK_UP_POINT';
@@ -37,6 +39,7 @@ class Package
         self::CHANNEL_COURIER,
         self::CHANNEL_PARCEL_MACHINE,
         self::CHANNEL_POST_OFFICE,
+        self::CHANNEL_POST_BOX,
     ];
 
     /** 
@@ -73,6 +76,7 @@ class Package
         self::MAIN_SERVICE_LETTER => [
             self::CHANNEL_COURIER,
             self::CHANNEL_POST_OFFICE,
+            self::CHANNEL_POST_BOX,
         ],
 
         self::MAIN_SERVICE_PALLET => [
@@ -213,6 +217,9 @@ class Package
     /** @var string Commentary about the delivery string(128). For OMX */
     private $comment;
 
+    /** @var string Description of the contents of the shipment string(500). For OMX. Required for international shipments */
+    private $contentDescription;
+
     /**
      * @var string $comment Comment string, will be truncated to max 128
      * 
@@ -234,6 +241,29 @@ class Package
     public function getComment()
     {
         return (string) $this->comment;
+    }
+
+    /**
+     * @var string $contentDescription Content description string, will be truncated to max 500
+     * 
+     * @return Package
+     */
+    public function setContentDescription($contentDescription)
+    {
+        $this->contentDescription = mb_substr(
+            strip_tags((string) $contentDescription),
+            0,
+            self::LIMIT_CONTENT_DESC_LENGTH
+        );
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentDescription()
+    {
+        return (string) $this->contentDescription;
     }
 
     /**
