@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.8]
+- Added description of shipment contents when registering a shipment
+- Updated omniva-api library to 1.3.5
+- Updated tecnickcom/tcpdf to 6.10.0
+- Updated setasign/fpdi to v2.6.4
+
 ## [2.2.7]
 - Updated user manual
 - Fixed bug when IBAN value is not entered

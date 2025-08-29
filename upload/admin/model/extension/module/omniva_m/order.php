@@ -130,6 +130,8 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             }
         }
 
+        $data['products'] = $this->getOrderProductsData($id_order);
+
         return $data;
     }
 
@@ -503,6 +505,29 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         }
 
         return 'token=' . $this->session->data['token'];
+    }
+
+    private function getOrderProductsData($order_id)
+    {
+        $this->load->model('sale/order');
+
+        $products = $this->model_sale_order->getOrderProducts($order_id);
+
+        $products_data = array();
+
+        foreach ($products as $product) {
+            $order_prod_id = $product['order_product_id'];
+            $products_data[$order_prod_id] = array(
+                'id' => $product['product_id'],
+                'name' => $product['name'],
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+                'total_price' => $product['total'],
+                'tax' => $product['tax']
+            );
+        }
+
+        return $products_data;
     }
 
     private function getOrderWeight($order_id)
