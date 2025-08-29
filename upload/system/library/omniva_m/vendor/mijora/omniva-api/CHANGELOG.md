@@ -1,3 +1,17 @@
+## [1.3.5]
+- added the posibility to specify the required parameter `contentDescription` for international shipments. Usage: `(new Package())->setContentDescription($string)`
+
+## [1.3.4]
+- fixed the size of packages for international shipments to be calculated using the formula `longest_edge + 2 x (middle_edge + shortest_edge)`
+
+## [1.3.3]
+- added the ability to enable OMX test mode via a constant `_OMNIVA_API_USE_TEST_OMX_`
+- added ability to change username via constant `_OMNIVA_API_USERNAME_`
+- added ability to change password via constant `_OMNIVA_API_PASSWORD_`
+- added ability to change request timeout via constant `_OMNIVA_API_CURL_TIMEOUT_`
+- added new delivery channel: POST_BOX
+- added new package service: EXPRESS_LETTER
+
 ## [1.3.2]
 - added `X-Integration-Agent-Id` header to all API calls with value of constant `_OMNIVA_INTEGRATION_AGENT_ID_` if it is defined
 
