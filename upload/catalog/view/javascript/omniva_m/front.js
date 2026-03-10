@@ -15,6 +15,7 @@ const OMNIVA_M = {
         crossOrigin: ''
     },
     txtPrefix : '',
+    _initTimer: null,
 
     observer: new MutationObserver(function(mutationsList, observer) {
         if (
@@ -77,9 +78,15 @@ const OMNIVA_M = {
             this.txtPrefix = 'mh_';
         }
 
-        console.log('Omniva_m starting');
-        this.loadLeaflet(this.loadTerminals);
-        // this.loadTerminals();
+        // Debounce to prevent multiple rapid init calls (e.g. from observer + ajax handler)
+        if (this._initTimer) {
+            clearTimeout(this._initTimer);
+        }
+        this._initTimer = setTimeout(() => {
+            this._initTimer = null;
+            console.log('Omniva_m starting');
+            this.loadLeaflet(this.loadTerminals);
+        }, 100);
     },
 
     loadTerminals: function () {
