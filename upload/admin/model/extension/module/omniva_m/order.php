@@ -421,7 +421,9 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                         $this->db->query(
                             "
                             UPDATE `" . DB_PREFIX . "order` 
-                            SET `order_status_id` = '" . (int) $status_id . "' 
+                            SET
+                                `order_status_id` = '" . (int) $status_id . "',
+                                `date_modified` = NOW()
                             WHERE `order_id` = '" . (int) $order_id . "'
                             "
                         );
