@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 - Fix triple map load in some cases on Journal3 Quick Checkout
+- Fixed to update the order modification date when the module changes the order status
 
 ## [2.2.8]
 - Added description of shipment contents when registering a shipment
