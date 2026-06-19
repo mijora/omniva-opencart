@@ -15,9 +15,9 @@
   overflow: auto;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
-  -webkit-animation-name: fadeIn;
+  -webkit-animation-name: omnivaFadeIn;
   -webkit-animation-duration: 0.4s;
-  animation-name: fadeIn;
+  animation-name: omnivaFadeIn;
   animation-duration: 0.4s;
   z-index: 9999;
 }
@@ -31,9 +31,9 @@
   border-radius: 5px;
   width: 90%;
   height: 80%;
-  -webkit-animation-name: slideIn;
+  -webkit-animation-name: omnivaSlideIn;
   -webkit-animation-duration: 0.4s;
-  animation-name: slideIn;
+  animation-name: omnivaSlideIn;
   animation-duration: 0.4s;
 }
 
@@ -87,7 +87,7 @@
   align-items: center;
 }
 
-@-webkit-keyframes slideIn {
+@-webkit-keyframes omnivaSlideIn {
   from {
     bottom: -300px;
     opacity: 0
@@ -98,7 +98,7 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes omnivaSlideIn {
   from {
     bottom: -300px;
     opacity: 0
@@ -109,7 +109,7 @@
   }
 }
 
-@-webkit-keyframes fadeIn {
+@-webkit-keyframes omnivaFadeIn {
   from {
     opacity: 0
   }
@@ -118,7 +118,7 @@
   }
 }
 
-@keyframes fadeIn {
+@keyframes omnivaFadeIn {
   from {
     opacity: 0
   }
@@ -218,13 +218,13 @@
 
 /** Tooltips*/
 
-.tooltip {
+.omniva-terminal-container .tooltip {
   position: relative;
   display: inline-block;
   border-bottom: 1px dotted black;
 }
 
-.tooltip .tooltiptext {
+.omniva-terminal-container .tooltip .tooltiptext {
   visibility: hidden;
   width: 200px;
   background-color: black;
@@ -240,7 +240,7 @@
   margin-left: -100px;
 }
 
-.tooltip .tooltiptext::after {
+.omniva-terminal-container .tooltip .tooltiptext::after {
   content: "";
   position: absolute;
   top: 100%;
@@ -251,7 +251,7 @@
   border-color: black transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptext {
+.omniva-terminal-container .tooltip:hover .tooltiptext {
   visibility: visible;
 }
 
@@ -289,7 +289,7 @@
   background-color: #000000;
 }
 
-ol li {
+.omniva-terminal-container ol li {
   list-style-type: decimal;
   list-style-type: upper-roman;
 }
@@ -353,7 +353,7 @@ ol li {
   ;
 }
 
-@keyframes bounce {
+@keyframes omnivaBounce {
   from {
     top: 0px;
   }
@@ -362,7 +362,7 @@ ol li {
   }
 }
 
-@-webkit-keyframes bounce {
+@-webkit-keyframes omnivaBounce {
   from {
     top: 0px;
   }
@@ -372,8 +372,8 @@ ol li {
 }
 
 .omniva-map img.active {
-  animation: bounce 0.7s infinite alternate;
-  -webkit-animation: bounce 0.7s infinite alternate;
+  animation: omnivaBounce 0.7s infinite alternate;
+  -webkit-animation: omnivaBounce 0.7s infinite alternate;
 }
 
 .omniva-back-to-list {
@@ -675,9 +675,9 @@ ol li {
     border-radius: 5px;
     width: 65%;
     height: 60%;
-    -webkit-animation-name: slideIn;
+    -webkit-animation-name: omnivaSlideIn;
     -webkit-animation-duration: 0.4s;
-    animation-name: slideIn;
+    animation-name: omnivaSlideIn;
     animation-duration: 0.4s;
   }
   .omniva-scrollbar {
