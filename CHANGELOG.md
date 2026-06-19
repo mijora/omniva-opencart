@@ -1,5 +1,8 @@
 # Changelog
 
+## [Unreleased]
+- Scoped module CSS selectors to prevent global style leakage
+
 ## [2.2.9]
 - Fix triple map load in some cases on Journal3 Quick Checkout
 - Fixed to update the order modification date when the module changes the order status
