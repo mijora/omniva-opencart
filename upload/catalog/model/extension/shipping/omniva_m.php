@@ -263,12 +263,22 @@ class ModelExtensionShippingOmnivaM extends Model
         $weight_class_id = (int) $this->config->get('config_weight_class_id');
 
         if ($kg_weight_class_id === $weight_class_id) {
-            return (float) $total_kg;
+            return $this->getFiniteNumber($total_kg);
         }
 
         return $kg_weight_class_id
-                ? (float) $this->weight->convert($total_kg, $weight_class_id, $kg_weight_class_id)
-                : (float) $total_kg;
+                ? $this->getFiniteNumber($this->weight->convert($total_kg, $weight_class_id, $kg_weight_class_id))
+                : $this->getFiniteNumber($total_kg);
+    }
+
+    /**
+     * Weight/length class with value 0 makes OpenCart conversion return NAN/INF, treat such values as 0
+     */
+    protected function getFiniteNumber($value)
+    {
+        $value = (float) $value;
+
+        return is_finite($value) ? $value : 0.0;
     }
 
     protected function getCostByCartTotal($cost_ranges)
@@ -401,10 +411,10 @@ class ModelExtensionShippingOmnivaM extends Model
                 : (float) $product['weight'];
 
             $cart_items[] = [
-                'width' => $width,
-                'length' => $length,
-                'height' => $height,
-                'weight' => $weight,
+                'width' => $this->getFiniteNumber($width),
+                'length' => $this->getFiniteNumber($length),
+                'height' => $this->getFiniteNumber($height),
+                'weight' => $this->getFiniteNumber($weight),
                 'quantity' => (int) $product['quantity'],
             ];
         }
