@@ -42,6 +42,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             'manifest_id' => 0, // default no manifest
             'shipping_code' => '',
             'is_international' => false,
+            'invalid_weight_classes' => false, // weight classes with value 0 break weight conversion
         ];
 
         $oc_order = $this->model_sale_order->getOrder((int) $id_order);
@@ -101,8 +102,13 @@ class ModelExtensionModuleOmnivaMOrder extends Model
         $data['set_weight'] = $data['total_weight'];
 
         if ($order_data->getData('weight') !== null) {
-            $data['set_weight'] = (float) $order_data->getData('weight');
+            $saved_weight = (float) $order_data->getData('weight');
+            if (is_finite($saved_weight) && $saved_weight > 0) {
+                $data['set_weight'] = $saved_weight;
+            }
         }
+
+        $data['invalid_weight_classes'] = $this->hasInvalidWeightClasses();
 
         if (strpos($oc_order['shipping_code'], 'omniva_m.terminal_') === 0) {
             $data['shipping_type'] = Params::SHIPPING_TYPE_TERMINAL;
@@ -562,7 +568,7 @@ class ModelExtensionModuleOmnivaMOrder extends Model
             $options = $this->model_sale_order->getOrderOptions($order_id, $product['order_product_id']);
 
             foreach ($options as $option) {
-                if ($option['type'] = 'file') {
+                if ($option['type'] == 'file') {
                     continue;
                 }
 
@@ -577,16 +583,36 @@ class ModelExtensionModuleOmnivaMOrder extends Model
                 }
             }
 
-            $weight_in_kg = $this->weight->convert(($product_info['weight'] + (float)$option_weight) * $product['quantity'], $product_info['weight_class_id'], $kg_class_id);
+            try {
+                $weight_in_kg = (float) $this->weight->convert(($product_info['weight'] + (float)$option_weight) * $product['quantity'], $product_info['weight_class_id'], $kg_class_id);
+            } catch (\Throwable $e) {
+                // PHP 8 throws DivisionByZeroError when weight class value is 0
+                $weight_in_kg = 0.0;
+            }
 
-            $total_order_weight += (float) $weight_in_kg;
+            // weight class with 0 value produces NAN/INF, ignore such product weight
+            if (!is_finite($weight_in_kg)) {
+                continue;
+            }
+
+            $total_order_weight += $weight_in_kg;
         }
 
-        if ($total_order_weight <= 0) {
+        if (!is_finite($total_order_weight) || $total_order_weight <= 0) {
             $total_order_weight = Params::DEFAULT_WEIGHT;
         }
 
         return $total_order_weight;
+    }
+
+    private function hasInvalidWeightClasses()
+    {
+        $result = $this->db->query("
+            SELECT COUNT(*) AS total FROM " . DB_PREFIX . "weight_class
+            WHERE `value` <= 0
+        ");
+
+        return (int) $result->row['total'] > 0;
     }
 
     public function loadInfoPanelTranslation()

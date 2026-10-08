@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 - Scoped module CSS selectors to prevent global style leakage
+- Fixed broken order Omniva panel and "NAN" weight when weight classes have value 0, added warning about invalid weight classes
+- Fixed product option weight not being included in order weight
 
 ## [2.2.9]
 - Fix triple map load in some cases on Journal3 Quick Checkout

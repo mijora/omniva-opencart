@@ -62,6 +62,9 @@
                                 {% if omniva_m_order.terminal_overweight %}
                                 <div class="omniva_m_alert alert-warning">{{ omniva_m_warning_overweight }} {{ omniva_m_order.terminal_max_weight }}kg</div>
                                 {% endif %}
+                                {% if omniva_m_order.invalid_weight_classes %}
+                                <div class="omniva_m_alert alert-danger">{{ omniva_m_warning_invalid_weight_classes }}</div>
+                                {% endif %}
 							</div>
 						</div>
 
@@ -155,7 +158,7 @@
     </div>
 </div>
 <script>
-    const OMNIVA_M_ORDER_DATA = {{ omniva_m_order|json_encode() }};
+    const OMNIVA_M_ORDER_DATA = {{ omniva_m_order|json_encode(constant('JSON_PARTIAL_OUTPUT_ON_ERROR')) }};
     const OMNIVA_M_INFO_PANEL_TRANSLATION = {{ omniva_m_info_panel_translation|json_encode() }};
 </script>
 <script src="view/javascript/omniva_m/order_info.js?202407231710" type="text/javascript"></script>

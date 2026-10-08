@@ -63,6 +63,9 @@
                                 <?php if ($omniva_m_order['terminal_overweight']): ?>
                                 <div class="omniva_m_alert alert-warning"><?php echo $omniva_m_warning_overweight; ?> <?php echo $omniva_m_order['terminal_max_weight']; ?>kg</div>
                                 <?php endif; ?>
+                                <?php if ($omniva_m_order['invalid_weight_classes']): ?>
+                                <div class="omniva_m_alert alert-danger"><?php echo $omniva_m_warning_invalid_weight_classes; ?></div>
+                                <?php endif; ?>
 							</div>
 						</div>
 
@@ -159,7 +162,7 @@
     </div>
 </div>
 <script>
-    const OMNIVA_M_ORDER_DATA = <?php echo json_encode($omniva_m_order); ?>;
+    const OMNIVA_M_ORDER_DATA = <?php echo json_encode($omniva_m_order, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
     const OMNIVA_M_INFO_PANEL_TRANSLATION = <?php echo json_encode($omniva_m_info_panel_translation); ?>;
 </script>
 <script src="view/javascript/omniva_m/order_info.js?202407231710" type="text/javascript"></script>

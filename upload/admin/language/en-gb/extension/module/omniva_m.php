@@ -62,6 +62,7 @@ $_['omniva_m_error_nothing_in_manifest'] = 'No order added to manifest. Please i
 
 $_['omniva_m_warning_no_terminal'] = 'Could not find terminal, it might have been removed from system!';
 $_['omniva_m_warning_overweight'] = 'Warning! Total weight is over terminal limit:';
+$_['omniva_m_warning_invalid_weight_classes'] = 'Warning! Some weight classes have value 0 (System > Localisation > Weight Classes), order weight can not be calculated correctly. Please check weight before registering label.';
 $_['omniva_m_warning_cod_used'] = 'Warning! COD payment detected, but COD is disabled in module!';
 $_['omniva_m_warning_cod_amount_mismatch'] = 'Warning! Set COD amount [ $$cod_amount$$ ] does not match Order amount [ $$order_amount$$ ]!';
 $_['omniva_m_warning_order_data_changed'] = 'Warning! You have changed some of bellow information manualy!';
